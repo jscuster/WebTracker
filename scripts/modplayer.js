@@ -25,7 +25,6 @@ timePerTick = 0.02; //ticks tied to VSync, static number.
 tpr = Math.round(r);
 bpm = x;
 timePerTick = 60/(4*tpr*bpm*1.25);
-//alert(timePerTick);
 } //tick or bpm if
 WebTracker.logger.log("tpr is " + tpr + ", bpm = " + bpm);
 WebTracker.logger.log("timePerTick is " + timePerTick);
@@ -56,7 +55,8 @@ WebTracker.logger.log("preloaded mod player. time: " + time);
 
 playRow = function() {
 WebTracker.logger.log("row " + rowCursor);
-for (var i = 0, r = song.patterns[patternCursor][rowCursor]; i < channelCount; i++) {
+var r = song.patterns[patternCursor][rowCursor];
+for (var i = 0; i < channelCount; i++) {
 WebTracker.logger.log("channel " + i);
 playNote(r[i], i);
 } //i (channels)
@@ -68,7 +68,7 @@ rowCursor += 1;
 if (rowCursor >= 64) {
 rowCursor = 0;
 bumpPatternCursor();
-WebTracker.logger.log("playing pattern " + patternCursor + " in a song with " + c + " channels.");
+WebTracker.logger.log("playing pattern " + patternCursor + " in a song with " + channelCount + " channels.");
 } //if
 }, //bumpRowCursor
 
@@ -79,7 +79,10 @@ patternCursor = song.patternOrder[curPattern];
 } else {
 clearInterval(playTimer);
 donePlaying = true;
-alert("done");
+for (var i = 0; i < channels.length; i++) {
+channels[i].stop(time);
+} //i
+//prompt("log", WebTracker.logger.getLog());
 } //if
 }, //bumpPatternCursor
 
@@ -127,9 +130,5 @@ donePlaying = false;
 playPatternOnly = false;
 rowCursor = 0;
 playTimer = setInterval(play, 100);
-for (var i = 0; i < channels.length; i++) {
-channels[i].stop(time);
-} //i
-//prompt("log", WebTracker.logger.getLog());
 }; //playSong
 }; //ModPlayer
