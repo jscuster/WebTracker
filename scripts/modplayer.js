@@ -110,7 +110,7 @@ s.play(note.sample-1, note.factor, time);
 switch (note.effect) {
 case 12: //set volume
 WebTracker.logger.log("Found set volume effect.");
-s.setVolume(note.param);
+s.setVolume(note.param, time);
 break;
 case 15: //set speed
 WebTracker.logger.log("found set speed effect.");

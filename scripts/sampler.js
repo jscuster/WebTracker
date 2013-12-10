@@ -58,8 +58,9 @@ this.setPan = function (x, y, z) {
 	panner.setPosition(x, y, z);
 }; //setPan
 
-this.setVolume = function (x) {
-	gain.gain.value = x <= 0 ? 0 : (x / 64);
-	WebTracker.logger.log("setting volume to " + x);
+this.setVolume = function (volume, when) {
+volume = volume <= 0 ? 0 : (volume / 64);
+	gain.gain.setValueAtTime(volume, when);
+	WebTracker.logger.log("setting volume to " + volume);
 }; //setVolume
 }; //SamplePlayer
