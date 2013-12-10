@@ -1,0 +1,6 @@
+Things to do
+
+1. implement remaining effects.
+2. confirm sample tunings
+3. remove logger when debugging is complete.
+

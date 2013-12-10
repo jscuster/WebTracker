@@ -47,6 +47,12 @@ WebTracker.logger.log("stopping at time " + when);
 	}; //stop
 
 this.setPan = function(x, y, z) {
+WebTracker.logger.log("setting pan to: x = " + x + ", y = " + y + ", z = " + z);
 panner.setPosition(x, y, z);
-}; //pan
+}; //setPan
+
+this.setVolume = function(x) {
+gain.gain.value = x;
+WebTracker.logger.log("setting volume to " + x);
+}; //setVolume
 }; //SamplePlayer
