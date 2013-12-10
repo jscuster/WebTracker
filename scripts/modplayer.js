@@ -79,15 +79,20 @@ playNote = function(note, chan) {
 WebTracker.logger.log("playing note\n" + JSON.stringify(note) + "\n on channel " + chan);
 var s = channels[chan];
 switch (note.effect) {
-case 15:
+case 12: //set volume
+WebTracker.logger.log("Found set volume effect.");
+s.setVolume(note.param);
+break;
+case 15: //set speed
 WebTracker.logger.log("found set speed effect.");
 setTimePerTick(note.param);
 break;
 default:
+WebTracker.logger.log("unlogged event: " + note.effect + "x: " + note.x + ", y: " + note.y + ", param: " + note.param);
+} //switch
 if (note.period != 0) {
 s.play(note.sample-1, note.factor, time);
 } //if
-} //switch
 }; //playNote
 
 this.playSong = function() {
