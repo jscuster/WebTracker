@@ -39,6 +39,13 @@ curPattern = 0;
 var c = song.channels;
 for (var i = 0; i < c; i++) {
 channels[i] = new WebTracker.Sampler(song.samples, context, destination);
+//set position per left, right, right, left spec.
+var mod = i % 4;
+if (mod === 0 || mod === 3) {
+channels[i].setPan(-0.25, 0, 0); //left
+} else {
+channels[i].setPan(0.25, 0, 0); //right
+} 
 } //i
 time = context.currentTime;
 WebTracker.logger.log("preloaded mod player. time: " + time);

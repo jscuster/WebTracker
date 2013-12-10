@@ -3,10 +3,12 @@ WebTracker.Sampler = function (samples, context, destination) {
 WebTracker.logger.log("creating sampler");
 	destination = destination || context.destination;
 	var buffers = [],
-		node, gain = context.createGain();
-gain.connect(destination)
+		node, gain = context.createGain(),
+panner = context.createPanner();;
+gain.connect(destination);
 gain.gain.value=0.2;
-destination = gain;
+panner.connect(gain);
+destination = panner;
 	for (var i = 0; i < 31; i++) {
 		buffers[i] = samples[i].data;
 	} //i
@@ -35,6 +37,7 @@ WebTracker.logger.log("setting playback rate: " + node.playbackRate);
 			} //if valid buffer
 		} //if valid note
 	} //play func
+
 	this.stop = function (when) {
 WebTracker.logger.log("stopping at time " + when);
 		if (node) {
@@ -42,4 +45,8 @@ WebTracker.logger.log("stopping at time " + when);
 			node.stop(when);
 		} //if
 	}; //stop
+
+this.setPan = function(x, y, z) {
+panner.setPosition(x, y, z);
+}; //pan
 }; //SamplePlayer
