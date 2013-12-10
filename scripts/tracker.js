@@ -68,7 +68,13 @@ player.play(sptr++, 6, context.currentTime + 3);
 							} //if
 						}); //keyUp
 $("#play").click(function() {
-var modPlayer = new WebTracker.ModPlayer(sng, context, context.destination);
+var n = context.createDynamicsCompressor();
+n.ratio.value = 20;
+var m = context.createGainNode();
+m.gain.value = 0.5;
+m.connect(n);
+n.connect(context.destination);
+var modPlayer = new WebTracker.ModPlayer(sng, context, m);
 modPlayer.playSong();
 }); //play click
 					}; //onload
