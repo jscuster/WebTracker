@@ -3,4 +3,5 @@ Things to do
 1. implement remaining effects.
 2. confirm sample tunings
 3. remove logger when debugging is complete.
-
+4. create better interface for tracker and player.
+5. create stand-alone player page so anyone can include a mod player on their page.
