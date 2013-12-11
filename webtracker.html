@@ -10,27 +10,45 @@
 <script type="text/javascript"  src="scripts/webtracker.js"></script>
 </head>
 <body>
-<div id="mainMenu">
-<button class="mainMenu" id="first">Files</button>
-<button class="mainMenu">Samples</button>
-<button class="mainMenu">Song</button>
-<button class="mainMenu">Patterns</button>
-<button class="mainMenu">Editor</button>
+<div id="menu">
+<button class="menu" id="first">Files</button>
+<button class="menu">Samples</button>
+<button class="menu">Song</button>
+<button class="menu">Patterns</button>
+<button class="menu">Editor</button>
 </div>
 <div id="files" class = "mainPanel">
 <center><H1>Files</H1></center>
-<div id="filesMenu">
-<button class="filesMenu" id="filesFirst">Open</button>
-<button class="filesMenu">New</button>
-<button class="filesMenu">Save</button>
-<button class="filesMenu">Import</button>
-<button class="filesMenu">Export</button>
-
+<div id="menu">
+<button class="submenu" id="subfirst">Open</button>
+<button class="submenu">New</button>
+<button class="submenu">Save</button>
+<button class="submenu">Import</button>
+<button class="submenu">Export</button>
 </div>
-
+<div class="subpanel" id="open">
+<center><H1>Open File</H1></center>
+</div>
+<div class="subpanel" id="new">
+<center><H1>New File</H1></center>
+</div>
+<div class="subpanel" id="save">
+<center><H1>Save</H1></center>
+</div>
+<div class="subpanel" id="import">
+<center><H1>Import Samples</H1></center>
+</div>
+<div class="subpanel" id="export">
+<center><H1>Export Samples</H1></center>
+</div>
 </div>
 <div id="samples" class = "mainPanel">
 Samples
+<div class="subpanel" id="">
+<center><H1>
+blank
+</H1></center>
+</div>
 </div>
 <div id="song" class = "mainPanel">
 Song Info
