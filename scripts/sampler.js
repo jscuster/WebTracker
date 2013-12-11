@@ -63,4 +63,11 @@ volume = volume <= 0 ? 0 : (volume / 64);
 	gain.gain.setValueAtTime(volume, when);
 	WebTracker.logger.log("setting volume to " + volume);
 }; //setVolume
+
+this.slideVolume = function(delta, endTime) {
+var tmp = gain.gain.value + delta;
+tmp = tmp > 64 ? 64 : tmp;
+tmp = tmp < 0 ? 0 : tmp;
+gain.gain.linearRampToValueAtTime(tmp, endTime);
+}; //slideVolume
 }; //SamplePlayer
