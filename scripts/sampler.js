@@ -66,8 +66,8 @@ volume = volume <= 0 ? 0 : (volume / 64);
 
 this.slideVolume = function(delta, endTime) {
 var tmp = gain.gain.value + delta;
-tmp = tmp > 64 ? 64 : tmp;
-tmp = tmp < 0 ? 0 : tmp;
+if (tmp > 64) tmp = 64;
+if (tmp < 0) tmp = 0;
 gain.gain.linearRampToValueAtTime(tmp, endTime);
 }; //slideVolume
 }; //SamplePlayer
