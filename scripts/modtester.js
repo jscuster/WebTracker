@@ -78,7 +78,8 @@ var modPlayer = new WebTracker.ModPlayer(sng, context, m);
 modPlayer.playSong();
 }); //play click
 					}; //onload
-alert(f.type);					reader.readAsArrayBuffer(f);
+alert(f.type);
+					reader.readAsArrayBuffer(f);
 				} //i
 			}); //file changed
 	}); //document ready
