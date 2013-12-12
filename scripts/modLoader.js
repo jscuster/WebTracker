@@ -1,14 +1,19 @@
 var WebTracker = WebTracker || {};
-WebTracker.modLoader = function (dataView, context) { //pass in a DataView.
-	'use strict';
-WebTracker.logger.log("Creating mod loader");
-	var song = {
-		title: "",
+WebTracker.emptySong = function() {
+return {
+		title: "Untitled",
 		samples: [],
 		patterns: [],
 		patternOrder: [],
-		channels: -1
-	}, //initial song variable
+		channels: 0,
+totalPatterns: 0
+	}; //song variable
+};
+
+WebTracker.modLoader = function (dataView, context) { //pass in a DataView.
+	'use strict';
+WebTracker.logger.log("Creating mod loader");
+	var song = WebTracker.emptySong(), //initial song variable
 
 		getString = function (offset, length) {
 			var res = [],
