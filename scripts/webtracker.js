@@ -8,7 +8,6 @@ changed = false,
 song = WebTracker.emptySong(),
 initialized = false,
 filename = "untitled",
-updateCallbacks = [],
 
 showPanel = function(name) {
 $(".mainPanel").hide();
@@ -21,20 +20,10 @@ $("#" + name).show();
 }, //showPanel
 
 update = function() {
-var l = updateCallbacks.length;
-for (var i = 0; i < l; i++) {
-updateCallbacks[i]();
-} //i
-}; //updatesafter changes are made.
-
-updateCallbacks.push(function() { //file opened
-$("#filesFilename").html("current file: " + filename + " - " + song.title)
-});
-
-updateCallbacks.push(function() {
 document.title = song.title + ": Web Tracker";
 $("#songTitle").prop('value', song.title)
-}); //make sure the title reflects the song title
+$("#filesFilename").html("current file: " + filename + " - " + song.title)
+}; //updatesafter changes are made.
 
 $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());
@@ -58,6 +47,7 @@ var f = e.target.files[0]; //only open the first selected file
 						var sng = WebTracker.modLoader(dv, context);
 if (sng) {
 song = sng;
+alert(JSON.stringify(sng));
 filename = f.name;
 update();
 initialized = true;
@@ -89,7 +79,7 @@ song.title = t;
 update();
 } //if user says yes
 } //if titles don't match
-});
+}); //songTitle leave focus
 
 update();
 }); //ready

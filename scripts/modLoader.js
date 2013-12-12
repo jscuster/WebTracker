@@ -201,6 +201,6 @@ d = d.getChannelData(0);
 readSampleData();
 		return song;
 	} else {
-		return; //invalid file
+		return undefined; //invalid file
 	} //else
 }; //modLoader
