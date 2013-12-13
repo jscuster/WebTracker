@@ -1,7 +1,19 @@
 var WebTracker = WebTracker || {};
-WebTracker.AmigaModule = function() {
+WebTracker.emptySong = function() {
+return {
+		title: "Untitled",
+		samples: [],
+		patterns: [],
+		patternOrder: [],
+		channels: 0,
+totalPatterns: 0
+	}; //song variable
+};
+
+WebTracker.modLoader = function (dataView, context) { //pass in a DataView.
 	'use strict';
-WebTracker.logger.log("Creating amiga module");
+WebTracker.logger.log("Creating mod loader");
+	var song = WebTracker.emptySong(), //initial song variable
 
 		getString = function (offset, length) {
 			var res = [],
@@ -191,12 +203,4 @@ readSampleData();
 	} else {
 		return undefined; //invalid file
 	} //else
-
-this.title = "Untitled";
-this.samples = [];
-this.patterns = [];
-this.patternOrder = [];
-this.channels = 0;
-this.totalPatterns = 0
-
-}; //AmigaModule
+}; //modLoader
