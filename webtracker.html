@@ -3,7 +3,7 @@
 <title>Web Tracker</title>
 <script type="text/javascript" src="scripts/jquery-2.0.3.js"></script>
 <script type="text/javascript" src="scripts/log.js"></script>
-<script type="text/javascript" src="scripts/modLoader.js"></script>
+<script type="text/javascript" src="scripts/modHandler.js"></script>
 <script type="text/javascript" src="scripts/modplayer.js"></script>
 <script type="text/javascript" src="scripts/sampler.js"></script>
 <script type="text/javascript"  src="scripts/buttontable.js"></script>
@@ -59,10 +59,10 @@
 <table>
 <tr>
 <td>Title:</td>
-<td><input type="text" value="untitled" id="songTitle" maxlength = 20></td>
+<td><input type="text" value="untitled" id="songTitle" maxlength="20"></td>
 </tr>
 <tr><td>Message<BR>sample titles</td>
-<td><textarea rows="4" cols="23" id="#songMessage" readonly></textarea></td>
+<td><div id="songMessage"></div></td>
 </tr>
 </table>
 </div>

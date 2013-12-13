@@ -23,6 +23,7 @@ update = function() {
 document.title = song.title + ": Web Tracker";
 $("#songTitle").prop('value', song.title)
 $("#filesFilename").html("current file: " + filename + " - " + song.title)
+$("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br>"));
 }; //updatesafter changes are made.
 
 $(".menu").click(function() {
