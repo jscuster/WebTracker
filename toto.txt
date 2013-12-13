@@ -5,3 +5,10 @@ Things to do
 3. remove logger when debugging is complete.
 4. create better interface for tracker and player.
 5. create stand-alone player page so anyone can include a mod player on their page.
+6. complete tracker interface
+7. enable cloud support for saving files
+8. make XM loader
+8.5. create loader for mo3 files (samples are mp3 encoded)
+9. make converter for mod/xm
+10. check out s3m, it, far, etx.
+11. create song format that supports 16-bit stereo samples, if not alread built
