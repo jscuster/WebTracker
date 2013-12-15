@@ -248,7 +248,7 @@ var hoff = 20, doff = startSampleData;
 song.samples.forEach(function(s) {
 writeString(s.title, hoff, 22);
 hoff+=22;
-dv.setUint16(hoff, s.length / 2 + s.length % 2);
+dv.setUint16(hoff, (s.length / 2) + (s.length % 2));
 hoff += 2;
 dv.setUint8(hoff++, s.finetune < 0 ? s.finetune + 15 : s.finetune); //two's complament lower nibble
 dv.setUint8(hoff++, s.volume);
@@ -256,8 +256,8 @@ dv.setUint16(hoff, s.loopStart/2);
 hoff+=2;
 dv.setUint16(hoff, s.loopLength/2);
 hoff+=2;
-for (var i = 0, d = s.data, l = d.byteLength; i < l; i++) {
-dv.setUint8(doff,  d[i]);
+for (var i = 0, d = s.data.getChannelData(0), l = s.length; i < l; i++) {
+dv.setInt8(doff,  d[i]*127);
 doff++;
 } //i
 if ((s.length % 2) > 0) hoff++; //length measured in words.
