@@ -18,7 +18,6 @@ loopLength: 0
 } //i
 this.restartPosition = 127; //rarely used
 this.patternCount = 0;
-
 	}; //song variable
 
 WebTracker.modLoader = function (dataView, context) { //pass in a DataView.
@@ -180,8 +179,6 @@ smp.factor = (16574 * Math.pow(1.007247, smp.finetune)) / 44100;
 				song.samples[i] = smp;
 
 			} //i
-var smp = song.samples[0];
-
 		}, //getSampleHeaders
 
 		readSampleData = function () {
@@ -197,7 +194,7 @@ var d = context.createBuffer(1, l, 44100);
 smp.data = d;
 d = d.getChannelData(0);
 				for (var j = 0; j < l; j++) {
-					d[j] = dataView.getInt8(offset++) / 127; //scale down to -1 .. 1
+					d[j] = dataView.getInt8(offset++) / 128; //scale down to -1 .. 1
 				} //j
 			} //i
 } //if
@@ -217,15 +214,19 @@ readSampleData();
 }; //modLoader
 
 WebTracker.saveMod = function(song, b64) {
+'use strict';
+WebTracker.logger.log("Saving mod file.");
+
 var startSampleData,
 modLength = function() {
 var l = 1084; //sample headers, title, pattern headers, etc.
-l += 64 * song.totalPatterns * song.channels;
+l += 64 * song.patternCount * song.channels*4;
 startSampleData = l;
 song.samples.forEach(function(s) {
 l += s.length;
 l += s.length % 2;
 });
+WebTracker.logger.log("length calculated to " + l);
 return l; //length
 },
 buffer = new ArrayBuffer(modLength()),
@@ -244,11 +245,15 @@ writeString(song.title, 0, 20);
 }, //writeTitle
 
 writeSamples = function() {
-var hoff = 20, doff = startSampleData;
+var hoff = 20, doff = startSampleData, num = 0;
 song.samples.forEach(function(s) {
+WebTracker.logger.log("Writing sample " + num + " title: " + s.title);
+num++;
 writeString(s.title, hoff, 22);
 hoff+=22;
-dv.setUint16(hoff, (s.length / 2) + (s.length % 2)), false;
+var tmp = (s.length / 2) + (s.length % 2);
+WebTracker.logger.log("sample length:" + s.length + ", logging " + tmp);
+dv.setUint16(hoff, tmp, false);
 hoff += 2;
 dv.setUint8(hoff++, s.finetune < 0 ? s.finetune + 15 : s.finetune); //two's complament lower nibble
 dv.setUint8(hoff++, s.volume);
@@ -256,6 +261,8 @@ dv.setUint16(hoff, s.loopStart/2, false);
 hoff+=2;
 dv.setUint16(hoff, s.loopLength/2, false);
 hoff+=2;
+WebTracker.logger.log("wrote remaining data, hoff = "+ hoff);
+tmp = doff;
 if (s.length <= 2) {
 doff += s.length/2;
 } else {
@@ -268,6 +275,7 @@ doff++;
 } //i
 if ((s.length % 2) > 0) doff++; //length measured in words.
 } //if length > 2
+WebTracker.logger.log("written bytes: "+(doff-tmp));
 }); //forEach
 }, //writeSamples
 
@@ -301,7 +309,13 @@ a[1] = n.period & 0xff;
 a[2] = a[2] | n.effect;
 //parameter
 a[3] = n.param;
+WebTracker.logger.log("sample: " + n.sample.toString(16));
+WebTracker.logger.log("period: " + n.period.toString(16));
+WebTracker.logger.log("effect: " + n.effect.toString(16));
+WebTracker.logger.log("param: " + n.param.toString(16));
+WebTracker.logger.log("logging:");
 a.forEach(function(v) {
+WebTracker.logger.log(v.toString(16));
 dv.setUint8(offset++, v);
 });//forEach
 } //k
@@ -373,8 +387,10 @@ writeSamples();
 writePatternHeaders();
 writePatternData();
 if (b64) {
+prompt("log", WebTracker.logger.getLog());
 return base64ArrayBuffer(buffer);
 } else {
+prompt("log", WebTracker.logger.getLog());
 return buffer;
 } //if converting to base64
 }; //saveMod
