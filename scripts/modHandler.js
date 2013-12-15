@@ -387,10 +387,8 @@ writeSamples();
 writePatternHeaders();
 writePatternData();
 if (b64) {
-prompt("log", WebTracker.logger.getLog());
 return base64ArrayBuffer(buffer);
 } else {
-prompt("log", WebTracker.logger.getLog());
 return buffer;
 } //if converting to base64
 }; //saveMod

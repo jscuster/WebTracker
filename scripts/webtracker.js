@@ -5,7 +5,7 @@ $(function() {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		var context = new window.AudioContext(),
 changed = false,
-song = WebTracker.emptySong(),
+song = new WebTracker.AmigaMod(),
 initialized = false,
 filename = "untitled",
 
@@ -48,7 +48,6 @@ var f = e.target.files[0]; //only open the first selected file
 						var sng = WebTracker.modLoader(dv, context);
 if (sng) {
 song = sng;
-alert(JSON.stringify(sng));
 filename = f.name;
 update();
 initialized = true;
@@ -67,10 +66,15 @@ go = confirm("This will erace your current song. Do you wish to proceed?");
 } //if changed
 if (go) { //user says OK or the changes were saved.
 changed = false;
-song = WebTracker.emptySong();
+song = new WebTracker.AmigaMod();
 update();
 } //if
 }); //new file creation
+
+$("#saveButton").click(function() {
+var htm = '<a href="' + 'data:application/zip;base64,' + WebTracker.saveMod(song, true) + '">Click to download</a>';
+$("#saveLink").html(htm);
+}); //save click
 
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
