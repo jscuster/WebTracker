@@ -1,19 +1,30 @@
 var WebTracker = WebTracker || {};
-WebTracker.emptySong = function() {
-return {
-		title: "Untitled",
-		samples: [],
-		patterns: [],
-		patternOrder: [],
-		channels: 0,
-totalPatterns: 0
+WebTracker.AmigaMod = function() {
+		this.title = "Untitled";
+		this.samples = [];
+		this.patterns = [];
+		this.patternOrder = [];
+		this.channels = 0;
+this.totalPatterns = 0;
+for (var i = 0; i < 31; i++) {
+this.samples[i] = {
+title: "untitled",
+length: 0,
+volume: 64,
+finetune: 0,
+loopStart: 0,
+loopLength: 0
+}; //sample
+} //i
+this.restartPosition = 127; //rarely used
+this.patternCount = 0;
+
 	}; //song variable
-};
 
 WebTracker.modLoader = function (dataView, context) { //pass in a DataView.
 	'use strict';
 WebTracker.logger.log("Creating mod loader");
-	var song = WebTracker.emptySong(), //initial song variable
+	var song = new WebTracker.AmigaMod(), //initial song variable
 
 		getString = function (offset, length) {
 			var res = [],
@@ -204,3 +215,97 @@ readSampleData();
 		return undefined; //invalid file
 	} //else
 }; //modLoader
+
+WebTracker.modSaver = function(song, b64) {
+var startSampleData,
+modLength = function() {
+var l = 1084; //sample headers, title, pattern headers, etc.
+l += 64 * song.totalPatterns * song.channels;
+startSampleData = l;
+song.samples.forEach(function(s) {
+l += s.length;
+l += s.length % 2;
+});
+return l; //length
+},
+buffer = new ArrayBuffer(modLength()),
+dv = new DataView(buffer),
+
+		writeString = function (txt, offset, length) {
+var st = txt.slice(0, length),
+l=st.length;
+for (var i = 0; i < l; i++) {
+dv.setUint8(st.charCodeAt(i), offset + i);
+} //i
+}, //writeString
+
+writeTitle = function() {
+writeString(song.title, 0, 20);
+}, //writeTitle
+
+writeSamples = function() {
+var hoff = 20, doff = startSampleData;
+song.samples.forEach(function(s) {
+writeString(s.title, hoff, 22);
+hoff+=22;
+dv.setUint8(hoff++, s.volume);
+dv.setUint8(hoff++, s.finetune < 0 ? s.finetune + 15 : s.finetune); //two's complament lower nibble
+dv.setUint16(hoff, s.loopStart/2);
+hoff+=2;
+dv.setUint16(hoff, s.loopLength/2);
+hoff+=2;
+for (var i = 0, d = s.data, l = d.byteLength; i < l; i++) {
+dv.setUint8(doff,  d[i]);
+doff++;
+} //i
+}); //forEach
+}, //writeSamples
+
+writePatternHeaders = function() {
+var offset = 950; //start of data
+dv.setUint8(offset, song.totalPatterns);
+offset++;
+dv.setUint8(offset, song.restartPosition);
+offset++;
+for (var i = 0; i < song.totalPatterns; i++) {
+dv.setUint8(offset++, song.patternOrder[i] || 0);
+} //i
+writeString(song.channels === 4 ? "M.K." : (song.channels + "CHN").slice(0, 4), offset, 4);
+}, //writePatternHeaders
+
+writePatternData = function() {
+var offset = 1084,
+p = song.patterns;
+for (var i = 0; i < song.totalPatterns; i++) {
+for (var j = 0; j < 64; j++) {
+for (var k = 0; k < song.channels; k++) {
+var n = p[i][j][k];
+var w1 = n.period;
+w1 = w1 | ((n.sample & 0xf0) << 8);
+dv.setUint16(offset, w1);
+offset+=2;
+w1 = (n.sample & 0x0f) << 12;
+w1 = w1 | (n.effect << 8);
+w1 = w1 | n.param;
+dv.setUint16(offset, w1);
+offset+=2;
+} //k
+} //j
+} //i
+}; //writePatternData
+
+//do the work
+writeTitle()
+writeSamples();
+writePatternHeaders();
+writePatternData();
+if (b64) {
+var s = [], l = buffer.byteLength, cc = String.fromCharCode;
+for (var i = 0; i < l; i++) {
+s[i] = cc(buffer[i]);
+} //i
+return atob(s.join(""));
+} else {
+return buffer;
+} //if converting to base64
+}; //saveMod
