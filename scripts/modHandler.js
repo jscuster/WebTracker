@@ -163,7 +163,7 @@ WebTracker.logger.log("Creating mod loader");
 				offset += 2;
 				smp.finetune = dataView.getInt8(offset);
 				if (smp.finetune > 7) {
-					smp.finetune = 14-smp.finetune;
+					smp.finetune = 15-smp.finetune;
 				}
 				offset++;
 				smp.volume = dataView.getUint8(offset);
@@ -235,7 +235,7 @@ dv = new DataView(buffer),
 var st = txt.slice(0, length),
 l=st.length;
 for (var i = 0; i < l; i++) {
-dv.setUint8(st.charCodeAt(i), offset + i);
+dv.setUint8(offset + i, st.charCodeAt(i));
 } //i
 }, //writeString
 
@@ -248,8 +248,10 @@ var hoff = 20, doff = startSampleData;
 song.samples.forEach(function(s) {
 writeString(s.title, hoff, 22);
 hoff+=22;
-dv.setUint8(hoff++, s.volume);
+dv.setUint16(hoff, s.length / 2 + s.length % 2);
+hoff += 2;
 dv.setUint8(hoff++, s.finetune < 0 ? s.finetune + 15 : s.finetune); //two's complament lower nibble
+dv.setUint8(hoff++, s.volume);
 dv.setUint16(hoff, s.loopStart/2);
 hoff+=2;
 dv.setUint16(hoff, s.loopLength/2);
@@ -258,6 +260,7 @@ for (var i = 0, d = s.data, l = d.byteLength; i < l; i++) {
 dv.setUint8(doff,  d[i]);
 doff++;
 } //i
+if ((s.length % 2) > 0) hoff++; //length measured in words.
 }); //forEach
 }, //writeSamples
 
@@ -270,18 +273,18 @@ offset++;
 for (var i = 0; i < song.totalPatterns; i++) {
 dv.setUint8(offset++, song.patternOrder[i] || 0);
 } //i
-writeString(song.channels === 4 ? "M.K." : (song.channels + "CHN").slice(0, 4), offset, 4);
+writeString(song.channels === 4 ? "M.K." : (song.channels + "CHN").slice(0, 4), 1080, 4);
 }, //writePatternHeaders
 
 writePatternData = function() {
 var offset = 1084,
 p = song.patterns;
-for (var i = 0; i < song.totalPatterns; i++) {
+for (var i = 0; i < song.patternCount; i++) {
 for (var j = 0; j < 64; j++) {
 for (var k = 0; k < song.channels; k++) {
 var n = p[i][j][k];
 var w1 = n.period;
-w1 = w1 | ((n.sample & 0xf0) << 8);
+w1 = w1 | ((n.sample & 0xf0) << 12);
 dv.setUint16(offset, w1);
 offset+=2;
 w1 = (n.sample & 0x0f) << 12;
