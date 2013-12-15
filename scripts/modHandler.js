@@ -248,19 +248,26 @@ var hoff = 20, doff = startSampleData;
 song.samples.forEach(function(s) {
 writeString(s.title, hoff, 22);
 hoff+=22;
-dv.setUint16(hoff, (s.length / 2) + (s.length % 2));
+dv.setUint16(hoff, (s.length / 2) + (s.length % 2)), false;
 hoff += 2;
 dv.setUint8(hoff++, s.finetune < 0 ? s.finetune + 15 : s.finetune); //two's complament lower nibble
 dv.setUint8(hoff++, s.volume);
-dv.setUint16(hoff, s.loopStart/2);
+dv.setUint16(hoff, s.loopStart/2, false);
 hoff+=2;
-dv.setUint16(hoff, s.loopLength/2);
+dv.setUint16(hoff, s.loopLength/2, false);
 hoff+=2;
-for (var i = 0, d = s.data.getChannelData(0), l = s.length; i < l; i++) {
+if (s.length <= 2) {
+doff += s.length/2;
+} else {
+var d = s.data.getChannelData(0),
+l = s.length
+if (s.length !== d.length) alert("length mismatch: " + s.title);
+for (var i = 0; i < l; i++) {
 dv.setInt8(doff,  d[i]*127);
 doff++;
 } //i
-if ((s.length % 2) > 0) hoff++; //length measured in words.
+if ((s.length % 2) > 0) doff++; //length measured in words.
+} //if length > 2
 }); //forEach
 }, //writeSamples
 
@@ -283,15 +290,20 @@ for (var i = 0; i < song.patternCount; i++) {
 for (var j = 0; j < 64; j++) {
 for (var k = 0; k < song.channels; k++) {
 var n = p[i][j][k];
-var w1 = n.period;
-w1 = w1 | ((n.sample & 0xf0) << 12);
-dv.setUint16(offset, w1);
-offset+=2;
-w1 = (n.sample & 0x0f) << 12;
-w1 = w1 | (n.effect << 8);
-w1 = w1 | n.param;
-dv.setUint16(offset, w1);
-offset+=2;
+			var a = [];
+//sample
+a[0] = n.sample & 0xf0;
+a[2] = ((n.sample & 0x0f) << 4);
+//period
+a[0] = a[0] | (n.period & 0xf00) >> 8;
+a[1] = n.period & 0xff;
+//effect
+a[2] = a[2] | n.effect;
+//parameter
+a[3] = n.param;
+a.forEach(function(v) {
+dv.setUint8(offset++, v);
+});//forEach
 } //k
 } //j
 } //i
