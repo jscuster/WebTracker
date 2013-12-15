@@ -216,7 +216,7 @@ readSampleData();
 	} //else
 }; //modLoader
 
-WebTracker.modSaver = function(song, b64) {
+WebTracker.saveMod = function(song, b64) {
 var startSampleData,
 modLength = function() {
 var l = 1084; //sample headers, title, pattern headers, etc.
@@ -302,7 +302,7 @@ writePatternData();
 if (b64) {
 var s = [], l = buffer.byteLength, cc = String.fromCharCode;
 for (var i = 0; i < l; i++) {
-s[i] = cc(buffer[i]);
+s[i] = String.fromCharCode(buffer[i]);
 } //i
 return atob(s.join(""));
 } else {

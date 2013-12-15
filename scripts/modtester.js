@@ -36,7 +36,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 							} //j
 							o += "</table>";
 						} //i
-						o += '<h3>Player</H3><input type="button" value="click" id="smp"><input type="button" id="play" value="play">';
+						o += '<h3>Player</H3><input type="button" value="click" id="smp"><input type="button" id="play" value="play"><input type="button" value="save" id="save"><a href="" id="saveLnk">Click save to create file</A>';
 						$("#output").html(o);
 						var sptr = 0,
 							player = new WebTracker.Sampler(sng.samples, context);
@@ -77,8 +77,14 @@ n.connect(context.destination);
 var modPlayer = new WebTracker.ModPlayer(sng, context, m);
 modPlayer.playSong();
 }); //play click
+$("#save").click(function() {
+var l = $("#saveLnk");
+l.html("Generating file.");
+var r = WebTracker.saveMod(sng, true);
+l.prop("href", "data:application/zip;base64," + r);
+l.html("Click to download, rename to [yourname].mod.");
+}); //save click
 					}; //onload
-alert(f.type);
 					reader.readAsArrayBuffer(f);
 				} //i
 			}); //file changed
