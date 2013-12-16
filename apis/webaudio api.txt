@@ -392,7 +392,7 @@ interface AudioContext : EventTarget {
 
 
     // AudioNode creation 
-    AudioBufferSourceNode createBufferSource();
+    Audio	BufferSourceNode createBufferSource();
 
     MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 

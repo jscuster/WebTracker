@@ -38,13 +38,19 @@
 <P>This program currently uses a base64 string as a data url to download the file.
 When it is placed on a server, it will upload the file and give the user a download link if need be.
 </P>
-<P>For now, simply rename the file to [yourname].mod to enjoy.
+<P>For now, simply rename the file to [yourname].zip, and extract to enjoy.
 </P>
 <button id="saveButton">Save</button>
 <div id="saveLink"></div>
 </div>
 <div class="subpanel" id="import">
 <center><H1>Import Samples</H1></center>
+<div id="importButtons">
+<button id="importAdd" style="position: absolute, left: 0">Add Sample(s)</button>
+<button id="importClear" style="position: absolute, right: 0">Clear</button>
+</div>
+<br>
+<div id="importSamplesList"></div>
 </div>
 <div class="subpanel" id="export">
 <center><H1>Export Samples</H1></center>
