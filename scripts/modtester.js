@@ -11,7 +11,9 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var dv = new DataView(e.target.result);
-						var sng = WebTracker.modLoader(dv, context);
+WebTracker.context = context;
+						var sng = new WebTracker.AmigaMod();
+sng.loadMod(dv);
 						var o = "<table><tr><td>title:</td><td>" + sng.title + "</td></tr>";
 						o += "<tr><td>channels</td><td>" + sng.channels + "</td></tr>";
 						o += "<tr><td>patterns</td><td>" + sng.patternCount + "</td></tr>";
