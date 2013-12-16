@@ -1,5 +1,28 @@
-var WebTrackerScripts = [ //files in order of priority, skip folder and .js extension. 
-'jquery-2.0.3', //Yes, I know using a global var is a sin, but I am open to suggestions, see bottom.
+//files are at the bottom.
+window.onload = function() {
+(function(scripts) {
+if (document.getElementById('testingWebTracker')) {
+} else {
+scripts.push('WebTracker');
+}; //if we're testing, we need another script.
+var l = scripts.length;
+ptr=0,
+head = document.getElementsByTagName( 'head')[0],
+load = function() {
+var s = document.createElement('script');
+s.type="text/javascript";
+s.src = 'scripts/' + scripts[ptr++] + ".js";
+if (ptr < l) {
+s.onload = load;
+s.onreadystatechange = function() {
+if (this.readyState == 'complete') load();
+} //onreadystatechange
+} //if
+head.appendChild(s);
+}; //load each script in the array after the prev one is done.
+load(); //start it off.
+})([ //files in order of priority, skip folder and .js extension. 
+'jquery-2.0.3', 
 'log',
 'utils',
 'modHandler',
@@ -10,20 +33,6 @@ var WebTrackerScripts = [ //files in order of priority, skip folder and .js exte
 'jszip-deflate',
 'jszip-inflate',
 'jszip-load'
-];
-window.onload = function() {
-if (document.getElementById('testingWebTracker')) {
-WebTrackerScripts.push('modtester');
-} else {
-WebTrackerScripts.push('WebTracker');
-}; //if we're testing, we need another script.
-WebTrackerScripts.forEach((function() {
-var head = document.getElementsByTagName( 'head')[0];
-return function(file) {
-var s = document.createElement('script');
-s.type="text/javascript";
-s.src = 'scripts/' + file + ".js";
-head.appendChild(s);
-}; //load each script in the array.
-})()); //closure returning inner func, caching head to cut down on load time.
-}; //load
+]); //outer func, prepairs to load files.
+}; //onload
+

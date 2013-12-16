@@ -47,7 +47,7 @@ var f = e.target.files[0]; //only open the first selected file
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var dv = new DataView(e.target.result);
-if AmigaMod.isValid(dv) {
+if (WebTracker.AmigaMod.isValid(dv)) {
 						song = new WebTracker.AmigaMod();
 song.loadMod(dv);
 filename = f.name;
@@ -69,7 +69,7 @@ go = confirm("This will erace your current song. Do you wish to proceed?");
 if (go) { //user says OK or the changes were saved.
 changed = false;
 song = new WebTracker.AmigaMod();
-filename = "untitled.mod");
+filename = "untitled.mod";
 update();
 } //if
 }); //new file creation
@@ -77,7 +77,7 @@ update();
 $("#saveButton").click(function() {
 var zip = new JSZip();
 zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker: http://webtracker.com\n\nUnleash your creativity!\n");
-zip.file(filename, song.save(true)); //true = return ArrayBuffer. 
+zip.file(filename, song.saveMod(true)); //true = return ArrayBuffer. 
 var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
 $("#saveLink").html(htm);
 }); //save click
