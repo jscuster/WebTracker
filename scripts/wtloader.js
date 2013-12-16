@@ -2,6 +2,7 @@
 window.onload = function() {
 (function(scripts) {
 if (document.getElementById('testingWebTracker')) {
+scripts.push('modtester');
 } else {
 scripts.push('WebTracker');
 }; //if we're testing, we need another script.
