@@ -8,59 +8,75 @@ this.loopStart = 0;
 this.loopLength = 0;
 }; //AmigaSample
 
-AmigaSample.prototype.readSample = (function() {
+WebTracker.AmigaMod = function() {
 'use strict';
-var readSampleHeader = function (dataView, offset) {
-this.title = WebTracker.readString(dataView, offset, 22);
-offset += 22;
-this.length = 2 * dataView.getUint16(offset, false);
-offset += 2;
-this.finetune = dataView.getInt8(offset);
+this.title = "Untitled";
+this.samples = [];
+this.patterns = [];
+this.patternOrder = [];
+this.channels = 0;
+this.totalPatterns = 0;
+for (var i = 0; i < 31; i++) {
+this.samples[i] = new WebTracker.AmigaSample();
+}; //i
+this.restartPosition = 127; //rarely used
+this.patternCount = 0;
+}; //AmigaMod
+
+WebTracker.AmigaSample.prototype.readSample = function(dataView, ptrs) {
+'use strict';
+var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
+newSamplepointers = {
+headerOffset: 0,
+dataOffset: 0
+};
+
+//read header
+var hoff = ptrs.headerOffset;
+this.title = WebTracker.readString(dataView, hoff, 22);
+hoff += 22;
+this.length = 2 * dataView.getUint16(hoff, false);
+hoff += 2;
+this.finetune = dataView.getInt8(hoff);
 if (this.finetune > 7) {
 this.finetune = 15-this.finetune;
 }
-offset++;
-this.volume = dataView.getUint8(offset);
-offset++;
-this.loopStart = dataView.getUint16(offset) * 2;
-offset += 2;
-this.loopLength = dataView.getUint16(offset) * 2;
-offset += 2;
+hoff++;
+this.volume = dataView.getUint8(hoff);
+hoff++;
+this.loopStart = dataView.getUint16(hoff) * 2;
+hoff += 2;
+this.loopLength = dataView.getUint16(hoff) * 2;
+hoff += 2;
 var loopEnd = this.loopStart + this.loopLength;
 loopEnd = loopEnd < this.length ? loopEnd : this.length-1;
 this.loopTimeStart = this.loopStart / 44100;
 this.loopTimeEnd = loopEnd / 44100;
 this.factor = (16574 * Math.pow(1.007247, this.finetune)) / 44100;
-return offset; //should be original offset + 30.
-}, //readSampleHeader
+newSamplePointers.headerOffset = hoff;
 
-readSampleData = function (dataView, offset) {
-var l = this.length;
+//read sample data
+var doff = ptrs.dataOffset,
+l = this.length;
 if (l < 2) {
 this.data = WebTracker.context.createBuffer(1, 1, 44100);
 this.data.getChannelData(0)[0] = 0;
-offset += l;
+doff += l;
 } else {
 var d = WebTracker.context.createBuffer(1, l, 44100);
 this.data = d;
 d = d.getChannelData(0);
 for (var i = 0; i < l; i++) {
-d[i] = dataView.getInt8(offset++) / 128; //scale down to -1 .. 1
+d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } //if
-return offset; //should be original offset + this.length.
-}; //readSampleData
+newSamplePointer.dataOffset = doff; //should be original doff + this.length.
 
-return function(buffer, ptrs) {
-var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer;
-return {
-headerOffset: readSampleHeader(dataView, ptrs.headerOffset),
-dataOffset: readSampleData(dataView, ptrs.dataOffset)
-}; //returns pointers to the new offsets.
-}; //returned function
-})(); //closure: readSample
+//return new offsets
+return newSamplePointer;
+}; //readSample
 
-AmigaSample.prototype.writeSample = function(dv, ptrs) {
+WebTracker.AmigaSample.prototype.writeSample = function(dv, ptrs) {
 var hoff = ptrs.headerOffset, doff = ptrs.dataOffset;
 WebTracker.writeString(dv, s.title, hoff, 22);
 hoff+=22;
@@ -91,22 +107,7 @@ dataOffset: doff
 }; //pointers to the next data
 }; //writeSample
 
-WebTracker.AmigaMod = function() {
-'use strict';
-this.title = "Untitled";
-this.samples = [];
-this.patterns = [];
-this.patternOrder = [];
-this.channels = 0;
-this.totalPatterns = 0;
-for (var i = 0; i < 31; i++) {
-this.samples[i] = new AmigaSample();
-}; //i
-this.restartPosition = 127; //rarely used
-this.patternCount = 0;
-}; //AmigaMod
-
-AmigaMod.prototype.readChannels = function (buffer) {
+WebTracker.AmigaMod.prototype.readChannels = function (buffer) {
 var chanCount = {
 'TDZ1': 1, '1CHN': 1, 'TDZ2': 2, '2CHN': 2,
 'TDZ3': 3, '3CHN': 3, 'M.K.': 4, 'FLT4': 4, 'M!K!': 4,
@@ -128,13 +129,13 @@ return -1;
 } //else
 }; //readChannels
 
-AmigaMod.isValid = function (buffer) {
-return new AmigaMod().readChannels(buffer) >= 0;
+WebTracker.AmigaMod.isValid = function (buffer) {
+return new WebTracker.AmigaMod().readChannels(buffer) >= 0;
 }; //if the channel > 0, the cookie is there and it's good.
 
-AmigaMod.prototype.readMod = function (buffer) { //pass in a DataView.
-WebTracker.logger.log("Creating mod loader");
-
+WebTracker.AmigaMod.prototype.loadMod = function (buffer) { //pass in a DataView.
+this.channels = this.readChannels();
+if (this.channels >= 0) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 
 getString = (function() { //store the readString function for faster access.
@@ -143,26 +144,7 @@ return function(offset, length) {
 return readString(dataView, offset, length);
 }; //inner func
 })(), //getString closure
-
-getTitle = function () {
-this.title = getString(0, 20);
-},
-
-getPatternTable = function () {
-var offset = 950;
-this.totalPatterns = dataView.getUint8(offset);
-offset++
-this.restartPosition = dataView.getUint8(offset);
-offset++;
-var max = 0,
-order = this.patternOrder;
-for (var i = 0; i < this.totalPatterns; i++) {
-order[i] = dataView.getUint8(offset++);
-max = max < order[i] ? order[i] : max;
-} //i
-this.patternCount = max + 1;
-}, //getPatternTable
-
+offset = 0, //jumps around, depending on what we're doing.
 readNote = function (offset) {
 var a = [];
 for (var i = 0; i < 4; i++) {
@@ -179,9 +161,30 @@ e.y = a[3] & 0x0f;
 return e;
 }, //readNote
 
-readPatterns = function () {
-var offset = 1084,
-p = this.patterns;
+//get title
+this.title = getString(0, 20);
+
+//get pattern table
+offset = 950; //end of sample headers.
+this.totalPatterns = dataView.getUint8(offset);
+offset++
+this.restartPosition = dataView.getUint8(offset);
+offset++;
+var max = 0,
+order = this.patternOrder;
+for (var i = 0; i < this.totalPatterns; i++) {
+var tmp  = dataView.getUint8(offset++);
+order[i] = tmp;
+max = max < order[i] ? order[i] : max;
+} //i
+this.patternCount = max + 1;
+
+//get channels
+this.channels = this.readChannels(buffer);
+
+//read patterns
+offset = 1084, //after headers is pattern data.
+var p = this.patterns;
 for (var pattern = 0; pattern < this.patternCount; pattern++) {
 p[pattern] = [];
 for (var row = 0; row < 64; row++) {
@@ -192,47 +195,40 @@ offset += 4;
 } //channels
 } //rows
 } //patterns
-}, //readPatterns
 
-samplePointers = {
+//read samples
+var samplePointers = {
 headerOffset: 20,
-dataOffset: 0
+dataOffset: 1084 + (this.patternCount * 64 * this.channels * 4)
 }; //pointers to offsets where sample headers and data are stored.
-
-if (AmigaMod.isValid(dataView)) {
-getTitle();
-getPatternTable();
-readPatterns();
-samplePointers.dataOffset = 1084 + (this.patternCount * 64 * this.channels * 4); //offset of first sample's data.
 this.samples.forEach(function(s) {
 samplePointers = s.readSample(dataView, samplePointers);
 }); //read each sample.
+
+//done reading.
 } else {
 throw {message: "Bad Amiga Module Format."};
 } //else
 }; //loadMod
 
-AmigaMod.prototype.saveMod = function(returnArrayBuffer) {
+WebTracker.AmigaMod.prototype.saveMod = function(returnArrayBuffer) {
 'use strict';
-WebTracker.logger.log("Saving mod file.");
-
 var samplePointers = {
 headerOffset: 20,
 dataOffset: 0
 },
 
-modLength = function() {
-var l = 1084; //sample headers, title, pattern headers, etc.
-l += 64 * this.patternCount * this.channels*4;
-samplePointers.dataOffset = l;
+//calculate byte length
+var modLength = 1084; //sample headers, title, pattern headers, etc.
+modLength += 64 * this.patternCount * this.channels*4;
+samplePointers.dataOffset = modLength; //end of pattern data
 this.samples.forEach(function(s) {
-l += s.length;
-l += s.length % 2;
+modLength += s.length;
+modLength += s.length % 2;
 });
-WebTracker.logger.log("length calculated to " + l);
-return l; //length
-},
-buffer = new ArrayBuffer(modLength()),
+
+//vars
+var buffer = new ArrayBuffer(modLength()),
 dv = new DataView(buffer),
 
 writeString = (function() {
@@ -240,13 +236,12 @@ var sw = WebTracker.writeString;
 return function(txt, offset, length) {
 return sw(dv, txt, offset, length);
 }; //inner function
-})(), //closure writeString
+})(); //closure writeString
 
-writeTitle = function() {
+//write title
 writeString(this.title, 0, 20);
-}, //writeTitle
 
-writePatternHeaders = function() {
+//write pattern headers
 var offset = 950; //start of data
 dv.setUint8(offset, this.totalPatterns);
 offset++;
@@ -256,11 +251,10 @@ for (var i = 0; i < this.totalPatterns; i++) {
 dv.setUint8(offset++, this.patternOrder[i] || 0);
 } //i
 writeString(this.channels === 4 ? "M.K." : (this.channels + "CHN"), 1080, 4); //writes first 4 bytes, IE: 8CHN or 32CH.
-}, //writePatternHeaders
 
-writePatternData = function() {
-var offset = 1084,
-p = this.patterns;
+//write pattern data
+offset = 1084; //end of headers
+var p = this.patterns;
 for (var i = 0; i < this.patternCount; i++) {
 for (var j = 0; j < 64; j++) {
 for (var k = 0; k < this.channels; k++) {
@@ -282,19 +276,13 @@ dv.setUint8(offset++, v);
 } //k
 } //j
 } //i
-}, //writePatternData
 
-writeSamples = function() {
+//write samples
 this.samples.forEach(function(s) {
 samplePointers = s.writeSample(dv, samplePointers);
 }); //write each sample.
-}; //writeSamples
 
-//write the bad boy
-writeTitle();
-writeSamples();
-writePatternHeaders();
-writePatternData();
+//return the file in the desired format
 if (!returnArrayBuffer) {
 return WebTracker.base64ArrayBuffer(buffer);
 } else {
