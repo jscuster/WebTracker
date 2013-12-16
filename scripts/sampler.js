@@ -1,6 +1,5 @@
 var WebTracker = WebTracker || {};
 WebTracker.Sampler = function (samples, context, destination) {
-	WebTracker.logger.log("creating sampler");
 	destination = destination || context.destination;
 	var buffers = [],
 		lastSample = -1,
@@ -14,7 +13,6 @@ WebTracker.Sampler = function (samples, context, destination) {
 	} //i
 
 	this.play = function (s, note, when) {
-		WebTracker.logger.log("Playing sample " + s + ", note: " + note + ", time: " + when);
 		if (note >= 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
@@ -23,9 +21,9 @@ WebTracker.Sampler = function (samples, context, destination) {
 				node.buffer = buffers[s];
 				var smp = samples[s];
 				//volume
+				this.setVolume(smp.volume);
 				if (s !== lastSample) {
 					lastSample = s;
-					this.setVolume(smp.volume);
 				} //if different sample
 				//loop
 				if (smp.loopLength > 2) {
@@ -61,13 +59,12 @@ this.setPan = function (x, y, z) {
 this.setVolume = function (volume, when) {
 volume = volume <= 0 ? 0 : (volume / 64);
 	gain.gain.setValueAtTime(volume, when);
-	WebTracker.logger.log("setting volume to " + volume);
 }; //setVolume
 
 this.slideVolume = function(delta, endTime) {
-var tmp = gain.gain.value + delta;
+var tmp = (gain.gain.value * 64) + delta;
 if (tmp > 64) tmp = 64;
 if (tmp < 0) tmp = 0;
-gain.gain.linearRampToValueAtTime(tmp, endTime);
+gain.gain.linearRampToValueAtTime(tmp/64, endTime);
 }; //slideVolume
 }; //SamplePlayer

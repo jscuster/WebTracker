@@ -1,5 +1,4 @@
 Things to do
-0. fix sampler so that changing samples refreshes the gain node.
 1. implement remaining effects.
 2. confirm sample tunings
 3. remove logger when debugging is complete.
