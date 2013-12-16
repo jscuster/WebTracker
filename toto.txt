@@ -13,3 +13,4 @@ Things to do
 11. create song format that supports 16-bit stereo samples, if not alread built
 12. optimize functions to store often acessed vars in a closure.
 13. make exposed variables into properties.
+14. fix div in webtracker to drop files.

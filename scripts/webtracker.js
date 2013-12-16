@@ -7,7 +7,7 @@ $(function() {
 changed = false,
 song = new WebTracker.AmigaMod(),
 initialized = false,
-filename = "untitled",
+filename = "untitled.mod",
 
 showPanel = function(name) {
 $(".mainPanel").hide();
@@ -25,6 +25,8 @@ $("#songTitle").prop('value', song.title)
 $("#filesFilename").html("current file: " + filename + " - " + song.title)
 $("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br>"));
 }; //updatesafter changes are made.
+
+WebTracker.context = context; //globalize the audio context.
 
 $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());
@@ -45,9 +47,9 @@ var f = e.target.files[0]; //only open the first selected file
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var dv = new DataView(e.target.result);
-						var sng = WebTracker.modLoader(dv, context);
-if (sng) {
-song = sng;
+if AmigaMod.isValid(dv) {
+						song = new WebTracker.AmigaMod();
+song.loadMod(dv);
 filename = f.name;
 update();
 initialized = true;
@@ -67,12 +69,16 @@ go = confirm("This will erace your current song. Do you wish to proceed?");
 if (go) { //user says OK or the changes were saved.
 changed = false;
 song = new WebTracker.AmigaMod();
+filename = "untitled.mod");
 update();
 } //if
 }); //new file creation
 
 $("#saveButton").click(function() {
-var htm = '<a href="' + 'data:application/zip;base64,' + WebTracker.saveMod(song, true) + '">Click to download</a>';
+var zip = new JSZip();
+zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker: http://webtracker.com\n\nUnleash your creativity!\n");
+zip.file(filename, song.save(true)); //true = return ArrayBuffer. 
+var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
 $("#saveLink").html(htm);
 }); //save click
 

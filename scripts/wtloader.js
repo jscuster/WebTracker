@@ -12,9 +12,7 @@ var WebTrackerScripts = [ //files in order of priority, skip folder and .js exte
 'jszip-load'
 ];
 window.onload = function() {
-alert(document.getElementById('testingWebTracker'));
 if (document.getElementById('testingWebTracker')) {
-alert("loading test suite.");
 WebTrackerScripts.push('modtester');
 } else {
 WebTrackerScripts.push('WebTracker');
