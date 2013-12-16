@@ -1,6 +1,7 @@
 var WebTracker = WebTracker || {};
 
 WebTracker.readString = function (buffer, offset, length) {
+//alert("reading string at offset " + offset + ", with length " + length + ", from object type: " + typeof buffer);
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 res = [],
 end = offset + length,
@@ -18,7 +19,7 @@ WebTracker.writeString = function (dataView, txt, offset, length) {
 var st = txt.slice(0, length),
 l=st.length;
 for (var i = 0; i < l; i++) {
-dv.setUint8(offset + i, st.charCodeAt(i));
+dataView.setUint8(offset + i, st.charCodeAt(i));
 } //i
 }; //writeString
 //this function is not mine, find it at https://gist.github.com/jonleighton/958841

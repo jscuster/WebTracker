@@ -23,10 +23,10 @@ this.restartPosition = 127; //rarely used
 this.patternCount = 0;
 }; //AmigaMod
 
-WebTracker.AmigaSample.prototype.readSample = function(dataView, ptrs) {
+WebTracker.AmigaSample.prototype.readSample = function(buffer, ptrs) {
 'use strict';
-var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
-newSamplepointers = {
+var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer;
+var newSamplePointers = {
 headerOffset: 0,
 dataOffset: 0
 };
@@ -70,15 +70,15 @@ for (var i = 0; i < l; i++) {
 d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } //if
-newSamplePointer.dataOffset = doff; //should be original doff + this.length.
+newSamplePointers.dataOffset = doff; //should be original doff + this.length.
 
 //return new offsets
-return newSamplePointer;
+return newSamplePointers;
 }; //readSample
 
 WebTracker.AmigaSample.prototype.writeSample = function(dv, ptrs) {
 var hoff = ptrs.headerOffset, doff = ptrs.dataOffset;
-WebTracker.writeString(dv, s.title, hoff, 22);
+WebTracker.writeString(dv, this.title, hoff, 22);
 hoff+=22;
 var tmp = (this.length / 2) + (this.length % 2);
 dv.setUint16(hoff, tmp, false);
@@ -90,7 +90,7 @@ hoff+=2;
 dv.setUint16(hoff, this.loopLength/2, false);
 hoff+=2;
 if (this.length <= 2) {
-doff += s.length/2;
+doff += this.length/2;
 } else {
 var d = this.data.getChannelData(0),
 l = this.length;
@@ -134,7 +134,7 @@ return new WebTracker.AmigaMod().readChannels(buffer) >= 0;
 }; //if the channel > 0, the cookie is there and it's good.
 
 WebTracker.AmigaMod.prototype.loadMod = function (buffer) { //pass in a DataView.
-this.channels = this.readChannels();
+this.channels = this.readChannels(buffer);
 if (this.channels >= 0) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 
@@ -159,7 +159,7 @@ e.param = a[3];
 e.x = (a[3] & 0xf0) >> 4;
 e.y = a[3] & 0x0f;
 return e;
-}, //readNote
+}; //readNote
 
 //get title
 this.title = getString(0, 20);
@@ -183,7 +183,7 @@ this.patternCount = max + 1;
 this.channels = this.readChannels(buffer);
 
 //read patterns
-offset = 1084, //after headers is pattern data.
+offset = 1084; //after headers is pattern data.
 var p = this.patterns;
 for (var pattern = 0; pattern < this.patternCount; pattern++) {
 p[pattern] = [];
@@ -219,7 +219,7 @@ dataOffset: 0
 },
 
 //calculate byte length
-var modLength = 1084; //sample headers, title, pattern headers, etc.
+modLength = 1084; //sample headers, title, pattern headers, etc.
 modLength += 64 * this.patternCount * this.channels*4;
 samplePointers.dataOffset = modLength; //end of pattern data
 this.samples.forEach(function(s) {
@@ -228,7 +228,7 @@ modLength += s.length % 2;
 });
 
 //vars
-var buffer = new ArrayBuffer(modLength()),
+var buffer = new ArrayBuffer(modLength),
 dv = new DataView(buffer),
 
 writeString = (function() {

@@ -82,7 +82,7 @@ modPlayer.playSong();
 $("#save").click(function() {
 var l = $("#saveLnk");
 l.html("Generating file.");
-var r = WebTracker.saveMod(sng, true);
+var r = sng.saveMod(false);
 l.prop("href", "data:application/zip;base64," + r);
 l.html("Click to download, rename to [yourname].mod.");
 }); //save click
