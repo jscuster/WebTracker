@@ -29,7 +29,7 @@ load(); //start it off.
 'modHandler',
 'sampler',
 'modplayer',
-'buttontable',
+'sampleManager',
 'jszip',
 'jszip-deflate',
 'jszip-inflate',
