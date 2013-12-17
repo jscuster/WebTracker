@@ -3,9 +3,11 @@ WebTracker.AmigaSample = function() {
 this.title = "untitled";
 this.length = 0;
 this.volume = 64;
-this.finetune = 0,
+this.finetune = 0;
 this.loopStart = 0;
 this.loopLength = 0;
+this.data = WebTracker.context.createBuffer(1, 1, 44100);
+this.data.getChannelData(0)[0] = 0;
 }; //AmigaSample
 
 WebTracker.AmigaMod = function() {

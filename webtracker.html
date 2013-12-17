@@ -29,7 +29,7 @@
 </div>
 <div class="subpanel" id="new">
 <center><H1>New File</H1></center>
-<P>This panel allows you to create a nee, empty, song.</P>
+<P>This panel allows you to create a new, empty, song.</P>
 <br>
 <button id="newFile">Create New File</button>
 </div>
@@ -45,8 +45,10 @@ When it is placed on a server, it will upload the file and give the user a downl
 </div>
 <div class="subpanel" id="import">
 <center><H1>Import Samples</H1></center>
+<P>You can import samples from .mod files or from any file your browser can decode. Most browsers can decode .wav files. Other choices are: ogg, opus, WebM/WebA, and MP3. If your file doesn't open in this browser, save your work and open it in another, then import the file.
+</P>
 <div id="importButtons">
-<button id="importAdd" style="position: absolute, left: 0">Add Sample(s)</button>
+<input type="file" multiple id="importAdd">
 <button id="importClear" style="position: absolute, right: 0">Clear</button>
 </div>
 <br>

@@ -82,6 +82,24 @@ var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Cli
 $("#saveLink").html(htm);
 }); //save click
 
+/*starting code for importing samples.
+$("#importAdd").change(function(e) {
+var f = e.target.files; //all the files the user selected.
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						var dv = new DataView(e.target.result);
+if (WebTracker.AmigaMod.isValid(dv)) {
+						song = new WebTracker.AmigaMod();
+song.loadMod(dv);
+filename = f.name;
+} else {
+alert(f.name + " is an invalid amiga module. Please select only amiga modules (*.mod).");
+} //else
+}; //onload
+reader.readAsArrayBuffer(f);
+}); //fileOpen change (in file/open menu
+*/
+
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
 if (t !== song.title) {
