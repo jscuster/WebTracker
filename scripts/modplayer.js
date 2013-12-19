@@ -112,8 +112,8 @@ WebTracker.logger.log("playing note\n" + JSON.stringify(note) + "\n on channel "
 var s = channels[chan];
 switch (note.effect) {
 case 10: //slide volume
-var delta = note.x ? note.x : note.y*-1;
-delta *= tpr;
+var delta = note.x ? note.x : 0 - note.y;
+delta *= (tpr-1);
 WebTracker.logger.log("Sliding by volume " + delta);
 s.slideVolume(delta, time + (tpr*timePerTick));
 break;

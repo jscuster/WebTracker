@@ -1,5 +1,6 @@
 var WebTracker = WebTracker || {};
-WebTracker.Sampler = function (samples, context, destination) {
+WebTracker.Sampler = function (samples, destination) {
+var context = WebTracker.context;
 	destination = destination || context.destination;
 	var buffers = [],
 		lastSample = -1,
@@ -32,11 +33,7 @@ WebTracker.Sampler = function (samples, context, destination) {
 				node.loopEnd = smp.loopTimeEnd;
 			} //if
 			node.connect(destination);
-			if (note > 0 && note < 1) {
 				node.playbackRate.value = note;
-			} else {
-				node.playbackRate.value = smp.factor * Math.pow(1.0595, note);
-			} //if
 			WebTracker.logger.log("setting playback rate: " + node.playbackRate);
 			node.start(when);
 		} //if valid buffer

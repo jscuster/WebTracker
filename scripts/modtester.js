@@ -4,6 +4,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob) {
  		'use strict';
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		var context = new window.AudioContext();
+WebTracker.context = context;
 
 			$("#file").change(function (e) {
 				var files = e.target.files;
@@ -41,13 +42,13 @@ sng.loadMod(dv);
 						o += '<h3>Player</H3><input type="button" value="click" id="smp"><input type="button" id="play" value="play"><input type="button" value="save" id="save"><a href="" id="saveLnk">Click save to create file</A>';
 						$("#output").html(o);
 						var sptr = 0,
-							player = new WebTracker.Sampler(sng.samples, context);
+							player = new WebTracker.Sampler(sng.samples);
 						$("#smp").click(function () {
 							$(this).prop('value', ("" + (sptr + 1)) + sng.samples[sptr].title);
 							player.stop(sptr === 0 ? 30 : sptr - 1);
 //							player.play(sptr++);
 player.play(sptr++, 0, context.currentTime + 1);
-player.play(sptr++, 3, context.currentTime + 2);
+player.play(sptr+1, 3, context.currentTime + 2);
 player.play(sptr++, 6, context.currentTime + 3);
 							sptr = sptr < 31 ? sptr : 0;
 						}); //click

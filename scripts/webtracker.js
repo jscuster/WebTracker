@@ -99,7 +99,7 @@ alert(f.name + " is an invalid amiga module. Please select only amiga modules (*
 reader.readAsArrayBuffer(f);
 }); //fileOpen change (in file/open menu
 */
-
+	
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
 if (t !== song.title) {
