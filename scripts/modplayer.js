@@ -1,8 +1,9 @@
 var WebTracker = WebTracker || {};
-WebTracker.ModPlayer = function(song, context, destination) {
+WebTracker.ModPlayer = function(song, destination) {
 'use strict';
 WebTracker.logger.log("created mod player.");
-var channels = [],
+var context = WebTracker.context,
+channels = [],
 channelCount = 0,
 patternCursor = 0,
 rowCursor = 0,
@@ -43,7 +44,7 @@ curPattern = 0;
 //load channels with samplers.
 channelCount = song.channels;
 for (var i = 0; i < channelCount; i++) {
-channels[i] = new WebTracker.Sampler(song.samples, context, destination);
+channels[i] = new WebTracker.Sampler(song.samples, destination);
 //set position per left, right, right, left spec.
 var mod = i % 4;
 if (mod === 0 || mod === 3) {

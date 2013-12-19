@@ -1,9 +1,11 @@
 var WebTracker = WebTracker || {};
 WebTracker.Sampler = function (samples, destination) {
 var context = WebTracker.context;
+alert(context);
 	destination = destination || context.destination;
 		var lastSample = -1,
-		node, gain = context.createGain(),
+		node,
+gain = context.createGain(),
 		panner = context.createPanner();
 	gain.connect(destination);
 	panner.connect(gain);

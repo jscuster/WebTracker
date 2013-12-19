@@ -77,7 +77,7 @@ var m = context.createGainNode();
 m.gain.value = 0.5;
 m.connect(n);
 n.connect(context.destination);
-var modPlayer = new WebTracker.ModPlayer(sng, context, m);
+var modPlayer = new WebTracker.ModPlayer(sng, m);
 modPlayer.playSong();
 }); //play click
 $("#save").click(function() {

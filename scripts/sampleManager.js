@@ -86,7 +86,7 @@ set: function(value) {
 samples[sptr] = value;
 update();
 } //set the currently selected sample to the new value
-}; //sample property
+}); //sample property
 
 Object.defineProperty(this, 'sampleIndex', {
 get: function() {
@@ -98,6 +98,6 @@ if (sptr >= samples.length) sptr = samples.Length - 1;
 if (sptr < 0) sptr = 0;
 update();
 } //set sampleIndex
-}; //sampleIndex property
+}); //sampleIndex property
 
 }; //SamplePlayer
