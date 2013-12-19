@@ -1,12 +1,13 @@
 var WebTracker = WebTracker || {};
-WebTracker.SamplePlayer = function(samples) { 
+WebTracker.SamplePlayer = function(samples, destination) { 
 //allows the player to select and play a sample.
 'use strict';
 var sptr = 0, //points to the currently playing sample
 keys = "zsxdcvgbhnjm,l.;/".toUpperCase(),
 octave = 5,
 downKey = -1, //keys currently down. Must keep track so the key is not retriggerd when held.
-noteCallbacks = []
+noteCallbacks = [],
+player = new Sampler(samples, destination), //only use of destination param (selects destination for audio.
 
 keyToNote = function(key) {
 var k = keys.indexOf(key);

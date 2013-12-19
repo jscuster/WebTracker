@@ -2,25 +2,22 @@ var WebTracker = WebTracker || {};
 WebTracker.Sampler = function (samples, destination) {
 var context = WebTracker.context;
 	destination = destination || context.destination;
-	var buffers = [],
-		lastSample = -1,
+		var lastSample = -1,
 		node, gain = context.createGain(),
 		panner = context.createPanner();
 	gain.connect(destination);
 	panner.connect(gain);
 	destination = panner;
-	for (var i = 0; i < 31; i++) {
-		buffers[i] = samples[i].data;
-	} //i
 
 	this.play = function (s, note, when) {
 		if (note >= 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
-			if (buffers[s]) {
+				var smp = samples[s],
+buffer = smp.data;
+			if (buffer) {
 				node = context.createBufferSource();
-				node.buffer = buffers[s];
-				var smp = samples[s];
+				node.buffer = buffer;
 				//volume
 				this.setVolume(smp.volume);
 				if (s !== lastSample) {
