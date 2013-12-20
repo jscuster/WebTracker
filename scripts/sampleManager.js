@@ -17,6 +17,12 @@ player = new WebTracker.Sampler(samples, destination), //only use of destination
 nextSampId = container + "NextSample",
 prevSampId = container + "PrevSample",
 sampNameId = container + "SampleName",
+prevOctId = container+"PrevOctave",
+nextOctId = container + "NextOctave",
+octNameId = container + "OctaveName",
+transUpId = container+"TransposeUp",
+transDownId = container+"TransposeDown",
+transNameId = container + "TransposeName",
 
 keyToNote = function(key) {
 var k = keys.indexOf(key);
@@ -73,15 +79,32 @@ downKey = -1;
 }, //keyUp
 
 generateHtml = function() {
-var res = '<table><tr><td><button id="' + nextSampId +'">+</button></td></tr><tr><td id="' + sampNameId + '">';
-res += '</td></tr><tr><td><button id="' + prevSampId + '">-</button></td></tr></table>';
+var res = '<table><tr>';
+res += '<td><button id="' + nextSampId +'">Next Sample</button></td>';
+res += '<td><button id="' + nextOctId + '">+ 1</button></td>';
+res += '<td><button id="' + transUpId + '">+ 1</button></td>';
+res += '</tr><tr>';
+res += '<td id="' + sampNameId + '"></td>';
+res += '<td id="' + octNameId + '"></td>';
+res += '<td id="' + transNameId + '"></td>';res += '<td id="' + sampNameId + '"></td>';
+res += '</tr><tr>';
+res += '<td><button id="' + prevSampId + '">Previous Sample</button></td>';
+res += '<td><button id="' + prevOctId + '">- 1</button></td>';
+res += '<td><button id="' + transDownId + '">- 1</button></td>';
+res += '</tr></table>';
 return res;
 }, //generateHtml
 
 initControls = function() {
+//button bindings
 $("#" + container).html(generateHtml());
 $("#"+ prevSampId).click(that.prevSample);
 $("#" + nextSampId).click(that.nextSample);
+$("#" + nextOctId).click(that.nextOctave);
+$("#" + prevOctId).click(that.prevOctave);
+$("#" + transUpId).click(that.transposeUp);
+$("#" + transDownId).click(that.transposeDown);
+//key bindings
 $(document).keydown(keyDown);
 $(document).keyup(keyUp);
 update();
@@ -89,6 +112,8 @@ update();
 
 update = function() {
 $("#" + sampNameId).html((sptr+1) + ": " + samples[sptr].title);
+$("#"+octNameId).html("octave: " + octave);
+$("#"+transNameId).html("Transpoze: " + transpose);
 }
 
 //publicly viewable data
