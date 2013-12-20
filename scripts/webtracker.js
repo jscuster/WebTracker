@@ -3,8 +3,9 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 $(function() {
 'use strict';
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		var context = new window.AudioContext(),
-changed = false,
+		var context = new window.AudioContext();
+WebTracker.context = context;
+var changed = false,
 song = new WebTracker.AmigaMod(),
 initialized = false,
 filename = "untitled.mod",
