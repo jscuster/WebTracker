@@ -1,7 +1,6 @@
 var WebTracker = WebTracker || {};
 WebTracker.Sampler = function (samples, destination) {
 var context = WebTracker.context;
-alert(context);
 	destination = destination || context.destination;
 		var lastSample = -1,
 		node,

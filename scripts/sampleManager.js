@@ -7,56 +7,88 @@ throw {message: "Error: A valid id must be passed so controls can be placed."};
 }
 
 var sptr = 0, //points to the currently playing sample
-keys = "zsxdcvgbhnjm,l.;/".toUpperCase(),
+that = this,
+keys = "zsxdcvgbhnjmq2w3er5t6y7ui9o0p".toUpperCase(),
 octave = 5,
+transpose = 0,
 downKey = -1, //keys currently down. Must keep track so the key is not retriggerd when held.
 noteCallbacks = [],
-player = new Sampler(samples, destination), //only use of destination param (selects destination for audio.
+player = new WebTracker.Sampler(samples, destination), //only use of destination param
+nextSampId = container + "NextSample",
+prevSampId = container + "PrevSample",
+sampNameId = container + "SampleName",
 
 keyToNote = function(key) {
 var k = keys.indexOf(key);
 if (k >= 0) {
-return (12*octave)+k;
+k += (12*octave) + transpose;
 }
 return k; //-1 = bad key
 }, //keyToNote returns midi note from key and octave.
 
-keydown = function (e) {
-if (this.active) {var i = keyToNote(String.fromCharCode(e.which));
-if (i >= 0 && downKey != i) {
-var rate = curSample.factor * Math.pow(1.0595, i-60);
+keyDown = function (e) {
+if (that.active) {
+if (downKey !== e.which) {
+switch (e.which) {
+case 187:
+that.nextSample();
+break;
+case 189:
+that.prevSample();
+break;
+case 219:
+that.prevOctave();
+break;
+case 221:
+that.nextOctave();
+break;
+case 186:
+that.transposeDown();
+break;
+case 222:
+that.transposeUp();
+break;
+default:
+var  i = keyToNote(String.fromCharCode(e.which));
+if (i >= 0) {
+var rate = samples[sptr].factor * Math.pow(1.0595, i-60);
 player.play(sptr, rate);
-downKey = i;
-} //if
+} //note finding
+} //switch
+downKey = e.which;
+} //if key not pressed
 } //if active
 }, //keyDown
 
-keyup = function (e) {
-if (this.active) {var i = keyToNote(String.fromCharCode(e.which));
-if (i >= 0 && i === downKey) {
+keyUp = function (e) {
+if (that.active) {
+var i = keyToNote(String.fromCharCode(e.which));
+if (e.which === downKey) {
+if (i >= 0) {
 player.stop();
+} //if matching note
 downKey = -1;
-} //if
+} //if the key had been pressed
 } //if active
 }, //keyUp
 
 generateHtml = function() {
-res = '<table><tr><td><button id="' + container + '"NextSample">+</button></td></tr><tr><td id="' + container + 'SampleName>';
-res += '</td></tr><tr><td><button id="' + container + 'PrevSample">-</button></td></tr></table>';
+var res = '<table><tr><td><button id="' + nextSampId +'">+</button></td></tr><tr><td id="' + sampNameId + '">';
+res += '</td></tr><tr><td><button id="' + prevSampId + '">-</button></td></tr></table>';
 return res;
 }, //generateHtml
 
 initControls = function() {
 $("#" + container).html(generateHtml());
-$("#"+container + "PrevSample").click(this.prevSample);
-$("#"+container + "NextSample").click(this.nextSample);
+$("#"+ prevSampId).click(that.prevSample);
+$("#" + nextSampId).click(that.nextSample);
 $(document).keydown(keyDown);
 $(document).keyup(keyUp);
 update();
 },
 
 update = function() {
-$("#" + container + "SampleName").html((sptr+1) + ": " + samples[sptr].title);
+$("#" + sampNameId).html((sptr+1) + ": " + samples[sptr].title);
 }
 
 //publicly viewable data
@@ -68,7 +100,7 @@ if (sptr >= samples.length) {
 sptr = 0;
 } //we move to the next sample in the list.
 update();
-}, //nextSample
+}; //nextSample
 
 this.prevSample = function() {
 sptr--;
@@ -78,6 +110,39 @@ sptr = samples.length - 1;
 update();
 }; //prevSample
 
+this.prevOctave = function() {
+octave--;
+if (octave < 2) {
+ octave = 2;
+} //if
+update();
+}; //prevOctave
+
+this.nextOctave = function() {
+octave++;
+if (octave > 8) {
+octave = 8;
+}
+update();
+}; //nextOctave
+
+this.transposeDown = function() {
+//alert("transposing down.");
+transpose--;
+if (transpose < -11) {
+transpose=-11;
+}
+update();
+}; //transposeDown
+
+this.transposeUp = function() {
+//alert("transposing up.");
+transpose++;
+if (transpose > 11) {
+transpose = 11;
+}
+update();
+}; //transposeUp
 Object.defineProperty(this, 'sample', {
 get: function() {
 return samples[sptr];
@@ -99,5 +164,5 @@ if (sptr < 0) sptr = 0;
 update();
 } //set sampleIndex
 }); //sampleIndex property
-
+initControls();
 }; //SamplePlayer

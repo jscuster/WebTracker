@@ -39,37 +39,10 @@ sng.loadMod(dv);
 							} //j
 							o += "</table>";
 						} //i
-						o += '<h3>Player</H3><input type="button" value="click" id="smp"><input type="button" id="play" value="play"><input type="button" value="save" id="save"><a href="" id="saveLnk">Click save to create file</A>';
+						o += '<h3>Player</H3><div id="sampleContainer">sample player goes here.</div><input type="button" id="play" value="play"><input type="button" value="save" id="save"><a href="" id="saveLnk">Click save to create file</A>';
 						$("#output").html(o);
-						var sptr = 0,
-							player = new WebTracker.Sampler(sng.samples);
-						$("#smp").click(function () {
-							$(this).prop('value', ("" + (sptr + 1)) + sng.samples[sptr].title);
-							player.stop(sptr === 0 ? 30 : sptr - 1);
-//							player.play(sptr++);
-player.play(sptr++, 0, context.currentTime + 1);
-player.play(sptr+1, 3, context.currentTime + 2);
-player.play(sptr++, 6, context.currentTime + 3);
-							sptr = sptr < 31 ? sptr : 0;
-						}); //click
-						var keys = "zsxdcvgbhnjm".toUpperCase();
-						var notes = [];
-						for (var i = 0; i < 12; i++) notes[i] = keys.charCodeAt(i);
-						var downKey = -1;
-						$("#smp").keydown(function (e) {
-							var i = notes.indexOf(e.which);
-							if (i >= 0 && downKey != i) {
-								player.play(sptr, i);
-								downKey = i;
-							} //if
-						}); //keyDown
-						$("#smp").keyup(function (e) {
-							var i = notes.indexOf(e.which);
-							if (i >= 0 && i === downKey) {
-								player.stop();
-								downKey = -1;
-							} //if
-						}); //keyUp
+var sp = new WebTracker.SamplePlayer(sng.samples, context.destination, "sampleContainer");
+sp.active = true;
 $("#play").click(function() {
 var n = context.createDynamicsCompressor();
 n.ratio.value = 20;
