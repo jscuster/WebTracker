@@ -1,7 +1,6 @@
 <html>
 <head>
 <title>Web Tracker</title>
-<script type="text/javascript" src="scripts/wtloader.js"></script>
 </head>
 <body>
 <div id="menu">
@@ -49,10 +48,15 @@ When it is placed on a server, it will upload the file and give the user a downl
 </P>
 <div id="importButtons">
 <input type="file" multiple id="importAdd">
-<button id="importClear" style="position: absolute, right: 0">Clear</button>
+<button id="importImport">Import</button>
+<button id="importBack"><<- Back</button>
 </div>
-<br>
-<div id="importSamplesList"></div>
+<h3 id="samplesInstructions">Choose a sample to import</H3>
+<div id="importSamplesList">
+Samples in the import list
+</div>
+<div id="importSongSamples">
+Samples currently in the song.
 </div>
 <div class="subpanel" id="export">
 <center><H1>Export Samples</H1></center>
@@ -60,8 +64,12 @@ When it is placed on a server, it will upload the file and give the user a downl
 </div>
 <div id="samples" class = "mainPanel">
 <H1>Samples</H1>
-
-
+<div id="samplesSampleChooser">
+Sample player goes here.
+</div>
+<div id="samplesSampleEditor">
+Edit info for current sample
+</div>
 </div>
 <div id="song" class = "mainPanel">
 <H1>Song Info</H1>
@@ -84,5 +92,6 @@ When it is placed on a server, it will upload the file and give the user a downl
 <div id="footer" class = "footer">
 Copyright 2013, Jason Custer
 </div>
+<script type="text/javascript" src="scripts/wtloader.js"></script>
 </body>
 </html>
