@@ -23,7 +23,7 @@ octNameId = container + "OctaveName",
 transUpId = container+"TransposeUp",
 transDownId = container+"TransposeDown",
 transNameId = container + "TransposeName",
-
+keyboardClass = container + "Keyboard",
 keyToNote = function(key) {
 var k = keys.indexOf(key);
 if (k >= 0) {
@@ -92,6 +92,9 @@ res += '<td><button id="' + prevSampId + '">Previous Sample</button></td>';
 res += '<td><button id="' + prevOctId + '">- 1</button></td>';
 res += '<td><button id="' + transDownId + '">- 1</button></td>';
 res += '</tr></table>';
+res += '<table><tr><td><a class="' + keyboardClass + '">';
+res += "c c# d d# e f f# g g# a a# b".split(" ").join('</a></td><td><a class="' + keyboardClass + '">');
+res += "</A></td></tr></table>";
 return res;
 }, //generateHtml
 
@@ -111,14 +114,17 @@ update();
 },
 
 update = function() {
+if (that.active) {
 $("#" + sampNameId).html((sptr+1) + ": " + samples[sptr].title);
 $("#"+octNameId).html("octave: " + octave);
 $("#"+transNameId).html("Transpoze: " + transpose);
-}
+} //if
+}; //update
 
 //publicly viewable data
 this.active = false;
 
+this.update = update;
 this.nextSample = function() {
 sptr++;
 if (sptr >= samples.length) {
