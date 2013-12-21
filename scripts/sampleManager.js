@@ -120,11 +120,24 @@ $("#" + sampNameId).html((sptr+1) + ": " + samples[sptr].title);
 $("#"+octNameId).html("octave: " + octave);
 $("#"+transNameId).html("Transpoze: " + transpose);
 } //if
-}; //update
+}, //update
+active = false;
 
 //publicly viewable data
-this.active = false;
-
+Object.defineProperty(this, 'active', {
+get: function() {
+return active;
+},
+set: function(v) {
+if (active && !v) {
+alert(container + " deactivating.");
+} //if
+active = v;
+if (active) {
+alert(container + " is active.");
+} //if
+} //set
+}); //active property
 this.update = update;
 this.nextSample = function() {
 sptr++;
@@ -196,6 +209,12 @@ if (sptr < 0) sptr = 0;
 update();
 } //set sampleIndex
 }); //sampleIndex property
+
+Object.defineProperty(this, 'currentSample', {
+get: function() {
+return samples[sptr];
+} //getter
+}); //currentSample property
 
 Object.defineProperty(this, 'samples', {
 get: function() {

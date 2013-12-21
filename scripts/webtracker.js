@@ -14,12 +14,36 @@ importSongSamples: new WebTracker.SamplePlayer([], context.destination, "importS
 samplesSampleChooser: new WebTracker.SamplePlayer([], context.destination, "samplesSampleChooser")
 },
 importSelected = false,
+importSamples = [],
 
 deactivatePlayers = function() {
 for (var i in samplePlayers) {
 samplePlayers[i].active = false;
 } //deactivate all players.
 }, //deactivate players
+
+showImportControls = function() {
+if (importSelected) { //we're in the middle of an import
+$("#importClear").html("Cancel Import")
+$("#importImport").html("Place Sample");
+$("#importAdd").attr('disabled', 'disabled');
+deactivatePlayers();
+samplePlayers.importSongSamples.active = true;
+update();
+$("#importSongSamples").show();
+$("#importSamplesList").hide();
+} else {
+//we are not in the middle of an import, just starting.
+$("#importClear").html("Clear Loaded Samples")
+$("#importImport").html("Select Sample");
+$("#importAdd").removeAttr('disabled');
+$("#importSamplesList").show();
+$("#importSongSamples").hide();
+deactivatePlayers();
+samplePlayers.importSamplesList.active = true;
+update();
+} //show proper labels on controls
+}, //showing controls for import
 
 showPanel = function(name) {
 $(".mainPanel").hide();
@@ -49,9 +73,20 @@ $("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br
 for (var i in samplePlayers) {
 samplePlayers[i].update();
 } //update the players.
-}; //updatesafter changes are made.
+}, //updatesafter changes are made.
 
+fillSamplePlayers = function() {
+samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
+samplePlayers.importSongSamples.samples = song.samples;
+samplePlayers.importSamplesList.samples = importSamples;
+}, //load the samples in.
+
+init = function() {
 WebTracker.context = context; //globalize the audio context.
+$("#first").click();
+$("#subfirst").click();
+fillSamplePlayers();
+}; //initialize the program
 
 $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());
@@ -64,8 +99,6 @@ showSubpanel($(this).html().toLowerCase());
 $(".submenu").removeAttr("disabled");
 $(this).attr("disabled", "disabled");
 }); //click
-$("#first").click();
-$("#subfirst").click();
 
 $("#fileOpen").change(function(e) {
 var f = e.target.files[0]; //only open the first selected file
@@ -76,8 +109,7 @@ if (WebTracker.AmigaMod.isValid(dv)) {
 						song = new WebTracker.AmigaMod();
 song.loadMod(dv);
 filename = f.name;
-samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
-samplePlayers.importSongSamples.samples = song.samples;
+fillSamplePlayers();
 update();
 initialized = true;
 changed = false;
@@ -97,6 +129,7 @@ if (go) { //user says OK or the changes were saved.
 changed = false;
 song = new WebTracker.AmigaMod();
 filename = "untitled.mod";
+fillSamplePlayers();
 update();
 } //if
 }); //new file creation
@@ -109,23 +142,72 @@ var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Cli
 $("#saveLink").html(htm);
 }); //save click
 
-/*starting code for importing samples.
+$("#importClear").click(function() {
+importSelected = !importSelected; //toggle the bad boy.
+if (!importSelected) { //if it was on
+//the operation was canceled.
+showImportControls();
+} else {
+//clearing importSamples.
+importSamples = [];
+fillSamplePlayers();
+} //act on importSelected togg.e
+}); //importClear clicked
+
+$("#importImport").click(function() {
+if (importSelected) {
+var smp = samplePlayers.importSamplesList.currentSample,
+i = samplePlayers.importSongSamples.sampleIndex;
+if (confirm("Warning: replacing sample " + (i+1) + ": (" + song.samples[i].title + ") with the selected sample. Continue?")) {
+smp.title = song.samples[i].title;
+song.samples[i]=smp; //replace
+i = samplePlayers.importSamplesList.sampleIndex;
+importSamples.splice(i, 1);
+fillSamplePlayers();
+update();
+} //if confirmed
+} //if in the middle of importing
+//no matter what, we do this when import is clicked.
+importSelected = !importSelected; //toggle
+showImportControls(); //show controls based on prev var.
+}); //import clicked
+
 $("#importAdd").change(function(e) {
 var f = e.target.files; //all the files the user selected.
-					var reader = new FileReader();
-					reader.onload = function (e) {
-						var dv = new DataView(e.target.result);
+var reader = new FileReader();
+reader.onload = function (e) {
+var data = e.target.result,
+dv = new DataView(data),
+s; //song or sample temp var
 if (WebTracker.AmigaMod.isValid(dv)) {
-						song = new WebTracker.AmigaMod();
-song.loadMod(dv);
-filename = f.name;
+s = new WebTracker.AmigaMod();
+s.loadMod(dv);
+for (var i = 0; i < s.samples.length; i++) {
+importSamples[importSamples.length] = s.samples[i];
+} //i
+fillSamplePlayers();
+update();
 } else {
-alert(f.name + " is an invalid amiga module. Please select only amiga modules (*.mod).");
+//this is some other kind of audio file. Lets try to decode it.
+context.decodeAudioData(data, //the loaded file
+function(audio) { //callback for successful decode
+s = new AmigaSample();
+s.loadFromAudioBuffer(audio);
+importSamples.push(s);
+fillSamplePlayers();
+update();
+}, //decodeAudioData success
+function() { //error callback
+alert("This browser is unable to decode the data in one of the files. Perhaps another browser will be able to, save your work and open another browser to add the file.");
+}); //decodeAudioData
 } //else
 }; //onload
-reader.readAsArrayBuffer(f);
-}); //fileOpen change (in file/open menu
-*/
+for (var i = 0; i < f.length; i++) {
+var theFile = f[i];
+reader.readAsArrayBuffer(theFile);
+}; //for
+}); //fileImportAdd change (in file/open menu
+
 	
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
@@ -136,8 +218,8 @@ update();
 } //if user says yes
 } //if titles don't match
 }); //songTitle leave focus
-
 update();
+init();
 }); //ready
 } else {
 	alert('Some required features are unavailable in this browser. Please upgradee this browser or use another. We recommend Google Chrome or Mozilla Firefox.');

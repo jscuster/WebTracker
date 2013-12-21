@@ -73,10 +73,33 @@ d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } //if
 newSamplePointers.dataOffset = doff; //should be original doff + this.length.
-
 //return new offsets
 return newSamplePointers;
 }; //readSample
+
+WebTracker.AmigaSample.prototype.loadFromAudioBuffer = function(buffer) {
+var l = buffer.length,
+c=buffer.numberOfChannels,
+data = [];
+if (c === 1) {
+this.data = buffer;
+} else {
+for (var i = 0; i < c; i++) {
+data[i] = buffer.getChannelData(i);
+} //get each channel
+mono = context.createBuffer(1, l, buffer.sampleRate),
+chan = mono.getChannelData(0);
+for (var i = 0; i < l; i++) {
+var avg = 0;
+for (var j = 0; j < c; j++) {
+avg += data[j][i]; //add the channels together
+} //j
+chan[i] = avg / c;
+} //i
+this.data = mono;
+} //if
+}; //loadFromAudioBuffer
+
 
 WebTracker.AmigaSample.prototype.writeSample = function(dv, ptrs) {
 var hoff = ptrs.headerOffset, doff = ptrs.dataOffset;
