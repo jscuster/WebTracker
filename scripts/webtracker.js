@@ -9,7 +9,17 @@ var changed = false,
 song = new WebTracker.AmigaMod(),
 initialized = false,
 filename = "untitled.mod",
+samplePlayers = {importSamplesList: new WebTracker.SamplePlayer([], context.destination, "importSamplesList"),
+importSongSamples: new WebTracker.SamplePlayer([], context.destination, "importSongSamples"),
+samplesSampleChooser: new WebTracker.SamplePlayer([], context.destination, "samplesSampleChooser")
+},
+importSelected = false,
 
+deactivatePlayers = function() {
+for (i in samplePlayers) {
+samplePlayers[i].active = false;
+} //deactivate all players.
+}, //deactivate players
 showPanel = function(name) {
 $(".mainPanel").hide();
 $("#" + name).show();
@@ -18,6 +28,14 @@ $("#" + name).show();
 showSubpanel = function(name) {
 $(".subpanel").hide();
 $("#" + name).show();
+if (name === "import") {
+$("#importSongSamples").hide();
+deactivatePlayers();
+samplePlayers.importSamplesList.active = true; //activate the correct player.
+} else if (name === "samples") {
+deactivatePlayers();
+samplePlayers.samplesSampleChooser.active = true;
+} //activate correct player.
 }, //showPanel
 
 update = function() {
