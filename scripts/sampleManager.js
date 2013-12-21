@@ -1,12 +1,13 @@
 var WebTracker = WebTracker || {};
-WebTracker.SamplePlayer = function(samples, destination, container) { 
+WebTracker.SamplePlayer = function(_samples, destination, container) { 
 //allows the player to select and play a sample.
 'use strict';
 if (!container) { //must know where to generate html and which controls to listen to.
 throw {message: "Error: A valid id must be passed so controls can be placed."};
-}
+} //if bad container
 
-var sptr = 0, //points to the currently playing sample
+var samples = [],
+sptr = 0, //points to the currently playing sample
 that = this,
 keys = "zsxdcvgbhnjmq2w3er5t6y7ui9o0p".toUpperCase(),
 octave = 5,
@@ -195,5 +196,21 @@ if (sptr < 0) sptr = 0;
 update();
 } //set sampleIndex
 }); //sampleIndex property
+
+Object.defineProperty(this, 'samples', {
+get: function() {
+return samples;
+},
+set: function(s) {
+samples = s;
+sptr=0;
+if (samples.length === 0) {
+samples = [new WebTracker.AmigaSample()];
+}
+player = new WebTracker.Sampler(samples, destination);
+update();
+}
+}); //samples property
+this.samples = _samples;
 initControls();
 }; //SamplePlayer

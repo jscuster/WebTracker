@@ -16,26 +16,29 @@ samplesSampleChooser: new WebTracker.SamplePlayer([], context.destination, "samp
 importSelected = false,
 
 deactivatePlayers = function() {
-for (i in samplePlayers) {
+for (var i in samplePlayers) {
 samplePlayers[i].active = false;
 } //deactivate all players.
 }, //deactivate players
+
 showPanel = function(name) {
 $(".mainPanel").hide();
 $("#" + name).show();
+deactivatePlayers();
+if (name === "samples") {
+samplePlayers.samplesSampleChooser.active = true;
+} //activate correct player.
 }, //showPanel
 
 showSubpanel = function(name) {
+deactivatePlayers();
 $(".subpanel").hide();
 $("#" + name).show();
 if (name === "import") {
 $("#importSongSamples").hide();
-deactivatePlayers();
 samplePlayers.importSamplesList.active = true; //activate the correct player.
-} else if (name === "samples") {
-deactivatePlayers();
-samplePlayers.samplesSampleChooser.active = true;
-} //activate correct player.
+samplePlayers.importSamplesList.update();
+} //activate import player
 }, //showPanel
 
 update = function() {
@@ -43,6 +46,9 @@ document.title = song.title + ": Web Tracker";
 $("#songTitle").prop('value', song.title)
 $("#filesFilename").html("current file: " + filename + " - " + song.title)
 $("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br>"));
+for (var i in samplePlayers) {
+samplePlayers[i].update();
+} //update the players.
 }; //updatesafter changes are made.
 
 WebTracker.context = context; //globalize the audio context.
@@ -51,7 +57,6 @@ $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());
 $(".menu").removeAttr("disabled");
 $(this).attr("disabled", "disabled");
-$("#subfirst").click();
 }); //click
 
 $(".submenu").click(function() {
@@ -60,6 +65,7 @@ $(".submenu").removeAttr("disabled");
 $(this).attr("disabled", "disabled");
 }); //click
 $("#first").click();
+$("#subfirst").click();
 
 $("#fileOpen").change(function(e) {
 var f = e.target.files[0]; //only open the first selected file
@@ -70,6 +76,8 @@ if (WebTracker.AmigaMod.isValid(dv)) {
 						song = new WebTracker.AmigaMod();
 song.loadMod(dv);
 filename = f.name;
+samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
+samplePlayers.importSongSamples.samples = song.samples;
 update();
 initialized = true;
 changed = false;
