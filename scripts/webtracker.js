@@ -191,9 +191,9 @@ update();
 //this is some other kind of audio file. Lets try to decode it.
 context.decodeAudioData(data, //the loaded file
 function(audio) { //callback for successful decode
-s = new AmigaSample();
+s = new WebTracker.AmigaSample();
 s.loadFromAudioBuffer(audio);
-importSamples.push(s);
+importSamples[importSamples.length] = s;
 fillSamplePlayers();
 update();
 }, //decodeAudioData success

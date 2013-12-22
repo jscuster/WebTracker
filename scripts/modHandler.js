@@ -87,7 +87,7 @@ this.data = buffer;
 for (var i = 0; i < c; i++) {
 data[i] = buffer.getChannelData(i);
 } //get each channel
-mono = context.createBuffer(1, l, buffer.sampleRate),
+mono = WebTracker.context.createBuffer(1, l, buffer.sampleRate),
 chan = mono.getChannelData(0);
 for (var i = 0; i < l; i++) {
 var avg = 0;
@@ -97,9 +97,10 @@ avg += data[j][i]; //add the channels together
 chan[i] = avg / c;
 } //i
 this.data = mono;
+this.length = l;
 } //if
+this.factor = buffer.sampleRate / WebTracker.context.sampleRate;
 }; //loadFromAudioBuffer
-
 
 WebTracker.AmigaSample.prototype.writeSample = function(dv, ptrs) {
 var hoff = ptrs.headerOffset, doff = ptrs.dataOffset;
@@ -119,7 +120,6 @@ doff += this.length/2;
 } else {
 var d = this.data.getChannelData(0),
 l = this.length;
-if (l !== d.length) alert("length mismatch: " + s.title);
 for (var i = 0; i < l; i++) {
 dv.setInt8(doff,  d[i]*127);
 doff++;

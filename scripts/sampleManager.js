@@ -129,12 +129,8 @@ get: function() {
 return active;
 },
 set: function(v) {
-if (active && !v) {
-alert(container + " deactivating.");
-} //if
 active = v;
 if (active) {
-alert(container + " is active.");
 } //if
 } //set
 }); //active property
@@ -172,7 +168,6 @@ update();
 }; //nextOctave
 
 this.transposeDown = function() {
-//alert("transposing down.");
 transpose--;
 if (transpose < -11) {
 transpose=-11;
@@ -181,7 +176,6 @@ update();
 }; //transposeDown
 
 this.transposeUp = function() {
-//alert("transposing up.");
 transpose++;
 if (transpose > 11) {
 transpose = 11;
