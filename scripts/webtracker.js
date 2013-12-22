@@ -73,6 +73,7 @@ $("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br
 for (var i in samplePlayers) {
 samplePlayers[i].update();
 } //update the players.
+buildPatternTable();
 }, //updatesafter changes are made.
 
 fillSamplePlayers = function() {
@@ -80,6 +81,20 @@ samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to t
 samplePlayers.importSongSamples.samples = song.samples;
 samplePlayers.importSamplesList.samples = importSamples;
 }, //load the samples in.
+
+buildPatternTable = function() {
+var res = "<table><tr>",
+num = 1;
+song.patternOrder.forEach(function(o) {
+res += '<td>' + num + '</td><td><input type="text" class = "patternOrderValue" value="' + (o+1) + '" id = "patternOrder:' + (num-1) + '"></td>';
+if (num % 4 == 0) {
+res += "</tr><tr>";
+} //2 collumns
+num++;
+}); //show each pattern
+res += '</tr><tr><td><button id="patternOrderAdd">Add</button></td><td></td><td><button id="patternOrderRemove">Remove</td><td></td></tr></table>'
+$("#patternTable").html(res);
+},
 
 init = function() {
 WebTracker.context = context; //globalize the audio context.
@@ -222,5 +237,5 @@ update();
 init();
 }); //ready
 } else {
-	alert('Some required features are unavailable in this browser. Please upgradee this browser or use another. We recommend Google Chrome or Mozilla Firefox.');
+alert('Some required features are unavailable in this browser. Please upgradee this browser or use another. We recommend Google Chrome or Mozilla Firefox.');
 } //else
