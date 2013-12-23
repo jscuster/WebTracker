@@ -73,6 +73,7 @@ $("#songMessage").html(song.samples.map(function(s) {return s.title;}).join("<br
 for (var i in samplePlayers) {
 samplePlayers[i].update();
 } //update the players.
+buildPatternEditor();
 buildPatternTable();
 }, //updatesafter changes are made.
 
@@ -81,6 +82,36 @@ samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to t
 samplePlayers.importSongSamples.samples = song.samples;
 samplePlayers.importSamplesList.samples = importSamples;
 }, //load the samples in.
+
+buildPatternEditor = function() {
+var res = "<table>",
+c = song.patternCount;
+for (var i = 0; i < c; i++) {
+res += '<tr><td>' + (i+1) + '</td><td><button class="patternPlay" id="play:' + i + '">Play Pause</button></td>';
+res += '<td><button class="patternRemove" id="remove:' + i + '">Remove</button></td>';
+res += '<td><button class="patternUp" id="up:' + i + '">Move Up</button></td>';
+res += '<td><button class="patternDown" id="down:' + i + '">Move Down</button></td>'
+res += "</tr>";
+} //i
+res += "</table>";
+$("#editorInfo").html(res);
+$(".patternPlay").click(function() {
+var idx = this.id.split(":")[1];
+alert("playing " + idx);
+}); //play click
+$(".patternRemove").click(function() {
+var idx = this.id.split(":")[1];
+alert("removing " + idx);
+}); //remove click
+$(".patternUp").click(function() {
+var idx = this.id.split(":")[1];
+alert("removing up " + idx);
+}); //pattern up click
+$(".patternDown").click(function() {
+var idx = this.id.split(":")[1];
+alert("moving down " + idx);
+}); //down click
+}, //buildPatternEditor
 
 buildPatternTable = function() {
 var res = "<table><tr>",
