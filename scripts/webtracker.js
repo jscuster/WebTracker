@@ -86,7 +86,7 @@ buildPatternTable = function() {
 var res = "<table><tr>",
 num = 1;
 song.patternOrder.forEach(function(o) {
-res += '<td>' + num + '</td><td><input type="text" class = "patternOrderValue" value="' + (o+1) + '" id = "patternOrder:' + (num-1) + '"></td>';
+res += '<td>' + num + ': <input type="text" class = "patternOrderValue" value="' + (o+1) + '" id = "patternOrder:' + (num-1) + '"></td>';
 if (num % 4 == 0) {
 res += "</tr><tr>";
 } //2 collumns
@@ -94,7 +94,36 @@ num++;
 }); //show each pattern
 res += '</tr><tr><td><button id="patternOrderAdd">Add</button></td><td></td><td><button id="patternOrderRemove">Remove</td><td></td></tr></table>'
 $("#patternTable").html(res);
-},
+$("#patternOrderAdd").click(function() {
+if (song.patternCount > 0) {
+song.patternOrder[song.totalPatterns++] = 0;
+update();
+$("#patternOrderAdd").focus();
+} else {
+alert("Please create a pattern in the editor first.");
+} //no point in adding a slot to put patterns if none exist.
+}); //patternOrderAdd click
+$(".patternOrderValue").focusout(function() {
+var idx = +(this.id.split(":")[1]),
+val = +(this.value);
+if (isNaN(val) || val > song.patternCount) {
+alert("Please enter a number between " + 1 + " and " + song.patternCount + ".");
+$(this).focus();
+} else {
+song.patternOrder[idx] = val-1;
+} //if it's a valid number, set it in the song.
+}); //text field change.
+$("#patternOrderRemove").click(function() {
+if (song.totalPatterns <= 0) {
+alert("No slots to remove.");
+} else {
+song.totalPatterns--;
+song.patternOrder.pop();
+update();
+$("#patternOrderRemove").focus();
+} //remove if there are slots
+}); //remove clicked
+}, //build pattern order html table
 
 init = function() {
 WebTracker.context = context; //globalize the audio context.
@@ -102,6 +131,8 @@ $("#first").click();
 $("#subfirst").click();
 fillSamplePlayers();
 }; //initialize the program
+
+
 
 $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());
@@ -223,7 +254,6 @@ reader.readAsArrayBuffer(theFile);
 }; //for
 }); //fileImportAdd change (in file/open menu
 
-	
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
 if (t !== song.title) {
@@ -233,8 +263,9 @@ update();
 } //if user says yes
 } //if titles don't match
 }); //songTitle leave focus
-update();
+
 init();
+update();
 }); //ready
 } else {
 alert('Some required features are unavailable in this browser. Please upgradee this browser or use another. We recommend Google Chrome or Mozilla Firefox.');
