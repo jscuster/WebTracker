@@ -16,7 +16,9 @@ bpm = 125,
 time = 0,
 timePerTick = 0.02, //set in setTimePerTick
 donePlaying = true,
-playTimer,
+playTimer = 0,
+donePlayingCallback,
+
 setTimePerTick = function(x) {
 var r = 750/x; 
 //ticks = 60/(4*bpm*0.02), bpm=60/(4*ticks*0.02), simplifying, = (60/(4*0.02) = 750
@@ -28,12 +30,10 @@ timePerTick = 0.02; //ticks tied to VSync, static number.
 tpr = Math.round(r);
 bpm = x;
 timePerTick = 60/(4*tpr*bpm*1.25);
-//alert(timePerTick);
 } //tick or bpm if
-alert("Setting bpm to " + bpm);
 WebTracker.logger.log("tpr is " + tpr + ", bpm = " + bpm);
 WebTracker.logger.log("timePerTick is " + timePerTick);
-},
+}, //setTimePerTick
 
 preload = function() {
 //initialize variables
@@ -67,16 +67,26 @@ WebTracker.logger.log("playing pattern " + patternCursor + " in a song with " + 
 } //if
 }, //bumpRowCursor
 
+stopMusic = function() {
+if (playTimer) {
+clearInterval(playTimer);
+playTimer = 0;
+}
+donePlaying = true;
+for (var i = 0; i < channels.length; i++) {
+channels[i].stop(time);
+} //i
+if (donePlayingCallback) {
+donePlayingCallback();
+} //if
+}, //stop audio and end playback
+
 bumpPatternCursor = function() {
 curPattern++;
 if (curPattern < song.totalPatterns && !playPatternOnly) {
 patternCursor = song.patternOrder[curPattern];
 } else {
-clearInterval(playTimer);
-donePlaying = true;
-for (var i = 0; i < channels.length; i++) {
-channels[i].stop(time);
-} //i
+stopMusic();
 //prompt("log", WebTracker.logger.getLog());
 } //if
 }, //bumpPatternCursor
@@ -139,12 +149,14 @@ patternCursor = song.patternOrder[curPattern];
 rowCursor = 0;
 donePlaying = false;
 playPatternOnly = false;
+stopMusic();
 time = context.currentTime;
 playTimer = setInterval(play, playInterval);
 //prompt("log", WebTracker.logger.getLog());
 }; //playSong
 
 this.playPattern = function(p) {
+stopMusic();
 patternCursor = p;
 rowCursor = 0;
 donePlaying = false;
@@ -158,11 +170,17 @@ Object.defineProperty(this, 'bpm', {
 get: function() {
 return bpm;
 }, //get
-set = function(v) {
+set: function(v) {
 v = v < 32 ? 32 : v;
 setTimePerTick(v);
 } //set
 }); //defineProperty
+
+Object.defineProperty(this, "stopCallback", {
+set: function(v) {
+donePlayingCallback = v;
+} //set
+}); //stopCallback
 
 this.update = preload;
 preload();

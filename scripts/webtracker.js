@@ -76,6 +76,8 @@ samplePlayers[i].update();
 } //update the players.
 buildPatternEditor();
 buildPatternTable();
+modPlayer.update();
+$("#patternTempo").val(modPlayer.bpm);
 }, //updatesafter changes are made.
 
 fillSamplePlayers = function() {
@@ -175,6 +177,9 @@ refreshObjects();
 refreshObjects = function() {
 fillSamplePlayers();
 modPlayer = new WebTracker.ModPlayer(song, context.destination);
+modPlayer.stopCallback = function() {
+$("#patternTempo").val(modPlayer.bpm);
+}; //stopCallback
 update();
 }, //refresh players, andother objects.
 
@@ -309,6 +314,16 @@ update();
 } //if user says yes
 } //if titles don't match
 }); //songTitle leave focus
+
+$("#patternTempo").focusout(function() {
+var v = +this.value;
+if (v && v < 32) {
+alert ("Please enter a number larger than 32.");
+this.value=modPlayer.bpm;
+} else {
+modPlayer.bpm = v;
+} //if
+}); //tempo loose focus
 
 init();
 }); //ready
