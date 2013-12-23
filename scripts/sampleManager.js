@@ -35,6 +35,7 @@ return k; //-1 = bad key
 
 keyDown = function (e) {
 if (that.active) {
+if (!e.ctrlKey) {
 if (downKey !== e.which) {
 switch (e.which) {
 case 187:
@@ -64,6 +65,7 @@ player.play(sptr, rate);
 } //switch
 downKey = e.which;
 } //if key not pressed
+} //if ctrl not pushed
 } //if active
 }, //keyDown
 
