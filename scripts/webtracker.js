@@ -48,6 +48,7 @@ update();
 showPanel = function(name) {
 $(".mainPanel").hide();
 $("#" + name).show();
+$("#" + name + "First").click();
 deactivatePlayers();
 if (name === "samples") {
 samplePlayers.samplesSampleChooser.active = true;
@@ -55,7 +56,6 @@ samplePlayers.samplesSampleChooser.active = true;
 }, //showPanel
 
 showSubpanel = function(name) {
-deactivatePlayers();
 $(".subpanel").hide();
 $("#" + name).show();
 if (name === "import") {
@@ -127,12 +127,9 @@ $("#patternOrderRemove").focus();
 
 init = function() {
 WebTracker.context = context; //globalize the audio context.
-$("#first").click();
-$("#subfirst").click();
 fillSamplePlayers();
+$(".first").click();
 }; //initialize the program
-
-
 
 $(".menu").click(function() {
 showPanel($(this).html().toLowerCase());

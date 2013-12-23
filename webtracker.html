@@ -4,36 +4,36 @@
 </head>
 <body>
 <div id="menu">
-<button class="menu" id="first">Files</button>
+<button class="menu first">Files</button>
 <button class="menu">Samples</button>
 <button class="menu">Song</button>
 <button class="menu">Patterns</button>
-<button class="menu">Editor</button>
+<button class="menu">Tracker</button>
 </div>
 <div id="files" class = "mainPanel">
 <center><H1>Files</H1></center>
 <div id="menu">
-<button class="submenu" id="subfirst">Open</button>
+<button class="submenu" id="filesFirst">Open</button>
 <button class="submenu">New</button>
 <button class="submenu">Save</button>
 <button class="submenu">Import</button>
 <button class="submenu">Export</button>
 </div>
 <div class="subpanel" id="open">
-<center><H1>Open File</H1></center>
+<center><H2>Open File</H2></center>
 <P>Please drag any amiga module file anywhere on this text, or use the button below to browse your computer.</P>
 <input type="file" id="fileOpen">
 <br>
 <div id="filesFilename"></div>
 </div>
 <div class="subpanel" id="new">
-<center><H1>New File</H1></center>
+<center><H2>New File</H2></center>
 <P>This panel allows you to create a new, empty, song.</P>
 <br>
 <button id="newFile">Create New File</button>
 </div>
 <div class="subpanel" id="save">
-<center><H1>Save</H1></center>
+<center><H2>Save</H2></center>
 <P>This program currently uses a base64 string as a data url to download the file.
 When it is placed on a server, it will upload the file and give the user a download link if need be.
 </P>
@@ -43,7 +43,7 @@ When it is placed on a server, it will upload the file and give the user a downl
 <div id="saveLink"></div>
 </div>
 <div class="subpanel" id="import">
-<center><H1>Import Samples</H1></center>
+<center><H2>Import Samples</H2></center>
 <P>You can import samples from .mod files or from any file your browser can decode. Most browsers can decode .wav files. Other choices are: ogg, opus, WebM/WebA, and MP3. If your file doesn't open in this browser, save your work and open it in another, then import the file.
 </P>
 <div id="importButtons">
@@ -59,11 +59,11 @@ Samples in the import list
 Samples currently in the song.
 </div></div>
 <div class="subpanel" id="export">
-<center><H1>Export Samples</H1></center>
+<center><H2>Export Samples</H2></center>
 </div>
 </div>
 <div id="samples" class = "mainPanel">
-<H1>Samples</H1>
+<center><H1>Samples</H1></center>
 <div id="samplesSampleChooser">
 Sample player goes here.
 </div>
@@ -72,7 +72,7 @@ Edit info for current sample
 </div>
 </div>
 <div id="song" class = "mainPanel">
-<H1>Song Info</H1>
+<center><H1>Song Info</H1></center>
 <table>
 <tr>
 <td>Title:</td>
@@ -84,13 +84,21 @@ Edit info for current sample
 </table>
 </div>
 <div id="patterns" class = "mainPanel">
-<H1>Pattern Table</H1>
+<div>
+ <button class="submenu" id="patternsFirst">Editor</button>
+<button class="submenu">Play Order</button>
+</div>
+<div class="subpanel" id="editor">
+<center><h2>Pattern Editor</h2></center>
+</div>
+<div class="subpanel" id="play order">
+<center><H2>Play Order</H2></center>
 <P>After creating patterns, use this area to specify the order to play them.</P>
 <div id="patternTable">
 Pattern table goes here.
 </div>
 </div>
-<div id="editor" class = "mainPanel">
+<div id="tracker" class = "mainPanel">
 <H1>Note Editor</H1>
 </div>
 <div id="footer" class = "footer">
