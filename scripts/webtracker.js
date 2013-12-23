@@ -105,10 +105,12 @@ alert("removing " + idx);
 }); //remove click
 $(".patternUp").click(function() {
 var idx = this.id.split(":")[1];
-alert("removing up " + idx);
+changed=true;
+alert("moving up " + idx);
 }); //pattern up click
 $(".patternDown").click(function() {
 var idx = this.id.split(":")[1];
+changed=true;
 alert("moving down " + idx);
 }); //down click
 }, //buildPatternEditor
@@ -128,6 +130,7 @@ $("#patternTable").html(res);
 $("#patternOrderAdd").click(function() {
 if (song.patternCount > 0) {
 song.patternOrder[song.totalPatterns++] = 0;
+changed=true;
 update();
 $("#patternOrderAdd").focus();
 } else {
@@ -142,6 +145,7 @@ alert("Please enter a number between " + 1 + " and " + song.patternCount + ".");
 $(this).focus();
 } else {
 song.patternOrder[idx] = val-1;
+changed=true;
 } //if it's a valid number, set it in the song.
 }); //text field change.
 $("#patternOrderRemove").click(function() {
@@ -150,6 +154,7 @@ alert("No slots to remove.");
 } else {
 song.totalPatterns--;
 song.patternOrder.pop();
+changed=true;
 update();
 $("#patternOrderRemove").focus();
 } //remove if there are slots
@@ -163,9 +168,13 @@ song.createPattern();
 song.patternOrder = [0];
 song.totalPatterns = song.patternCount = 1;
 filename = "untitled.mod";
+refreshObjects();
+}, //newSong
+
+refreshObjects = function() {
 fillSamplePlayers();
 update();
-}, //newSong
+}, //refresh players, andother objects.
 
 init = function() {
 WebTracker.context = context; //globalize the audio context.
@@ -194,9 +203,7 @@ if (WebTracker.AmigaMod.isValid(dv)) {
 						song = new WebTracker.AmigaMod();
 song.loadMod(dv);
 filename = f.name;
-fillSamplePlayers();
-update();
-initialized = true;
+refreshObjects();
 changed = false;
 } else {
 alert(f.name + " is an invalid amiga module. Please select only amiga modules (*.mod).");
@@ -220,6 +227,7 @@ zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker:
 zip.file(filename, song.saveMod(true)); //true = return ArrayBuffer. 
 var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
 $("#saveLink").html(htm);
+changed=false;
 }); //save click
 
 $("#importClear").click(function() {
@@ -244,6 +252,7 @@ song.samples[i]=smp; //replace
 i = samplePlayers.importSamplesList.sampleIndex;
 importSamples.splice(i, 1);
 fillSamplePlayers();
+changed = true;
 update();
 } //if confirmed
 } //if in the middle of importing
@@ -293,13 +302,13 @@ var t = $(this).prop('value');
 if (t !== song.title) {
 if (confirm("Changing song title to '" + t + "'. Proceed?")) {
 song.title = t;
+changed=false;
 update();
 } //if user says yes
 } //if titles don't match
 }); //songTitle leave focus
 
 init();
-update();
 }); //ready
 } else {
 alert('Some required features are unavailable in this browser. Please upgradee this browser or use another. We recommend Google Chrome or Mozilla Firefox.');
