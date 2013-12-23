@@ -16,7 +16,7 @@ bpm = 125,
 time = 0,
 timePerTick = 0.02, //set in setTimePerTick
 donePlaying = true,
-
+playTimer,
 setTimePerTick = function(x) {
 var r = 750/x; 
 //ticks = 60/(4*bpm*0.02), bpm=60/(4*ticks*0.02), simplifying, = (60/(4*0.02) = 750
@@ -30,6 +30,7 @@ bpm = x;
 timePerTick = 60/(4*tpr*bpm*1.25);
 //alert(timePerTick);
 } //tick or bpm if
+alert("Setting bpm to " + bpm);
 WebTracker.logger.log("tpr is " + tpr + ", bpm = " + bpm);
 WebTracker.logger.log("timePerTick is " + timePerTick);
 },
@@ -39,7 +40,6 @@ preload = function() {
 channels = [];
 patternCursor = 0;
 rowCursor = 0;
-setTimePerTick(125); //default bpm
 curPattern = 0;
 //load channels with samplers.
 channelCount = song.channels;
@@ -53,7 +53,6 @@ channels[i].setPan(-0.25, 0, 0); //left
 channels[i].setPan(0.25, 0, 0); //right
 } 
 } //i
-time = context.currentTime;
 playPatternOnly = false;
 donePlaying = true;
 WebTracker.logger.log("preloaded mod player. time: " + time);
@@ -73,12 +72,12 @@ curPattern++;
 if (curPattern < song.totalPatterns && !playPatternOnly) {
 patternCursor = song.patternOrder[curPattern];
 } else {
-//clearInterval(playTimer);
+clearInterval(playTimer);
 donePlaying = true;
 for (var i = 0; i < channels.length; i++) {
 channels[i].stop(time);
 } //i
-prompt("log", WebTracker.logger.getLog());
+//prompt("log", WebTracker.logger.getLog());
 } //if
 }, //bumpPatternCursor
 
@@ -135,15 +134,25 @@ s.play(note.sample-1, note.factor, time);
 }; //playNote
 
 this.playSong = function() {
-preload();
 curPattern = 0;
 patternCursor = song.patternOrder[curPattern];
 rowCursor = 0;
 donePlaying = false;
-setInterval(play, playInterval);
-for (var i = 0; i < channels.length; i++) {
-channels[i].stop(time);
-} //i
+playPatternOnly = false;
+time = context.currentTime;
+playTimer = setInterval(play, playInterval);
 //prompt("log", WebTracker.logger.getLog());
 }; //playSong
+
+this.playPattern = function(p) {
+patternCursor = p;
+rowCursor = 0;
+donePlaying = false;
+playPatternOnly = true;
+time = context.currentTime;
+playTimer = setInterval(play, playInterval);
+//prompt("log", WebTracker.logger.getLog());
+}; //playPattern
+this.update = preload;
+preload();
 }; //ModPlayer

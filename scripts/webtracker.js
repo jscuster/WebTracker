@@ -15,6 +15,7 @@ samplesSampleChooser: new WebTracker.SamplePlayer([], context.destination, "samp
 },
 importSelected = false,
 importSamples = [],
+modPlayer,
 
 deactivatePlayers = function() {
 for (var i in samplePlayers) {
@@ -97,7 +98,7 @@ res += "</table>";
 $("#editorInfo").html(res);
 $(".patternPlay").click(function() {
 var idx = this.id.split(":")[1];
-alert("playing " + idx);
+modPlayer.playPattern(idx);
 }); //play click
 $(".patternRemove").click(function() {
 var idx = this.id.split(":")[1];
@@ -106,7 +107,7 @@ alert("removing " + idx);
 $(".patternUp").click(function() {
 var idx = this.id.split(":")[1];
 changed=true;
-alert("moving up " + idx);
+alert("Moving up " + idx);
 }); //pattern up click
 $(".patternDown").click(function() {
 var idx = this.id.split(":")[1];
@@ -173,6 +174,7 @@ refreshObjects();
 
 refreshObjects = function() {
 fillSamplePlayers();
+modPlayer = new WebTracker.ModPlayer(song, context.destination);
 update();
 }, //refresh players, andother objects.
 
