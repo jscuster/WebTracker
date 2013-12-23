@@ -153,6 +153,17 @@ time = context.currentTime;
 playTimer = setInterval(play, playInterval);
 //prompt("log", WebTracker.logger.getLog());
 }; //playPattern
+
+Object.defineProperty(this, 'bpm', {
+get: function() {
+return bpm;
+}, //get
+set = function(v) {
+v = v < 32 ? 32 : v;
+setTimePerTick(v);
+} //set
+}); //defineProperty
+
 this.update = preload;
 preload();
 }; //ModPlayer
