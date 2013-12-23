@@ -314,3 +314,80 @@ return WebTracker.base64ArrayBuffer(buffer);
 return buffer;
 } //if converting to base64
 }; //saveMod
+
+WebTracker.AmigaMod.prototype.findEmptyPatterns = function() {
+var p = this.patterns,
+res = [],
+ctr = 0,
+empty = true,
+c = this.channels;
+for (var i = 0; i < p.length; i++) {
+empty = true;
+for (var j = 0; empty && j < 64; j++) {
+for (var k=0; empty && k < c; k++) {
+var n = p[i][j][k];
+empty = (n.effect === 0 && n.sample === 0 && n.period === 0 && n.param === 0);
+} //k
+} //j
+if (empty) {
+res.push(i);
+} //if
+} //i
+return res;
+}; //findEmptyPatterns
+
+WebTracker.AmigaMod.prototype.createPattern = function() {
+if (this.patternCount < 127) {
+var p = [];
+for (var i = 0; i < 64; i++) {
+p[i] = [];
+} //i
+this.patterns.push(p);
+this.patternCount += 1;
+return true;
+} else { //can't have more than 127 patterns.
+return false;
+} //if
+}; //createPattern
+
+WebTracker.AmigaMod.prototype.removePattern = function(x) {
+if (x < this.patternCount) {
+song.patterns.splice(x, 1);
+var o = this.patternOrder;
+for (var i = 0; i < this.totalPatterns; i++) {
+if (o[i] > x) {
+o[i]--;
+} //if
+} //i
+} else { //doesn't exist
+throw {message: "Pattern doesn't exist, should be between 0 and " + this.patternCount + "."};
+} //else
+}; //removePattern
+
+WebTracker.AmigaMod.prototype.swapPatterns = function(x, y) {
+if (x < this.patternCount && y < this.patternCount) {
+var tmp, p = this.patterns, o = this.patternOrder;
+tmp = p[x];
+p[x] = p[y];
+p[y] = tmp;
+for (var i = 0; i < this.totalPatterns; i++) {
+if (o[i] === x) {
+o[i] = y;
+} else if (o[i] === y) {
+o[i] = x;
+} //if match, swap in pattern order.
+} //i
+} //if in bounds
+}; //swapPatterns
+
+WebTracker.AmigaMod.prototype.movePatternUp = function(x) {
+if (x > 0 && x < this.patternCount) {
+this.swapPatterns(x, x-1);
+} //if
+}; //movePatternUp
+
+WebTracker.AmigaMod.prototype.movePatternDown = function(x) {
+if (x > 0 && x < this.patternCount-1) {
+this.swapPatterns(x, x+1);
+} //if
+}; //movePatternDown

@@ -6,7 +6,7 @@ $(function() {
 		var context = new window.AudioContext();
 WebTracker.context = context;
 var changed = false,
-song = new WebTracker.AmigaMod(),
+song,
 initialized = false,
 filename = "untitled.mod",
 samplePlayers = {importSamplesList: new WebTracker.SamplePlayer([], context.destination, "importSamplesList"),
@@ -125,9 +125,20 @@ $("#patternOrderRemove").focus();
 }); //remove clicked
 }, //build pattern order html table
 
+newSong = function() {
+changed = false;
+song = new WebTracker.AmigaMod();
+song.createPattern();
+song.patternOrder = [0];
+song.totalPatterns = song.patternCount = 1;
+filename = "untitled.mod";
+fillSamplePlayers();
+update();
+}, //newSong
+
 init = function() {
 WebTracker.context = context; //globalize the audio context.
-fillSamplePlayers();
+newSong();
 $(".first").click();
 }; //initialize the program
 
@@ -169,12 +180,7 @@ if (changed) {
 go = confirm("This will erace your current song. Do you wish to proceed?");
 } //if changed
 if (go) { //user says OK or the changes were saved.
-changed = false;
-song = new WebTracker.AmigaMod();
-filename = "untitled.mod";
-fillSamplePlayers();
-update();
-} //if
+newSong();} //if
 }); //new file creation
 
 $("#saveButton").click(function() {
