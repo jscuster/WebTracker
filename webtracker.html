@@ -74,6 +74,11 @@ Edit info for current sample
 <div id="song" class = "mainPanel">
 <center><H1>Song Info</H1></center>
 <table>
+<tr><
+<td><button id="songPlay">Play</button>
+</td>
+<td></td>
+</tr>
 <tr>
 <td>Title:</td>
 <td><input type="text" value="untitled" id="songTitle" maxlength="20"></td>
@@ -86,7 +91,7 @@ Edit info for current sample
 <div id="patterns" class = "mainPanel">
 <div>
  <button class="submenu" id="patternsFirst">Editor</button>
-<button class="submenu">Play Order</button>
+<button class="submenu">Order</button>
 </div>
 <div class="subpanel" id="editor">
 <center><h2>Pattern Editor</h2></center>
@@ -95,9 +100,10 @@ Edit info for current sample
 <div id="editorInfo">
 Editor table goes here.
 </div>
-<div class="subpanel" id="play order">
+</div>
+<div class="subpanel" id="order">
 <center><H2>Play Order</H2></center>
-<P>After creating patterns, use this area to specify the order to play them.</P>
+<P>After creating patterns, use this area to specify the order to play them. While in this section, click the number beside each slot to play from that slot on.</P>
 <div id="patternTable">
 Pattern table goes here.
 </div>

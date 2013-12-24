@@ -124,7 +124,7 @@ buildPatternTable = function() {
 var res = "<table><tr>",
 num = 1;
 song.patternOrder.forEach(function(o) {
-res += '<td>' + num + ': <input type="text" class = "patternOrderValue" value="' + (o+1) + '" id = "patternOrder:' + (num-1) + '"></td>';
+res += '<td><a class="patternOrderPlay">' + num + ':</a> <input type="text" class = "patternOrderValue" value="' + (o+1) + '" id = "patternOrder:' + (num-1) + '"></td>';
 if (num % 4 == 0) {
 res += "</tr><tr>";
 } //2 collumns
@@ -164,6 +164,12 @@ update();
 $("#patternOrderRemove").focus();
 } //remove if there are slots
 }); //remove clicked
+$(".patternOrderPlay").click(function() {
+var v = $(this).html().split(":")[0];
+v = (+v) -1;
+alert("'" + v + "'");
+modPlayer.playFromSlot(v);
+}); //play from pattern
 }, //build pattern order html table
 
 newSong = function() {

@@ -144,18 +144,19 @@ s.play(note.sample-1, note.factor, time);
 }; //playNote
 
 this.playSong = function() {
+stopMusic();
 curPattern = 0;
 patternCursor = song.patternOrder[curPattern];
 rowCursor = 0;
 donePlaying = false;
 playPatternOnly = false;
-stopMusic();
 time = context.currentTime;
 playTimer = setInterval(play, playInterval);
 //prompt("log", WebTracker.logger.getLog());
 }; //playSong
 
 this.playPattern = function(p) {
+if (p < song.patternCount) {
 stopMusic();
 patternCursor = p;
 rowCursor = 0;
@@ -164,7 +165,27 @@ playPatternOnly = true;
 time = context.currentTime;
 playTimer = setInterval(play, playInterval);
 //prompt("log", WebTracker.logger.getLog());
+} else {
+throw {message: "Playing a pattern that does not exist."};
+} //else
 }; //playPattern
+
+this.playFromSlot = function(s) {
+alert("playing slot " + s);
+if (s < song.totalPatterns) {
+stopMusic();
+curPattern = s;
+patternCursor = song.patternOrder[curPattern];
+rowCursor = 0;
+donePlaying = false;
+playPatternOnly = false;
+time = context.currentTime;
+playTimer = setInterval(play, playInterval);
+//prompt("log", WebTracker.logger.getLog());
+} else {
+throw {message: "Playing from pattern that's out of bounds."};
+} //else
+}; //playFromPattern
 
 Object.defineProperty(this, 'bpm', {
 get: function() {
