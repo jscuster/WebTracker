@@ -3,13 +3,14 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 $(function() {
 'use strict';
 var context = WebTracker.context,
+destination = context.createDynamicsCompressor(),
 changed = false,
 song,
 initialized = false,
 filename = "untitled.mod",
-samplePlayers = {importSamplesList: new WebTracker.SamplePlayer([], context.destination, "importSamplesList"),
-importSongSamples: new WebTracker.SamplePlayer([], context.destination, "importSongSamples"),
-samplesSampleChooser: new WebTracker.SamplePlayer([], context.destination, "samplesSampleChooser")
+samplePlayers = {importSamplesList: new WebTracker.SamplePlayer([], destination, "importSamplesList"),
+importSongSamples: new WebTracker.SamplePlayer([], destination, "importSongSamples"),
+samplesSampleChooser: new WebTracker.SamplePlayer([], destination, "samplesSampleChooser")
 },
 importSelected = false,
 importSamples = [],
@@ -182,7 +183,7 @@ refreshObjects();
 
 refreshObjects = function() {
 fillSamplePlayers();
-modPlayer = new WebTracker.ModPlayer(song, context.destination);
+modPlayer = new WebTracker.ModPlayer(song, destination);
 modPlayer.stopCallback = function() {
 $("#patternTempo").val(modPlayer.bpm);
 }; //stopCallback
@@ -190,7 +191,7 @@ update();
 }, //refresh players, andother objects.
 
 init = function() {
-WebTracker.context = context; //globalize the audio context.
+destination.connect(context.destination);
 newSong();
 $(".first").click();
 }; //initialize the program

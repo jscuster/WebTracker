@@ -1,7 +1,6 @@
 var WebTracker = WebTracker || {};
 
 WebTracker.readString = function (buffer, offset, length) {
-//alert("reading string at offset " + offset + ", with length " + length + ", from object type: " + typeof buffer);
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 res = [],
 end = offset + length,
