@@ -352,13 +352,21 @@ return false;
 
 WebTracker.AmigaMod.prototype.removePattern = function(x) {
 if (x < this.patternCount) {
-song.patterns.splice(x, 1);
+this.patterns.splice(x, 1);
 var o = this.patternOrder;
 for (var i = 0; i < this.totalPatterns; i++) {
 if (o[i] > x) {
 o[i]--;
+} else if (o[i] === x) {
+o[i] = -1;
 } //if
 } //i
+var del;
+while ((del = o.indexOf(-1)) >= 0) {
+o.splice(del, 1);
+this.totalPatterns--;
+} //while
+this.patternCount--;
 } else { //doesn't exist
 throw {message: "Pattern doesn't exist, should be between 0 and " + this.patternCount + "."};
 } //else

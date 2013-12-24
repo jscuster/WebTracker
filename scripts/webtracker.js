@@ -104,17 +104,19 @@ modPlayer.playPattern(idx);
 }); //play click
 $(".patternRemove").click(function() {
 var idx = this.id.split(":")[1];
-alert("removing " + idx);
+changed = true;
+song.removePattern(idx);
+update();
 }); //remove click
 $(".patternUp").click(function() {
 var idx = this.id.split(":")[1];
 changed=true;
-alert("Moving up " + idx);
+song.movePatternUp(idx);
 }); //pattern up click
 $(".patternDown").click(function() {
 var idx = this.id.split(":")[1];
 changed=true;
-alert("moving down " + idx);
+song.movePatternDown(idx);
 }); //down click
 }, //buildPatternEditor
 
