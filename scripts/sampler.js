@@ -27,8 +27,8 @@ buffer = smp.data;
 				//loop
 				if (smp.loopLength > 2) {
 				node.loop = true;
-				node.loopStart = smp.loopTimeStart;
-				node.loopEnd = smp.loopTimeEnd;
+				node.loopStart = smp.startLoopTime;
+				node.loopEnd = smp.endLoopTime;
 			} //if
 			node.connect(destination);
 				node.playbackRate.value = note;
@@ -52,14 +52,13 @@ this.setPan = function (x, y, z) {
 }; //setPan
 
 this.setVolume = function (volume, when) {
-volume = volume <= 0 ? 0 : (volume / 64);
 	gain.gain.setValueAtTime(volume, when);
 }; //setVolume
 
 this.slideVolume = function(delta, endTime) {
-var tmp = (gain.gain.value * 64) + delta;
-if (tmp > 64) tmp = 64;
+var tmp = gain.gain.value + delta;
+if (tmp > 1) tmp = 1;
 if (tmp < 0) tmp = 0;
-gain.gain.linearRampToValueAtTime(tmp/64, endTime);
+gain.gain.linearRampToValueAtTime(tmp, endTime);
 }; //slideVolume
 }; //SamplePlayer

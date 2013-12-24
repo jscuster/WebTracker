@@ -2,10 +2,8 @@ var WebTracker = WebTracker || {};
 if (window.File && window.FileReader && window.FileList && window.Blob && (window.AudioContext || window.webkitAudioContext)) {
 $(function() {
 'use strict';
-		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		var context = new window.AudioContext();
-WebTracker.context = context;
-var changed = false,
+var context = WebTracker.context,
+changed = false,
 song,
 initialized = false,
 filename = "untitled.mod",
@@ -296,7 +294,7 @@ update();
 context.decodeAudioData(data, //the loaded file
 function(audio) { //callback for successful decode
 s = new WebTracker.AmigaSample();
-s.loadFromAudioBuffer(audio);
+s.data = audio;
 importSamples[importSamples.length] = s;
 fillSamplePlayers();
 update();

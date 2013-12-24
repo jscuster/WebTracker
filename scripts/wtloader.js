@@ -26,6 +26,7 @@ load(); //start it off.
 'jquery-2.0.3', 
 'log',
 'utils',
+'sample',
 'modHandler',
 'sampler',
 'modplayer',

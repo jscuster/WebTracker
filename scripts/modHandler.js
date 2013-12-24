@@ -1,122 +1,73 @@
 var WebTracker = WebTracker || {};
-WebTracker.AmigaSample = function() {
-this.title = "untitled";
-this.length = 0;
-this.volume = 64;
-this.finetune = 0;
-this.loopStart = 0;
-this.loopLength = 0;
-this.data = WebTracker.context.createBuffer(1, 1, 44100);
-this.data.getChannelData(0)[0] = 0;
-}; //AmigaSample
 
-WebTracker.AmigaMod = function() {
+WebTracker.amigaSample = function() {
 'use strict';
-this.title = "Untitled";
-this.samples = [];
-this.patterns = [];
-this.patternOrder = [];
-this.channels = 0;
-this.totalPatterns = 0;
-for (var i = 0; i < 31; i++) {
-this.samples[i] = new WebTracker.AmigaSample();
-}; //i
-this.restartPosition = 127; //rarely used
-this.patternCount = 0;
-}; //AmigaMod
-
-WebTracker.AmigaSample.prototype.readSample = function(buffer, ptrs) {
-'use strict';
-var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer;
-var newSamplePointers = {
+var p = new WebTracker.Sample({monoOnly: true, maxTitleLength: 22, maxSampleLength: 65535}); //limits for amiga samples.
+p.readSample = function(buffer, ptrs) {
+var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
+newSamplePointers = {
 headerOffset: 0,
 dataOffset: 0
-};
+},
 
 //read header
-var hoff = ptrs.headerOffset;
+hoff = ptrs.headerOffset,
+len;
 this.title = WebTracker.readString(dataView, hoff, 22);
 hoff += 22;
-this.length = 2 * dataView.getUint16(hoff, false);
+len = 2 * dataView.getUint16(hoff, false);
 hoff += 2;
-this.finetune = dataView.getInt8(hoff);
-if (this.finetune > 7) {
-this.finetune = 15-this.finetune;
+var tune = dataView.getInt8(hoff);
+if (tune > 7) {
+tune = 15-tune;
 }
+this.tune = tune;
 hoff++;
-this.volume = dataView.getUint8(hoff);
+this.volume = dataView.getUint8(hoff)/64;
 hoff++;
-this.loopStart = dataView.getUint16(hoff) * 2;
-hoff += 2;
-this.loopLength = dataView.getUint16(hoff) * 2;
-hoff += 2;
-var loopEnd = this.loopStart + this.loopLength;
-loopEnd = loopEnd < this.length ? loopEnd : this.length-1;
-this.loopTimeStart = this.loopStart / 44100;
-this.loopTimeEnd = loopEnd / 44100;
-this.factor = (16574 * Math.pow(1.007247, this.finetune)) / 44100;
-newSamplePointers.headerOffset = hoff;
 
 //read sample data
-var doff = ptrs.dataOffset,
-l = this.length;
-if (l < 2) {
-this.data = WebTracker.context.createBuffer(1, 1, 44100);
-this.data.getChannelData(0)[0] = 0;
-doff += l;
-} else {
-var d = WebTracker.context.createBuffer(1, l, 44100);
+var doff = ptrs.dataOffset;
+
+if (len > 2) {
+var d = WebTracker.context.createBuffer(1, len, WebTracker.context.sampleRate);
 this.data = d;
 d = d.getChannelData(0);
-for (var i = 0; i < l; i++) {
+for (var i = 0; i < len; i++) {
 d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
+} else {
+doff += len;
 } //if
 newSamplePointers.dataOffset = doff; //should be original doff + this.length.
+//read data-dependant info
+this.loopStart = dataView.getUint16(hoff) * 2;
+hoff += 2;
+var loopLength = dataView.getUint16(hoff) * 2;
+hoff += 2;
+this.loopEnd = this.loopStart + loopLength;
+this.sampleRate = 16574;
+newSamplePointers.headerOffset = hoff;
+
 //return new offsets
 return newSamplePointers;
 }; //readSample
 
-WebTracker.AmigaSample.prototype.loadFromAudioBuffer = function(buffer) {
-var l = buffer.length,
-c=buffer.numberOfChannels,
-data = [];
-if (c === 1) {
-this.data = buffer;
-} else {
-for (var i = 0; i < c; i++) {
-data[i] = buffer.getChannelData(i);
-} //get each channel
-mono = WebTracker.context.createBuffer(1, l, buffer.sampleRate),
-chan = mono.getChannelData(0);
-for (var i = 0; i < l; i++) {
-var avg = 0;
-for (var j = 0; j < c; j++) {
-avg += data[j][i]; //add the channels together
-} //j
-chan[i] = avg / c;
-} //i
-this.data = mono;
-this.length = l;
-} //if
-this.factor = buffer.sampleRate / WebTracker.context.sampleRate;
-}; //loadFromAudioBuffer
-
-WebTracker.AmigaSample.prototype.writeSample = function(dv, ptrs) {
+p.writeSample = function(dv, ptrs) {
 var hoff = ptrs.headerOffset, doff = ptrs.dataOffset;
 WebTracker.writeString(dv, this.title, hoff, 22);
 hoff+=22;
 var tmp = (this.length / 2) + (this.length % 2);
 dv.setUint16(hoff, tmp, false);
 hoff += 2;
-dv.setUint8(hoff++, this.finetune < 0 ? this.finetune + 15 : this.finetune); //two's complament lower nibble
-dv.setUint8(hoff++, this.volume);
+dv.setUint8(hoff++, this.tune < 0 ? this.tune + 15 : this.tune); //two's complament lower nibble
+dv.setUint8(hoff++, this.volume*64);
 dv.setUint16(hoff, this.loopStart/2, false);
 hoff+=2;
-dv.setUint16(hoff, this.loopLength/2, false);
+dv.setUint16(hoff, (this.loopEnd - this.loopStart)/2, false);
 hoff+=2;
 if (this.length <= 2) {
-doff += this.length/2;
+doff += this.length;
 } else {
 var d = this.data.getChannelData(0),
 l = this.length;
@@ -131,6 +82,23 @@ headerOffset: hoff,
 dataOffset: doff
 }; //pointers to the next data
 }; //writeSample
+return p;
+}; //function to create AmigaSample prototype
+
+WebTracker.AmigaMod = function() {
+'use strict';
+this.title = "Untitled";
+this.samples = [];
+this.patterns = [];
+this.patternOrder = [];
+this.channels = 0;
+this.totalPatterns = 0;
+for (var i = 0; i < 31; i++) {
+this.samples[i] = WebTracker.amigaSample();
+}; //i
+this.restartPosition = 127; //rarely used
+this.patternCount = 0;
+}; //AmigaMod
 
 WebTracker.AmigaMod.prototype.readChannels = function (buffer) {
 var chanCount = {

@@ -80,3 +80,15 @@ WebTracker.base64ArrayBuffer = function(arrayBuffer) {
   return base64
 }; //base64ArrayBuffer
 
+WebTracker.restrictRange = function(x, min, max) {
+if (x < min) {
+x = min;
+} else if (x > max) {
+x = max;
+}
+return x;
+}; //restrictRange
+
+//initialize webaudio
+WebTracker.context = window.AudioContext || window.webkitAudioContext;
+WebTracker.context = new WebTracker.context();
