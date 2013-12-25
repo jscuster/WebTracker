@@ -10,7 +10,7 @@ rowCursor = 0,
 curPattern = 0, //not the current pattern but the current spot in the pattern order table.
 playPatternOnly = false,
 playInterval = 100,
-lookAhead = 1000,
+lookAhead = 1,
 tpr = 6, //frames per row
 bpm = 125,
 time = 0,
@@ -58,15 +58,6 @@ donePlaying = true;
 WebTracker.logger.log("preloaded mod player. time: " + time);
 }, //preload
 
-bumpRowCursor = function() {
-rowCursor += 1;
-if (rowCursor >= 64) {
-rowCursor = 0;
-bumpPatternCursor();
-WebTracker.logger.log("playing pattern " + patternCursor + " in a song with " + channelCount + " channels.");
-} //if
-}, //bumpRowCursor
-
 stopMusic = function() {
 if (playTimer) {
 clearInterval(playTimer);
@@ -81,33 +72,38 @@ donePlayingCallback();
 } //if
 }, //stop audio and end playback
 
+bumpRowCursor = function() {
+rowCursor += 1;
+if (rowCursor >= 64) {
+rowCursor = 0;
+bumpPatternCursor();
+} //if
+}, //bumpRowCursor
+
 bumpPatternCursor = function() {
 curPattern++;
 if (curPattern < song.totalPatterns && !playPatternOnly) {
 patternCursor = song.patternOrder[curPattern];
 } else {
 stopMusic();
-//prompt("log", WebTracker.logger.getLog());
+alert("done playing.");
 } //if
 }, //bumpPatternCursor
 
 playRow = function() {
 var p = song.patterns[patternCursor][rowCursor];
 for (var i = 0; i < channelCount; i++) {
-WebTracker.logger.log("channel " + i);
 playNote(p[i], i);
 } //i (channels)
 for (var k = 0; k < tpr; k++) {
-WebTracker.logger.log("frame " + k);
 tick();
 } //k (ticks)
 bumpRowCursor();
 }, //playRow
 
 play = function() { //internal function to play a pattern
-WebTracker.logger.log("playing mod");
-//when this function is called, cursors are set up.
-while (time < (context.currentTime + lookAhead) && !donePlaying) {
+var rtime = context.currentTime + lookAhead;
+while ((time < rtime) && !donePlaying) {
 playRow();
 } //while
 }, //play
@@ -139,7 +135,7 @@ break;
 default:
 WebTracker.logger.log("unlogged event: " + note.effect + "x: " + note.x + ", y: " + note.y + ", param: " + note.param);
 } //switch
-if (note.period != 0) {
+if (note.sample != 0) {
 s.play(note.sample-1, note.factor, time);
 } //if
 }; //playNote
@@ -172,7 +168,6 @@ throw {message: "Playing a pattern that does not exist."};
 }; //playPattern
 
 this.playFromSlot = function(s) {
-alert("playing slot " + s);
 if (s < song.totalPatterns) {
 stopMusic();
 curPattern = s;

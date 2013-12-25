@@ -38,7 +38,6 @@ d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } else {
 doff += len;
-alert("small sample found. data is " + this.data);
 } //if
 newSamplePointers.dataOffset = doff; //should be original doff + this.length.
 //read data-dependant info

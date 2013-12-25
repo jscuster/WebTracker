@@ -166,7 +166,6 @@ $("#patternOrderRemove").focus();
 $(".patternOrderPlay").click(function() {
 var v = $(this).html().split(":")[0];
 v = (+v) -1;
-alert("'" + v + "'");
 modPlayer.playFromSlot(v);
 }); //play from pattern
 }, //build pattern order html table

@@ -4,7 +4,8 @@ WebTracker.Sample = function (params) {
 	params.monoOnly = params.monoOnly || false;
 	params.maxSampleLength = params.maxSampleLength || -1;
 	params.maxTitleLength = params.maxTitleLength || -1;
-	var _title = "Untitled",
+	var context = WebTracker.context,
+_title = "Untitled",
 		_channels = 0,
 		_length = 0,
 		_volume = 1,
@@ -16,7 +17,7 @@ WebTracker.Sample = function (params) {
 		_data,
 
 		setFactor = function () {
-			_factor = (_sampRate * Math.pow(1.007247, _tune)) / WebTracker.context.sampleRate;
+			_factor = (_sampRate * Math.pow(1.007247, _tune)) / context.sampleRate;
 		}; //setFactor
 
 	Object.defineProperty(this, "monoOnly", {
@@ -93,19 +94,19 @@ WebTracker.Sample = function (params) {
 
 	Object.defineProperty(this, "factor", {
 		get: function () {
-			return factor;
+			return _factor;
 		}
 	}); //factor property
 
 	Object.defineProperty(this, "endLoopTime", {
 		get: function () {
-			return _loopEnd / _sampRate;
+			return _loopEnd / context.sampleRate;
 		}
 	}); //endLoopTime property
 
 	Object.defineProperty(this, "startLoopTime", {
 		get: function () {
-			return _loopStart / _sampRate;
+			return _loopStart / context.sampleRate;
 		}
 	}); //loopStartTime property
 
@@ -118,7 +119,7 @@ WebTracker.Sample = function (params) {
 			for (var i = 0; i < c; i++) {
 				data[i] = buffer.getChannelData(i);
 			} //get each channel
-			mono = WebTracker.context.createBuffer(1, l, buffer.sampleRate),
+			mono = context.createBuffer(1, l, buffer.sampleRate),
 			chan = mono.getChannelData(0);
 			for (var i = 0; i < l; i++) {
 				var avg = 0;
@@ -170,7 +171,7 @@ return _loopEnd-_loopStart;
 		}
 	}); //channels property
 
-	this.data = WebTracker.context.createBuffer(1, 1, WebTracker.context.sampleRate);
+	this.data = context.createBuffer(1, 1, WebTracker.context.sampleRate);
 this.data.getChannelData(0)[0] = 0;
 
 }; //Sample
