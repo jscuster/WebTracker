@@ -30,7 +30,7 @@ load(); //start it off.
 'song',
 'modHandler',
 'sampler',
-'modplayer',
+'songplayer',
 'sampleManager',
 'jszip',
 'jszip-deflate',
