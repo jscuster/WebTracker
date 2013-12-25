@@ -173,7 +173,7 @@ modPlayer.playFromSlot(v);
 
 newSong = function() {
 changed = false;
-song = new WebTracker.AmigaMod();
+song = WebTracker.amigaMod();
 song.createPattern();
 song.patternOrder = [0];
 song.totalPatterns = song.patternCount = 1;
@@ -212,9 +212,10 @@ $("#fileOpen").change(function(e) {
 var f = e.target.files[0]; //only open the first selected file
 					var reader = new FileReader();
 					reader.onload = function (e) {
-						var dv = new DataView(e.target.result);
-if (WebTracker.AmigaMod.isValid(dv)) {
-						song = new WebTracker.AmigaMod();
+						var dv = new DataView(e.target.result),
+sng = WebTracker.amigaMod();
+if (sng.isValid(dv)) {
+						song = sng;
 song.loadMod(dv);
 filename = f.name;
 refreshObjects();
@@ -282,8 +283,8 @@ reader.onload = function (e) {
 var data = e.target.result,
 dv = new DataView(data),
 s; //song or sample temp var
-if (WebTracker.AmigaMod.isValid(dv)) {
-s = new WebTracker.AmigaMod();
+s = WebTracker.amigaMod();
+if (s.isValid(dv)) {
 s.loadMod(dv);
 for (var i = 0; i < s.samples.length; i++) {
 importSamples[importSamples.length] = s.samples[i];

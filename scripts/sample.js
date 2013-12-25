@@ -37,6 +37,18 @@ WebTracker.Sample = function (params) {
 		}
 	}); //maxTitleLength property
 
+	Object.defineProperty(this, "title", {
+		get: function() {
+			return _title;
+		},
+		set: function(v) {
+			if (params.maxTitleLength > 0) {
+				v = v.slice(0, params.maxTitleLength);
+			} //if
+			_title = v;
+		}
+	}); //title property
+
 	Object.defineProperty(this, "volume", {
 		get: function () {
 			return _volume;
@@ -135,7 +147,7 @@ return _loopEnd-_loopStart;
 			_length = value.length;
 			_channels = value.numberOfChannels;
 			_sampRate = value.sampleRate;
-			if (params.monoOnly) {
+			if (params.monoOnly && value.numberOfChannels > 1) {
 				this.toMono();
 			}
 			setFactor();
@@ -159,6 +171,6 @@ return _loopEnd-_loopStart;
 	}); //channels property
 
 	this.data = WebTracker.context.createBuffer(1, 1, WebTracker.context.sampleRate);
-
+this.data.getChannelData(0)[0] = 0;
 
 }; //Sample

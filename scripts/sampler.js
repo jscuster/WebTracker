@@ -14,8 +14,9 @@ gain = context.createGain(),
 		if (note >= 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
-				var smp = samples[s],
-buffer = smp.data;
+
+				var smp = samples[s];
+var buffer = smp.data;
 			if (buffer) {
 				node = context.createBufferSource();
 				node.buffer = buffer;

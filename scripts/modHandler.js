@@ -38,6 +38,7 @@ d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } else {
 doff += len;
+alert("small sample found. data is " + this.data);
 } //if
 newSamplePointers.dataOffset = doff; //should be original doff + this.length.
 //read data-dependant info
@@ -85,22 +86,10 @@ dataOffset: doff
 return p;
 }; //function to create AmigaSample prototype
 
-WebTracker.AmigaMod = function() {
+WebTracker.amigaMod = function() {
 'use strict';
-this.title = "Untitled";
-this.samples = [];
-this.patterns = [];
-this.patternOrder = [];
-this.channels = 0;
-this.totalPatterns = 0;
-for (var i = 0; i < 31; i++) {
-this.samples[i] = WebTracker.amigaSample();
-}; //i
-this.restartPosition = 127; //rarely used
-this.patternCount = 0;
-}; //AmigaMod
 
-WebTracker.AmigaMod.prototype.readChannels = function (buffer) {
+var readChannels = function (buffer) {
 var chanCount = {
 'TDZ1': 1, '1CHN': 1, 'TDZ2': 2, '2CHN': 2,
 'TDZ3': 3, '3CHN': 3, 'M.K.': 4, 'FLT4': 4, 'M!K!': 4,
@@ -122,14 +111,27 @@ return -1;
 } //else
 }; //readChannels
 
-WebTracker.AmigaMod.isValid = function (buffer) {
-return new WebTracker.AmigaMod().readChannels(buffer) >= 0;
+var mod = new WebTracker.Song({
+maxTitleLength: 20,
+maxSamples: 31,
+minSamples: 31,
+maxPatterns: 127,
+maxSlots: 127,
+maxChannels: 32,
+sampleGenerator: WebTracker.amigaSample
+}); //new Song with Amiga Mod based parameters.
+
+mod.isValid = function (buffer) {
+return readChannels(buffer) >= 0;
 }; //if the channel > 0, the cookie is there and it's good.
 
-WebTracker.AmigaMod.prototype.loadMod = function (buffer) { //pass in a DataView.
-this.channels = this.readChannels(buffer);
+mod.loadMod = function (buffer) { //pass in a DataView.
+this.channels = readChannels(buffer);
 if (this.channels >= 0) {
+mod.restartPosition = 127; //rarely used
+
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
+offset = 0, //jumps around, depending on what we're doing.
 
 getString = (function() { //store the readString function for faster access.
 var readString = WebTracker.readString;
@@ -137,7 +139,7 @@ return function(offset, length) {
 return readString(dataView, offset, length);
 }; //inner func
 })(), //getString closure
-offset = 0, //jumps around, depending on what we're doing.
+
 readNote = function (offset) {
 var a = [];
 for (var i = 0; i < 4; i++) {
@@ -173,7 +175,7 @@ max = max < order[i] ? order[i] : max;
 this.patternCount = max + 1;
 
 //get channels
-this.channels = this.readChannels(buffer);
+this.channels = readChannels(buffer);
 
 //read patterns
 offset = 1084; //after headers is pattern data.
@@ -194,9 +196,13 @@ var samplePointers = {
 headerOffset: 20,
 dataOffset: 1084 + (this.patternCount * 64 * this.channels * 4)
 }; //pointers to offsets where sample headers and data are stored.
-this.samples.forEach(function(s) {
-samplePointers = s.readSample(dataView, samplePointers);
-}); //read each sample.
+var s = [];
+for (var i = 0; i < 31; i++) {
+var smp = WebTracker.amigaSample();
+samplePointers = smp.readSample(dataView, samplePointers);
+s[i] = smp;
+} //for: read each sample.
+this.samples = s;
 
 //done reading.
 } else {
@@ -204,7 +210,7 @@ throw {message: "Bad Amiga Module Format."};
 } //else
 }; //loadMod
 
-WebTracker.AmigaMod.prototype.saveMod = function(returnArrayBuffer) {
+mod.saveMod = function(returnArrayBuffer) {
 'use strict';
 var samplePointers = {
 headerOffset: 20,
@@ -283,87 +289,8 @@ return buffer;
 } //if converting to base64
 }; //saveMod
 
-WebTracker.AmigaMod.prototype.findEmptyPatterns = function() {
-var p = this.patterns,
-res = [],
-ctr = 0,
-empty = true,
-c = this.channels;
-for (var i = 0; i < p.length; i++) {
-empty = true;
-for (var j = 0; empty && j < 64; j++) {
-for (var k=0; empty && k < c; k++) {
-var n = p[i][j][k];
-empty = (n.effect === 0 && n.sample === 0 && n.period === 0 && n.param === 0);
-} //k
-} //j
-if (empty) {
-res.push(i);
-} //if
-} //i
-return res;
-}; //findEmptyPatterns
+mod.channels = 4;
+mod.samples = [];
+return mod;
+}; //amigaMod
 
-WebTracker.AmigaMod.prototype.createPattern = function() {
-if (this.patternCount < 127) {
-var p = [];
-for (var i = 0; i < 64; i++) {
-p[i] = [];
-} //i
-this.patterns.push(p);
-this.patternCount += 1;
-return true;
-} else { //can't have more than 127 patterns.
-return false;
-} //if
-}; //createPattern
-
-WebTracker.AmigaMod.prototype.removePattern = function(x) {
-if (x < this.patternCount) {
-this.patterns.splice(x, 1);
-var o = this.patternOrder;
-for (var i = 0; i < this.totalPatterns; i++) {
-if (o[i] > x) {
-o[i]--;
-} else if (o[i] === x) {
-o[i] = -1;
-} //if
-} //i
-var del;
-while ((del = o.indexOf(-1)) >= 0) {
-o.splice(del, 1);
-this.totalPatterns--;
-} //while
-this.patternCount--;
-} else { //doesn't exist
-throw {message: "Pattern doesn't exist, should be between 0 and " + this.patternCount + "."};
-} //else
-}; //removePattern
-
-WebTracker.AmigaMod.prototype.swapPatterns = function(x, y) {
-if (x < this.patternCount && y < this.patternCount) {
-var tmp, p = this.patterns, o = this.patternOrder;
-tmp = p[x];
-p[x] = p[y];
-p[y] = tmp;
-for (var i = 0; i < this.totalPatterns; i++) {
-if (o[i] === x) {
-o[i] = y;
-} else if (o[i] === y) {
-o[i] = x;
-} //if match, swap in pattern order.
-} //i
-} //if in bounds
-}; //swapPatterns
-
-WebTracker.AmigaMod.prototype.movePatternUp = function(x) {
-if (x > 0 && x < this.patternCount) {
-this.swapPatterns(x, x-1);
-} //if
-}; //movePatternUp
-
-WebTracker.AmigaMod.prototype.movePatternDown = function(x) {
-if (x > 0 && x < this.patternCount-1) {
-this.swapPatterns(x, x+1);
-} //if
-}; //movePatternDown
