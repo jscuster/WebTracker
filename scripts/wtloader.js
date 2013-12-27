@@ -27,6 +27,7 @@ load(); //start it off.
 'log',
 'utils',
 'sample',
+'note',
 'song',
 'modHandler',
 'sampler',

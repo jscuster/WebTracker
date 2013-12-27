@@ -293,3 +293,28 @@ mod.samples = [];
 return mod;
 }; //amigaMod
 
+WebTracker.amigaEffect = function(e, p) {
+var x = ((p & 0xf0) >> 4),
+ = p & 0x0f;
+//set efects
+if (e === 15) {
+e += 15;
+} else if (e === 14) {
+e=x+14;
+return WebTracker.effect(e, y);
+}
+if WebTracker.effectParams[e].length >= 2) {
+return WebTracker.effect(e, x, y);
+} else {
+if (WebTracker.sinedEffects.indexOf(e) >= 0) {
+if (x) {
+p = x;
+} else {
+p = -y;
+} //+x or -y
+return WebTracker.Effect(e, p);
+} //1 or 2 params
+}; //amigaEffect
+
+WebTracker.fromAmigaEffect = function(e) {
+if (e.effect >= 14 && e.effect < 30)

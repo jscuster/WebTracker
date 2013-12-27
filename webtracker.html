@@ -89,6 +89,7 @@ Edit info for current sample
 </table>
 </div>
 <div id="patterns" class = "mainPanel">
+<center><h1>Patterns</H1></center>
 <div>
  <button class="submenu" id="patternsFirst">Editor</button>
 <button class="submenu">Order</button>
@@ -108,8 +109,24 @@ Editor table goes here.
 Pattern table goes here.
 </div>
 </div>
+</div>
 <div id="tracker" class = "mainPanel">
-<H1>Note Editor</H1>
+<center><H1>Tracker</H1></center>
+<div id="trackerToolbar">
+<table>
+<tr>
+<td><button id="trackerPlay">Play</button></td>
+<td>Pattern: <input type="number" value="1"min="1" max="127"></td>
+<td><button id="trackerPrevChan"><<-</button></td>
+<td><button id="trackerChannelRange">channels 1..4</button></td>
+<td><button id="patternNextChannel">->></button></td>
+<td>Adding: <input type="number" value="4" min="1" max="16"> rows/note</td>
+</tr>
+</table>
+</div>
+<div id="trackerTable">
+Tracker table goes here.
+</div>
 </div>
 <div id="footer" class = "footer">
 Copyright 2013, Jason Custer
