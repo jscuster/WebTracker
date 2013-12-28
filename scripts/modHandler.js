@@ -321,3 +321,61 @@ return WebTracker.Effect(e, p);
 } //1 or 2 params
 }; //amigaEffect
 
+WebTracker.toAmigaEffect = function(effect) {
+var e = effect.effect,
+x, y, p,
+
+encode = function() {
+p = ((x << 4) | y);
+return [e, p];
+}; //encode
+
+//set efects
+if (e === 30) {
+e = 15;
+return [e, effect.p1];
+} else if (e >= 14) {
+x=e-14;
+e=14;
+y=effect.p1;
+return encode();
+} else { //e < 14
+if (WebTracker.effectParams[e].length >= 2) {
+x=effect.p1;
+y=effect.p2;
+return encode();
+} else { //return 1 param;
+if (WebTracker.sinedEffects.indexOf(e) >= 0) {
+if (effect.p1 > 0) {
+x = p1
+y = 0;
+} else {
+x=0;
+y = -effect.p1; //negative to posative without abs.
+} //+x or -y
+return encode();
+} else { //1 unsigned param
+return [e, effect.p1];
+} //what to return
+} //1 or 2 params
+} //< 14
+}; //toAmigaEffect
+
+WebTracker.amigaNote = (function() {
+var log = Math.log,
+d = log(Math.pow(2, 1/12)); //devide log(period/428)/d = note.
+return function(s, p, e) {
+var n = log(p/428)/d;
+return WebTracker.note(s, n, e);
+}; //amigaNote
+})(); //closure for amigaNote
+
+WebTracker.toAmigaNote = (function() {
+var pow = Math.pow,
+f = pow(2, 1/12); //12; //th root of 2
+return function(n) {
+var p = period: 428 * pow(f, n.note),
+e=WebTracker.toAmigaEffect(n.effect);
+qq
+}; //toAmigaNote
+})(); //closure toAmigaNote

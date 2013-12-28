@@ -114,22 +114,18 @@ WebTracker.logger.log("time: " + time);
 }, //frame
 
 playNote = function(note, chan) {
-WebTracker.logger.log("playing note\n" + JSON.stringify(note) + "\n on channel " + chan);
 var s = channels[chan];
 switch (note.effect) {
 case 10: //slide volume
 var delta = note.x ? note.x : 0 - note.y;
 delta = delta / 64;
 delta *= (tpr-1);
-WebTracker.logger.log("Sliding by volume " + delta);
 s.slideVolume(delta, time + (tpr*timePerTick));
 break;
 case 12: //set volume
-WebTracker.logger.log("Found set volume effect.");
 s.setVolume(note.param/64);
 break;
 case 15: //set speed
-WebTracker.logger.log("found set speed effect.");
 setTimePerTick(note.param);
 break;
 default:
