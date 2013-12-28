@@ -65,7 +65,7 @@ true];
 
 (function() { //anonymous func to fill vars without creating global vars.
 'use struct';
-var e = WebTracker.Effects,
+var e = WebTracker.effects,
 l = e.length,
 n = [];
 for (var i = 0; i < l; i++) {

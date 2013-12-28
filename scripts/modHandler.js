@@ -4,6 +4,7 @@ WebTracker.amigaSample = function() {
 'use strict';
 var p = new WebTracker.Sample({monoOnly: true, maxTitleLength: 22, maxSampleLength: 65535}); //limits for amiga samples.
 p.readSample = function(buffer, ptrs) {
+try {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 newSamplePointers = {
 headerOffset: 0,
@@ -51,6 +52,9 @@ newSamplePointers.headerOffset = hoff;
 
 //return new offsets
 return newSamplePointers;
+} catch (e) {
+alert("Error reading the file.\n" + JSON.stringify(e));
+} //try catch
 }; //readSample
 
 p.writeSample = function(dv, ptrs) {
@@ -295,7 +299,7 @@ return mod;
 
 WebTracker.amigaEffect = function(e, p) {
 var x = ((p & 0xf0) >> 4),
- = p & 0x0f;
+y = p & 0x0f;
 //set efects
 if (e === 15) {
 e += 15;
@@ -303,7 +307,7 @@ e += 15;
 e=x+14;
 return WebTracker.effect(e, y);
 }
-if WebTracker.effectParams[e].length >= 2) {
+if (WebTracker.effectParams[e].length >= 2) {
 return WebTracker.effect(e, x, y);
 } else {
 if (WebTracker.sinedEffects.indexOf(e) >= 0) {
@@ -312,9 +316,8 @@ p = x;
 } else {
 p = -y;
 } //+x or -y
+} //if signed
 return WebTracker.Effect(e, p);
 } //1 or 2 params
 }; //amigaEffect
 
-WebTracker.fromAmigaEffect = function(e) {
-if (e.effect >= 14 && e.effect < 30)
