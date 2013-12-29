@@ -1,127 +1,14 @@
-
 var WebTracker = WebTracker || {};
 
-WebTracker.Song = function (params) {
-	params.maxTitleLength = params.maxTitleLength || -1;
-	params.maxSamples = params.maxSamples || -1;
-	params.minSamples = params.minSamples || -1;
-	params.maxPatterns = params.maxPatterns || -1;
-	params.maxSlots = params.maxPlayOrder || -1;
-	params.maxChannels = params.maxChannels || -1;
-	var _title = "Untitled",
-		_samples = [],
-		_patterns = [],
-		_channels = 1,
-		_patternOrder = [],
-		_patternCount = 0,
-		_slots = 0; //size of patternOrder
-
-	Object.defineProperty(this, "title", {
-		get: function () {
-			return _title;
-		},
-		set: function (v) {
-			if (params.maxTitleLength > 0) {
-				v = v.slice(0, params.maxTitleLength);
-			}
-			_title = v;
-		}
-	}); //title property
-
-	Object.defineProperty(this, "channels", {
-		get: function () {
-			return _channels;
-		},
-		set: function (v) {
-			_channels = WebTracker.restrictRange(v, 0, params.maxChannels);
-		}
-	}); //channels property
-
-	Object.defineProperty(this, "patterns", {
-		get: function () {
-			return _patterns;
-		},
-		set: function (v) {
-			_patterns = v;
-		}
-	}); //patterns property
-
-	Object.defineProperty(this, "slots", {
-		get: function () {
-			return _slots;
-		},
-		set: function (v) {
-			_slots = WebTracker.restrictRange(v, 0, params.maxSlots);
-		}
-	}); //slots property
-
-	Object.defineProperty(this, "patternOrder", {
-		get: function () {
-			return _patternOrder;
-		},
-		set: function (v) {
-			_patternOrder = v;
-		}
-	}); //patternOrder property
-
-	Object.defineProperty(this, "samples", {
-		get: function () {
-			return _samples;
-		},
-		set: function (v) {
-			_samples = v;
-			if (v.length < params.minSamples) {
-				this.fillSamples();
-			} //if
-		}
-	}); //samples property
-
-	Object.defineProperty(this, "maxTitleLength", {
-		get: function () {
-			return params.maxTitleLength;
-		}
-	}); //maxTitleLength property
-
-	Object.defineProperty(this, "maxSamples", {
-		get: function () {
-			return params.maxSamples;
-		}
-	}); //maxSamples property
-
-	Object.defineProperty(this, "maxChannels", {
-		get: function () {
-			return params.maxChannels;
-		}
-	}); //maxChannels property
-
-	Object.defineProperty(this, "rowsPerPattern", {
-		get: function () {
-			return params.rowsPerPattern;
-		}
-	}); //rowsPerPattern property
-
-	Object.defineProperty(this, "maxSlots", {
-		get: function () {
-			return params.maxSlots;
-		}
-	}); //maxSlots property
-
-	Object.defineProperty(this, "maxPatterns", {
-		get: function () {
-			return params.maxPatterns;
-		}
-	}); // property
-
-	Object.defineProperty(this, "minSamples", {
-		get: function () {
-			return params.minSamples;
-		}
-	}); //minSamples property
+WebTracker.Song = function () {
+'use strict';
+this.maxInstruments = this.maxTitleLength = this.maxChannels = this.maxPatterns = -1;
+this.minInstruments = this.maxSlots = -1;
 
 	this.fillSamples = function () {
-		if (_samples.length < params.minSamples) {
-			for (var i = _samples.length; i < params.minSamples; i++) {
-				_samples[i] = params.sampleGenerator();
+		if (_samples.length < obj.minSamples) {
+			for (var i = _samples.length; i < obj.minSamples; i++) {
+				_samples[i] = obj.sampleGenerator();
 			} //i
 		} //if
 	}; //fillSamples
@@ -134,7 +21,7 @@ WebTracker.Song = function (params) {
 			c = _channels;
 		for (var i = 0; i < p.length; i++) {
 			empty = true;
-			for (var j = 0; empty && j < params.rowsPerPattern; j++) {
+			for (var j = 0; empty && j < obj.rowsPerPattern; j++) {
 				for (var k = 0; empty && k < c; k++) {
 					var n = p[i][j][k];
 					empty = (n.effect === 0 && n.sample === 0 && n.period === 0 && n.param === 0);
@@ -148,7 +35,7 @@ WebTracker.Song = function (params) {
 	}; //findEmptyPatterns
 
 	this.createPattern = function (rows) {
-		if (_patternCount < params.maxPatterns) {
+		if (_patternCount < obj.maxPatterns) {
 			rows = rows || 0;
 			var p = [];
 			for (var i = 0; i < rows; i++) {
@@ -216,3 +103,76 @@ WebTracker.Song = function (params) {
 	}; //movePatternDown
 
 }; //Song
+
+WebTracker.Song.init = function(obj) {
+'use strict';
+	var _title = "Untitled",
+		_samples = [],
+		_patterns = [],
+		_channels = 1,
+		_patternOrder = [],
+		_patternCount = 0,
+		_slots = 0; //size of patternOrder
+
+	Object.defineProperty(obj, "title", {
+		get: function () {
+			return _title;
+		},
+		set: function (v) {
+			if (obj.maxTitleLength > 0) {
+				v = v.slice(0, obj.maxTitleLength);
+			}
+			_title = v;
+		}
+	}); //title property
+
+	Object.defineProperty(obj, "channels", {
+		get: function () {
+			return _channels;
+		},
+		set: function (v) {
+			_channels = WebTracker.restrictRange(v, 0, obj.maxChannels);
+		}
+	}); //channels property
+
+	Object.defineProperty(obj, "patterns", {
+		get: function () {
+			return _patterns;
+		},
+		set: function (v) {
+			_patterns = v;
+		}
+	}); //patterns property
+
+	Object.defineProperty(obj, "slots", {
+		get: function () {
+			return _slots;
+		},
+		set: function (v) {
+			_slots = WebTracker.restrictRange(v, 0, obj.maxSlots);
+		}
+	}); //slots property
+
+	Object.defineProperty(obj, "patternOrder", {
+		get: function () {
+			return _patternOrder;
+		},
+		set: function (v) {
+			_patternOrder = v;
+		}
+	}); //patternOrder property
+
+	Object.defineProperty(obj, "samples", {
+		get: function () {
+			return _samples;
+		},
+		set: function (v) {
+			_samples = v;
+			if (v.length < obj.minSamples) {
+				this.fillSamples();
+			} //if
+		}
+	}); //samples property
+
+
+}; //Song.init
