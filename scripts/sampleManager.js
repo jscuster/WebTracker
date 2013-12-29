@@ -220,7 +220,7 @@ set: function(s) {
 samples = s;
 sptr=0;
 if (samples.length === 0) {
-samples = [WebTracker.amigaSample()];
+samples = [new WebTracker.AmigaSample()];
 }
 player = new WebTracker.Sampler(samples, destination);
 update();

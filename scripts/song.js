@@ -6,22 +6,25 @@ this.maxInstruments = this.maxTitleLength = this.maxChannels = this.maxPatterns 
 this.minInstruments = this.maxSlots = -1;
 
 	this.fillSamples = function () {
-		if (_samples.length < obj.minSamples) {
-			for (var i = _samples.length; i < obj.minSamples; i++) {
-				_samples[i] = obj.sampleGenerator();
+var samples = this.samples,
+l = samples.length;
+		if (l < this.minSamples) {
+			for (var i = l; i < this.minSamples; i++) {
+				samples[i] = new this.Sample();
 			} //i
+this.samples = samples;
 		} //if
 	}; //fillSamples
 
 	this.findEmptyPatterns = function () {
-		var p = _patterns,
+		var p = this.patterns,
 			res = [],
 			ctr = 0,
 			empty = true,
-			c = _channels;
+			c = this.channels;
 		for (var i = 0; i < p.length; i++) {
 			empty = true;
-			for (var j = 0; empty && j < obj.rowsPerPattern; j++) {
+			for (var j = 0; empty && j < p[i].length; j++) {
 				for (var k = 0; empty && k < c; k++) {
 					var n = p[i][j][k];
 					empty = (n.effect === 0 && n.sample === 0 && n.period === 0 && n.param === 0);
@@ -35,14 +38,13 @@ this.minInstruments = this.maxSlots = -1;
 	}; //findEmptyPatterns
 
 	this.createPattern = function (rows) {
-		if (_patternCount < obj.maxPatterns) {
+		if (this.patternCount < this.maxPatterns) {
 			rows = rows || 0;
 			var p = [];
 			for (var i = 0; i < rows; i++) {
 				p[i] = [];
 			} //i
-			_patterns.push(p);
-			_patternCount += 1;
+			this.patterns.push(p);
 			return true;
 		} else { //can't have more than 127 patterns.
 			return false;
@@ -50,10 +52,10 @@ this.minInstruments = this.maxSlots = -1;
 	}; //createPattern
 
 	this.removePattern = function (x) {
-		if (x < _patternCount) {
+		if (x < this.patternCount) {
 			this.patterns.splice(x, 1);
 			var o = _patternOrder;
-			for (var i = 0; i < _totalPatterns; i++) {
+			for (var i = 0; i < this.slots; i++) {
 				if (o[i] > x) {
 					o[i]--;
 				} else if (o[i] === x) {
@@ -63,9 +65,7 @@ this.minInstruments = this.maxSlots = -1;
 			var del;
 			while ((del = o.indexOf(-1)) >= 0) {
 				o.splice(del, 1);
-				_totalPatterns--;
 			} //while
-			_patternCount--;
 		} else { //doesn't exist
 			throw {
 				message: "Pattern doesn't exist, should be between 0 and " + _patternCount + "."
@@ -74,13 +74,13 @@ this.minInstruments = this.maxSlots = -1;
 	}; //removePattern
 
 	this.swapPatterns = function (x, y) {
-		if (x < _patternCount && y < _patternCount) {
-			var tmp, p = _patterns,
-				o = _patternOrder;
+		if (x < this.patternCount && y < this.patternCount) {
+			var tmp, p = this.patterns,
+				o = this.patternOrder;
 			tmp = p[x];
 			p[x] = p[y];
 			p[y] = tmp;
-			for (var i = 0; i < _totalPatterns; i++) {
+			for (var i = 0; i < o.length; i++) {
 				if (o[i] === x) {
 					o[i] = y;
 				} else if (o[i] === y) {
@@ -91,13 +91,13 @@ this.minInstruments = this.maxSlots = -1;
 	}; //swapPatterns
 
 	this.movePatternUp = function (x) {
-		if (x > 0 && x < _patternCount) {
+		if (x > 0 && x < this.patternCount) {
 			this.swapPatterns(x, x - 1);
 		} //if
 	}; //movePatternUp
 
 	this.movePatternDown = function (x) {
-		if (x > 0 && x < _patternCount - 1) {
+		if (x > 0 && x < this.patternCount - 1) {
 			this.swapPatterns(x, x + 1);
 		} //if
 	}; //movePatternDown
@@ -110,9 +110,7 @@ WebTracker.Song.init = function(obj) {
 		_samples = [],
 		_patterns = [],
 		_channels = 1,
-		_patternOrder = [],
-		_patternCount = 0,
-		_slots = 0; //size of patternOrder
+		_patternOrder = [];
 
 	Object.defineProperty(obj, "title", {
 		get: function () {
@@ -146,12 +144,15 @@ WebTracker.Song.init = function(obj) {
 
 	Object.defineProperty(obj, "slots", {
 		get: function () {
-			return _slots;
-		},
-		set: function (v) {
-			_slots = WebTracker.restrictRange(v, 0, obj.maxSlots);
+			return _patternOrder.length;
 		}
 	}); //slots property
+
+	Object.defineProperty(obj, "patternCount", {
+		get: function () {
+			return _patterns.length;
+		}
+	}); //patternCount property
 
 	Object.defineProperty(obj, "patternOrder", {
 		get: function () {
@@ -169,10 +170,9 @@ WebTracker.Song.init = function(obj) {
 		set: function (v) {
 			_samples = v;
 			if (v.length < obj.minSamples) {
-				this.fillSamples();
+				obj.fillSamples();
 			} //if
 		}
 	}); //samples property
-
 
 }; //Song.init

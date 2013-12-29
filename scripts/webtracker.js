@@ -172,10 +172,9 @@ modPlayer.playFromSlot(v);
 
 newSong = function() {
 changed = false;
-song = WebTracker.amigaMod();
+song = new WebTracker.AmigaSong();
 song.createPattern();
 song.patternOrder = [0];
-song.totalPatterns = song.patternCount = 1;
 filename = "untitled.mod";
 refreshObjects();
 }, //newSong
@@ -212,7 +211,7 @@ var f = e.target.files[0]; //only open the first selected file
 					var reader = new FileReader();
 					reader.onload = function (e) {
 						var dv = new DataView(e.target.result),
-sng = WebTracker.amigaMod();
+sng = new WebTracker.AmigaSong();
 if (sng.isValid(dv)) {
 						song = sng;
 song.loadMod(dv);
@@ -220,7 +219,7 @@ filename = f.name;
 refreshObjects();
 changed = false;
 } else {
-alert(f.name + " is an invalid amiga module. Please select only amiga modules (*.mod).");
+alert(f.name + " is an invalid Amiga module. Please select only amiga modules (*.mod).");
 } //else
 }; //onload
 reader.readAsArrayBuffer(f);
@@ -282,7 +281,7 @@ reader.onload = function (e) {
 var data = e.target.result,
 dv = new DataView(data),
 s; //song or sample temp var
-s = WebTracker.amigaMod();
+s = new WebTracker.AmigaSong();
 if (s.isValid(dv)) {
 s.loadMod(dv);
 for (var i = 0; i < s.samples.length; i++) {

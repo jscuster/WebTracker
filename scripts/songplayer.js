@@ -82,11 +82,10 @@ bumpPatternCursor();
 
 bumpPatternCursor = function() {
 curPattern++;
-if (curPattern < song.totalPatterns && !playPatternOnly) {
+if (curPattern < song.slots && !playPatternOnly) {
 patternCursor = song.patternOrder[curPattern];
 } else {
 stopMusic();
-alert("done playing.");
 } //if
 }, //bumpPatternCursor
 
@@ -164,7 +163,7 @@ throw {message: "Playing a pattern that does not exist."};
 }; //playPattern
 
 this.playFromSlot = function(s) {
-if (s < song.totalPatterns) {
+if (s < song.slots) {
 stopMusic();
 curPattern = s;
 patternCursor = song.patternOrder[curPattern];

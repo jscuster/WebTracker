@@ -5,6 +5,7 @@ WebTracker.Sample = function () {
 this.maxSampleLength = -1;
 
 	this.toMono = function () {
+if (this.channels > 1) {
 		var buffer = this.data,
 			l = buffer.length,
 			c = buffer.numberOfChannels,
@@ -24,6 +25,7 @@ this.maxSampleLength = -1;
 			} //i
 			this.data = mono;
 		} //if
+} //if not mono already
 	}; //toMono
 
 }; //Sample
@@ -55,6 +57,7 @@ set: function(v) {
 _monoOnly = v;
 if (v) {
 obj.toMono();
+} //if
 } //set
 	}); //monoOnly property
 
@@ -63,8 +66,8 @@ obj.toMono();
 			return _title;
 		},
 		set: function(v) {
-			if _maxTitleLength > 0) {
-				v = v.slice(0, _maxTitleLength);
+			if (obj.maxTitleLength > 0) {
+				v = v.slice(0, obj.maxTitleLength);
 			} //if
 			_title = v;
 		}
@@ -120,13 +123,21 @@ obj.toMono();
 
 	Object.defineProperty(obj, "endLoopTime", {
 		get: function () {
-			return _loopEnd / context.sampleRate;
+			if (_loopEnd < 2) {
+				return 0;
+			} else {
+				return _loopEnd / context.sampleRate;
+			}
 		}
 	}); //endLoopTime property
 
 	Object.defineProperty(obj, "startLoopTime", {
 		get: function () {
-			return _loopStart / context.sampleRate;
+			if (_loopStart < 2) {
+				return 0;
+			} else {
+				return _loopStart / context.sampleRate;
+			}
 		}
 	}); //loopStartTime property
 
@@ -145,7 +156,7 @@ return _loopEnd-_loopStart;
 			_length = value.length;
 			_channels = value.numberOfChannels;
 			_sampRate = value.sampleRate;
-			if (params.monoOnly && value.numberOfChannels > 1) {
+			if (this.monoOnly && value.numberOfChannels > 1) {
 				obj.toMono();
 			}
 			setFactor();
