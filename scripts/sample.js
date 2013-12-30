@@ -112,6 +112,7 @@ obj.toMono();
 		},
 		set: function (value) {
 			_tune = WebTracker.restrictRange(value, -8, 7);
+setFactor();
 		}
 	}); //tune property
 

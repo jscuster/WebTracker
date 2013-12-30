@@ -59,8 +59,8 @@ break;
 default:
 var  i = keyToNote(String.fromCharCode(e.which));
 if (i >= 0) {
-var rate = samples[sptr].factor * Math.pow(1.0595, i-60);
-player.play(sptr, rate);
+
+player.play(sptr, i);
 } //note finding
 } //switch
 downKey = e.which;

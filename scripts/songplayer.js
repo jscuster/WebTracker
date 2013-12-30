@@ -114,24 +114,24 @@ WebTracker.logger.log("time: " + time);
 
 playNote = function(note, chan) {
 var s = channels[chan];
-switch (note.effect) {
+switch (note.effect.effect) {
 case 10: //slide volume
-var delta = note.x ? note.x : 0 - note.y;
+var delta = note.effect.p1;
 delta = delta / 64;
 delta *= (tpr-1);
 s.slideVolume(delta, time + (tpr*timePerTick));
 break;
 case 12: //set volume
-s.setVolume(note.param/64);
+s.setVolume(note.effect.p1/64);
 break;
-case 15: //set speed
-setTimePerTick(note.param);
+case 29: //set speed
+setTimePerTick(note.effect.p1);
 break;
 default:
-WebTracker.logger.log("unlogged event: " + note.effect + "x: " + note.x + ", y: " + note.y + ", param: " + note.param);
+WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
 } //switch
 if (note.sample != 0) {
-s.play(note.sample-1, note.factor, time);
+s.play(note.sample-1, note.note, time);
 } //if
 }; //playNote
 

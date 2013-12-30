@@ -11,12 +11,13 @@ gain = context.createGain(),
 	destination = panner;
 
 	this.play = function (s, note, when) {
-		if (note >= 0) {
+		if (note != 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
 
-				var smp = samples[s];
-var buffer = smp.data;
+			var smp = samples[s],
+			rate = smp.factor * Math.pow(1.0595, note-60),
+			buffer = smp.data;
 			if (buffer) {
 				node = context.createBufferSource();
 				node.buffer = buffer;
@@ -32,7 +33,7 @@ var buffer = smp.data;
 				node.loopEnd = smp.endLoopTime;
 			} //if
 			node.connect(destination);
-				node.playbackRate.value = note;
+				node.playbackRate.value = rate;
 			WebTracker.logger.log("setting playback rate: " + node.playbackRate);
 			node.start(when);
 		} //if valid buffer

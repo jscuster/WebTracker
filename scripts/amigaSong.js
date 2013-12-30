@@ -247,13 +247,15 @@ return [e, effect.p1];
 that.amigaNote = (function() {
 var log = Math.log,
 d = log(Math.pow(2, 1/12)); //devide log(period/428)/d = note.
+
 return function(n) {
+
 var res = {};
-res.period = ((n[0] & 0x0f) << 8) & n[1];
+res.period = ((n[0] & 0x0f) << 8) | n[1];
 res.sample = (n[0] & 0xf0) | ((n[2] & 0xf0) >> 4);
 res.effect = n[2] & 0x0f;
 res.param = n[3];
-var midiNote = log(res.period/428)/d;
+var midiNote = 60 + log(428/res.period)/d;
 return WebTracker.note(res.sample, midiNote, that.amigaEffect(res.effect, res.param));
 }; //amigaNote
 })(); //closure for amigaNote

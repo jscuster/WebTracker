@@ -6,8 +6,9 @@ WebTracker.Sample.init(this);
 this.monoOnly = true;
 this.maxTitleLength = 22;
 this.maxSampleLength = (0xffff)*2; //65535 words
-this.sampleRate=8287.2;
 var that = this;
+that.sampleRate=8287.2;
+
 this.readSample = function(buffer, ptrs) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 hoff=ptrs.headerOffset,
@@ -40,6 +41,7 @@ for (var i = 0; i < len; i++) {
 d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } //if
+that.sampleRate=8287.2;
 }; //readData
 
 readHeader();
