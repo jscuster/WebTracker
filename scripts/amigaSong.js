@@ -35,15 +35,7 @@ var a = [];
 for (var i = 0; i < 4; i++) {
 a[i] = dataView.getUint8(offset++);
 } //for
-var e = {};
-e.sample = ((a[0] & 0xf0) | ((a[2] & 0xf0) >> 4));
-e.period = (((a[0] & 0x0f) << 8) | a[1]);
-e.factor = 80.4284 / e.period;
-e.effect = a[2] & 0x0f;
-e.param = a[3];
-e.x = (a[3] & 0xf0) >> 4;
-e.y = a[3] & 0x0f;
-return e;
+return that.amigaNote(a);
 }; //readNote
 
 //get title
@@ -62,8 +54,6 @@ max = max < tmp ? tmp : max;
 } //i
 pcount = max + 1;
 
-//get channels
-that.channels = that.getChannels(buffer);
 //read patterns
 offset = 1084; //after headers is pattern data.
 var p = that.patterns;
@@ -143,18 +133,7 @@ var p = that.patterns;
 for (var i = 0; i < p.length; i++) {
 for (var j = 0; j < 64; j++) {
 for (var k = 0; k < that.channels; k++) {
-var n = p[i][j][k];
-var a = [];
-//sample
-a[0] = n.sample & 0xf0;
-a[2] = ((n.sample & 0x0f) << 4);
-//period
-a[0] = a[0] | (n.period & 0xf00) >> 8;
-a[1] = n.period & 0xff;
-//effect
-a[2] = a[2] | n.effect;
-//parameter
-a[3] = n.param;
+var a = that.toAmigaNote(p[i][j][k]);
 a.forEach(function(v) {
 dv.setUint8(offset++, v);
 });//forEach
@@ -199,12 +178,9 @@ return -1;
 
 that.isValid = function(buffer) {
 return that.getChannels(buffer) > 0;
-};
-}; //amigaMod
+}; //isValid
 
-WebTracker.AmigaSong.prototype = new WebTracker.Song();
-
-WebTracker.amigaEffect = function(e, p) {
+that.amigaEffect = function(e, p) {
 var x = ((p & 0xf0) >> 4),
 y = p & 0x0f;
 //set efects
@@ -228,7 +204,7 @@ return WebTracker.Effect(e, p);
 } //1 or 2 params
 }; //amigaEffect
 
-WebTracker.toAmigaEffect = function(effect) {
+that.toAmigaEffect = function(effect) {
 var e = effect.effect,
 x, y, p,
 
@@ -268,21 +244,35 @@ return [e, effect.p1];
 } //< 14
 }; //toAmigaEffect
 
-WebTracker.amigaNote = (function() {
+that.amigaNote = (function() {
 var log = Math.log,
 d = log(Math.pow(2, 1/12)); //devide log(period/428)/d = note.
-return function(s, p, e) {
-var n = log(p/428)/d;
-return WebTracker.note(s, n, e);
+return function(n) {
+var res = {};
+res.period = ((n[0] & 0x0f) << 8) & n[1];
+res.sample = (n[0] & 0xf0) | ((n[2] & 0xf0) >> 4);
+res.effect = n[2] & 0x0f;
+res.param = n[3];
+var midiNote = log(res.period/428)/d;
+return WebTracker.note(res.sample, midiNote, that.amigaEffect(res.effect, res.param));
 }; //amigaNote
 })(); //closure for amigaNote
 
-WebTracker.toAmigaNote = (function() {
+that.toAmigaNote = (function() {
 var pow = Math.pow,
 f = pow(2, 1/12); //12; //th root of 2
 return function(n) {
-var p = 428 * pow(f, n.note),
-e=WebTracker.toAmigaEffect(n.effect);
-qq
+var res = {};
+res.period = 428 * pow(f, n.note),
+var e=that.toAmigaEffect(n.effect);
+res.effect =e[0];
+res.param = e[1];
+res.sample = n.sample;
+return [(res.sample & 0xf0) | ((res.period & 0xf00) >> 8), res.period & 0xff, (res.sample & 0x0f) << 4) | res.effect, res.param];
+
 }; //toAmigaNote
 })(); //closure toAmigaNote
+
+}; //amigaMod
+
+WebTracker.AmigaSong.prototype = new WebTracker.Song();
