@@ -64,7 +64,7 @@ false,
 true];
 
 (function() { //anonymous func to fill vars without creating global vars.
-'use struct';
+'use strict';
 var e = WebTracker.effects,
 l = e.length,
 n = [];
@@ -73,6 +73,7 @@ n[e[i]] = i;
 } //i
 WebTracker.EffectByName = n;
 })(); //anonymous var setter
+
 WebTracker.effectParams = [
 ['Second Note', 'Third Note'],
 ['new Period'],
@@ -87,8 +88,7 @@ WebTracker.effectParams = [
 ['Position'],
 ['Volume'],
 ['Row'],
-['State'],
-['Amount'],
+['State'],['Amount'],
 ['Amount'],
 ['State'],
 ['Waveform'],
@@ -105,11 +105,12 @@ WebTracker.effectParams = [
 ['Speed'],
 ['BPM']
 ];
+
 WebTracker.EffectWaveforms = ['Sine With Retrigger', 'Saw With Retrigger', 'Square With Retrigger', 'Random With Retrigger', 'Sine', 'Saw', 'Square', 'Random']
 
-WebTracker.SignedEffects = [5, 6, 10];
+WebTracker.signedEffects = [5, 6, 10];
 
-WebTracker.Effect = function(e, p1, p2) {
+WebTracker.effect = function(e, p1, p2) {
 return {effect: e,
 p1: p1,
 p2: p2

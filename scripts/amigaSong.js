@@ -185,7 +185,7 @@ var x = ((p & 0xf0) >> 4),
 y = p & 0x0f;
 //set efects
 if (e === 15) {
-e += 15;
+e += 14;
 } else if (e === 14) {
 e=x+14;
 return WebTracker.effect(e, y);
@@ -193,14 +193,14 @@ return WebTracker.effect(e, y);
 if (WebTracker.effectParams[e].length >= 2) {
 return WebTracker.effect(e, x, y);
 } else {
-if (WebTracker.sinedEffects.indexOf(e) >= 0) {
+if (WebTracker.signedEffects.indexOf(e) >= 0) {
 if (x) {
 p = x;
 } else {
 p = -y;
 } //+x or -y
 } //if signed
-return WebTracker.Effect(e, p);
+return WebTracker.effect(e, p);
 } //1 or 2 params
 }; //amigaEffect
 
@@ -264,11 +264,11 @@ f = pow(2, 1/12); //12; //th root of 2
 return function(n) {
 var res = {};
 res.period = 428 * pow(f, n.note),
-var e=that.toAmigaEffect(n.effect);
+e = that.toAmigaEffect(n.effect);
 res.effect =e[0];
 res.param = e[1];
 res.sample = n.sample;
-return [(res.sample & 0xf0) | ((res.period & 0xf00) >> 8), res.period & 0xff, (res.sample & 0x0f) << 4) | res.effect, res.param];
+return [(res.sample & 0xf0) | ((res.period & 0xf00) >> 8), res.period & 0xff, ((res.sample & 0x0f) << 4)  | res.effect, res.param];
 
 }; //toAmigaNote
 })(); //closure toAmigaNote
