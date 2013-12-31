@@ -33,7 +33,9 @@ WebTracker.effects = [
 'Inverte Loop', //30
 'Set Tempo' //31
 ];
-WebTracker.effectSupported = [false,
+WebTracker.effectSupported = [
+true,
+false,
 false,
 false,
 false,
@@ -76,32 +78,33 @@ true];
 })(); //anonymous var setter
 
 WebTracker.effectParams = [
-[],
+[], //0
  ['Second Note', 'Third Note'],
+ ['new Period'],
  ['new Period'],
  ['Amount/Tick'],
  ['Frequency', 'Amplitude'],
- ['Amount/Tick'],
+ ['Amount/Tick'], //5
  ['Amount/Tick'],
  ['Frequency', 'Amplitude'],
  ['Reserved Param'],
  ['Bytes'],
- ['Amount/Tick'],
+ ['Amount/Tick'], //10
  ['Position'],
  ['Volume'],
  ['Row'],
  ['State'], ['Amount'],
- ['Amount'],
+ ['Amount'], //15
  ['State'],
  ['Waveform'],
  ['Value'],
  ['Loops'],
- ['Waveform'],
+ ['Waveform'], //20
  ['Reserved Param'],
  ['Ticks'],
  ['Volume Increment'],
  ['Volume Decrement'],
- ['Ticks'],
+ ['Ticks'], //25
  ['Delay'],
  ['Rows'],
  ['Speed'],
@@ -129,9 +132,10 @@ WebTracker.note = function (s, n, e) {
 }; //note factory
 
 WebTracker.effectToString = function (e) {
+var qq = e.effect;
 	var res = WebTracker.effects[e.effect];
 	var p = WebTracker.effectParams[e.effect];
-	if (p.length > 0) {
+	if (p.length) {
 		if (p.length == 2) {
 			res += ": " + p[0] + " " + e.p1;
 			res += ", " + p[1] + " " + e.p2;

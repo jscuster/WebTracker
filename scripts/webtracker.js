@@ -182,7 +182,7 @@ round = Math.round,
 res = "<table>";
 p = song.patterns[trackerCurPattern];
 res += "<tr><th>row</th>";
-for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
+for (var j = 0; j < trackerChanWidth; j++) {
 res += "<th>chn</th><th>smp</th><th>note</th><th>eff</th><th>|</th>";
 } //j
 for (var i = 0; i < p.length; i++) {
@@ -367,12 +367,13 @@ songPlayer.bpm = v;
 } //if
 }); //tempo loose focus
 
-$("#trackerChannelWidth").focusOut(function() {
-var v = this.value;
+$("#trackerChannelWidth").focusout(function() {
+var v = +this.value;
 if (v > song.channels) {
 v = this.value = song.channels;
 }
 trackerChanWidth = v;
+alert("setting channel width to " + trackerChanWidth);
 buildTrackerTable();
 }); //leave focus on tracker channel width
 
