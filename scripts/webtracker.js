@@ -15,6 +15,11 @@ samplesSampleChooser: new WebTracker.SamplePlayer([], destination, "samplesSampl
 importSelected = false,
 importSamples = [],
 modPlayer,
+trackerStartChan = 0,
+trackerChanWidth = 4,
+trackerCurPattern = 0,
+trackerCurRow = 0,
+trackerAddRows = 1,
 
 deactivatePlayers = function() {
 for (var i in samplePlayers) {
@@ -75,6 +80,7 @@ samplePlayers[i].update();
 } //update the players.
 buildPatternEditor();
 buildPatternTable();
+buildTrackerTable();
 modPlayer.update();
 $("#patternTempo").val(modPlayer.bpm);
 }, //updatesafter changes are made.
@@ -170,6 +176,31 @@ modPlayer.playFromSlot(v);
 }); //play from pattern
 }, //build pattern order html table
 
+buildTrackerTable = function() {
+var p,
+round = Math.round,
+res = "<table>";
+p = song.patterns[trackerCurPattern];
+res += "<tr><th>row</th>";
+for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
+res += "<th>chn</th><th>smp</th><th>note</th><th>eff</th><th>|</th>";
+} //j
+for (var i = 0; i < p.length; i++) {
+res += "<tr><td>" + (i+1) + "</td>";
+for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
+var n = p[i][j];
+res += "<td>" + (j+1) + "</td>";
+res += "<td>" + n.sample + "</td>";
+res += "<td>" + round(n.note) + "</td>";
+res += "<td>" + WebTracker.effectToString(n.effect) + "</td>";
+res += "<td>|</td>";
+} //j
+res += "</tr>";
+} //i
+res += "</table>";
+$("#trackerTable").html(res);
+}, //buildTrackerTable
+
 newSong = function() {
 changed = false;
 song = new WebTracker.AmigaSong();
@@ -182,11 +213,12 @@ refreshObjects();
 refreshObjects = function() {
 fillSamplePlayers();
 modPlayer = new WebTracker.ModPlayer(song, destination);
-modPlayer.stopCallback = function() {
-$("#patternTempo").val(modPlayer.bpm);
-}; //stopCallback
+trackerStartChan=0;
+if (trackerChanWidth > song.channels) {
+trackerChanWidth = song.channels;
+} //make sure we're not showing more channels than the song has.
 update();
-}, //refresh players, andother objects.
+}, //refresh players and other objects.
 
 init = function() {
 destination.connect(context.destination);
@@ -309,6 +341,10 @@ var theFile = f[i];
 reader.readAsArrayBuffer(theFile);
 }; //for
 }); //fileImportAdd change (in file/open menu
+
+$("songPlay").click(function() {
+modPlayer.play();
+});
 
 $("#songTitle").focusout(function() {
 var t = $(this).prop('value');
