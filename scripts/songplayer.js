@@ -125,7 +125,7 @@ break;
 case 13: //set volume
 s.setVolume(note.effect.p1/64);
 break;
-case 30: //set speed
+case 31: //set speed
 setTimePerTick(note.effect.p1);
 break;
 default:

@@ -1,37 +1,37 @@
 var WebTracker = WebTracker || {};
 WebTracker.effects = [
-'none',
+'none', //0
 'Arpeggio',
 'Slide Note Up',
 'Slide Note Down',
 'Slide To Note',
-'Vibrato',
+'Vibrato', //5
 'Continue Note Slide + Slide Volume',
 'Continue Vibrato + Volume Slide',
 'Tremolo',
 'Reserved',
-'SetSampleOffset',
+'SetSampleOffset', //10
 'Slide Volume',
 'Position Jump',
 'Set Volume',
 'Pattern Break',
-'Toggle Filter',
+'Toggle Filter', //15
 'Fine Slide Up',
 'Fine Slide Down',
 'Toggle Glissando',
 'Set Vibrato Waveform',
-'Tune',
+'Tune', //20
 'Loop Pattern',
 'Set Tremolo Waveform',
 'Reserved SubEffect',
 'Retrigger Sample',
-'Fine Volume Slide Up',
+'Fine Volume Slide Up', //25
 'Fine Volume Slide Down',
 'Cut Sample',
 'Delay Sample',
 'Delay Pattern',
-'Inverte Loop',
-'Set Tempo'
+'Inverte Loop', //30
+'Set Tempo' //31
 ];
 WebTracker.effectSupported = [false,
 false,

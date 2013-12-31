@@ -367,6 +367,31 @@ songPlayer.bpm = v;
 } //if
 }); //tempo loose focus
 
+$("#trackerChannelWidth").focusOut(function() {
+var v = this.value;
+if (v > song.channels) {
+v = this.value = song.channels;
+}
+trackerChanWidth = v;
+buildTrackerTable();
+}); //leave focus on tracker channel width
+
+$("#trackerPrevChan").click(function() {
+trackerStartChan -= trackerChanWidth;
+if (trackerStartChan < 0) {
+trackerStartChan = 0;
+}
+buildTrackerTable();
+}); //trackerPrevChan clicked
+
+$("#trackerNextChan").click(function() {
+trackerStartChan += trackerChanWidth;
+if (trackerStartChan+trackerChanWidth >= song.channels) {
+trackerStartChan = song.channels - 1 - trackerChanWidth;
+}
+buildTrackerTable();
+}); //trackerNextChan clicked
+
 init();
 }); //ready
 } else {
