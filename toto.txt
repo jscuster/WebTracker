@@ -1,6 +1,6 @@
 Things to do
 1. implement remaining effects.
-2. make effects enum and object for format independance.
+2. fix div in webtracker to drop files.
 3. resample audio when importing from non-mod file.
 4. create better interface for tracker and player.
 5. create stand-alone player page so anyone can include a mod player on their page.
@@ -10,5 +10,4 @@ Things to do
 9. create loader for mo3 files (samples are mp3 encoded)
 10. check out s3m, it, far, etx.
 11. create song format that supports 16-bit stereo samples, if not already built
-12. optimize functions to store often acessed vars in a closure.
-13. fix div in webtracker to drop files.
+12. optimize functions.
