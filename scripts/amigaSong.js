@@ -224,7 +224,7 @@ WebTracker.AmigaSong = function () {
 		if (e === 0 && p === 0) {
 			return WebTracker.effect(e, p);
 		} else if (e === 15) {
-			e = 30;
+return WebTracker.effect(30, p);
 		} else if (e === 14) {
 			e = x + 15;
 			return WebTracker.effect(e, y);

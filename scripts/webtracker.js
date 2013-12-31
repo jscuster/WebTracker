@@ -14,7 +14,7 @@ samplesSampleChooser: new WebTracker.SamplePlayer([], destination, "samplesSampl
 },
 importSelected = false,
 importSamples = [],
-modPlayer,
+songPlayer,
 trackerStartChan = 0,
 trackerChanWidth = 4,
 trackerCurPattern = 0,
@@ -81,8 +81,8 @@ samplePlayers[i].update();
 buildPatternEditor();
 buildPatternTable();
 buildTrackerTable();
-modPlayer.update();
-$("#patternTempo").val(modPlayer.bpm);
+songPlayer.update();
+$("#patternTempo").val(songPlayer.bpm);
 }, //updatesafter changes are made.
 
 fillSamplePlayers = function() {
@@ -105,7 +105,7 @@ res += "</table>";
 $("#editorInfo").html(res);
 $(".patternPlay").click(function() {
 var idx = this.id.split(":")[1];
-modPlayer.playPattern(idx);
+songPlayer.playPattern(idx);
 }); //play click
 $(".patternRemove").click(function() {
 var idx = this.id.split(":")[1];
@@ -172,7 +172,7 @@ $("#patternOrderRemove").focus();
 $(".patternOrderPlay").click(function() {
 var v = $(this).html().split(":")[0];
 v = (+v) -1;
-modPlayer.playFromSlot(v);
+songPlayer.playFromSlot(v);
 }); //play from pattern
 }, //build pattern order html table
 
@@ -212,7 +212,7 @@ refreshObjects();
 
 refreshObjects = function() {
 fillSamplePlayers();
-modPlayer = new WebTracker.ModPlayer(song, destination);
+songPlayer = new WebTracker.SongPlayer(song, destination);
 trackerStartChan=0;
 if (trackerChanWidth > song.channels) {
 trackerChanWidth = song.channels;
@@ -342,8 +342,8 @@ reader.readAsArrayBuffer(theFile);
 }; //for
 }); //fileImportAdd change (in file/open menu
 
-$("songPlay").click(function() {
-modPlayer.play();
+$("#songPlay").click(function() {
+songPlayer.playSong();
 });
 
 $("#songTitle").focusout(function() {
@@ -361,9 +361,9 @@ $("#patternTempo").focusout(function() {
 var v = +this.value;
 if (v && v < 32) {
 alert ("Please enter a number larger than 32.");
-this.value=modPlayer.bpm;
+this.value=songPlayer.bpm;
 } else {
-modPlayer.bpm = v;
+songPlayer.bpm = v;
 } //if
 }); //tempo loose focus
 

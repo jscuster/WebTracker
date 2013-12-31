@@ -1,5 +1,5 @@
 var WebTracker = WebTracker || {};
-WebTracker.ModPlayer = function(song, destination) {
+WebTracker.SongPlayer = function(song, destination) {
 'use strict';
 WebTracker.logger.log("created mod player.");
 var context = WebTracker.context,
@@ -114,17 +114,18 @@ WebTracker.logger.log("time: " + time);
 
 playNote = function(note, chan) {
 var s = channels[chan];
+//alert(JSON.stringify(note));
 switch (note.effect.effect) {
-case 10: //slide volume
+case 11: //slide volume
 var delta = note.effect.p1;
 delta = delta / 64;
 delta *= (tpr-1);
 s.slideVolume(delta, time + (tpr*timePerTick));
 break;
-case 12: //set volume
+case 13: //set volume
 s.setVolume(note.effect.p1/64);
 break;
-case 29: //set speed
+case 30: //set speed
 setTimePerTick(note.effect.p1);
 break;
 default:
@@ -196,4 +197,4 @@ donePlayingCallback = v;
 
 this.update = preload;
 preload();
-}; //ModPlayer
+}; //SongPlayer
