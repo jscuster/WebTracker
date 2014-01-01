@@ -116,13 +116,16 @@ Pattern table goes here.
 <table>
 <tr>
 <td><button id="trackerPlay">Play</button></td>
-<td>Pattern: <input type="number" value="1"min="1" max="127"></td>
+<td>Pattern: <input type="number" value="1" min="1" max="127" id="trackerCurrentPattern"></td>
 <td><button id="trackerPrevChan"><<-</button></td>
 <td>Showing: <input type="number" id="trackerChannelWidth" min="1" max="8" value="4"> channels</td>
 <td><button id="trackerNextChan">->></button></td>
-<td>Adding: <input type="number" value="4" min="1" max="16"> rows/note</td>
+<td>Adding: <input type="number" value="4" min="1" max="16" id="trackerAdding"> rows/note</td>
 </tr>
 </table>
+</div>
+<div id="trackerSampleChooser">
+Sample Chooser goes here.
 </div>
 <div id="trackerTable">
 Tracker table goes here.

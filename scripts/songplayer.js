@@ -179,6 +179,12 @@ throw {message: "Playing from pattern that's out of bounds."};
 } //else
 }; //playFromPattern
 
+this.quickPlayNote = function(pat, row, chan) {
+time = context.currentTime;
+playNote(song.patterns[pat][row][chan], chan);
+channels[chan].stop(time+1);
+}; //quickPlayNote
+
 Object.defineProperty(this, 'bpm', {
 get: function() {
 return bpm;
