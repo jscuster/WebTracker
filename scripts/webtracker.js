@@ -23,8 +23,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			trackerCurRow = 0,
 			trackerAddRows = 1,
 			trackerCurChan = 0,
+trackerButtonsPerChan = 4, //chan, samp, note, eff
 			trackerCurBtn = 0,
-			trackerButtons = [],
 			trackerKeys = false,
 
 			deactivatePlayers = function () {
@@ -201,46 +201,35 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				for (var j = 0; j < trackerChanWidth; j++) {
 					res += "<th>chn</th><th>smp</th><th>note</th><th>eff</th><th>|</th>";
 				} //j
-				trackerButtons = [];
+				res += "</tr>"
 				for (var i = 0; i < p.length; i++) {
-					res += "<tr><td>" + (i + 1) + "</td>";
-					trackerButtons[i] = [];
+					res += '<tr><td><label><input type="checkbox" id="trackerRow"' + i + '">' + (i + 1) + '</label></td>';
 					for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
-						trackerButtons[i][j] = [];
-						var n = p[i][j];
-						res += '<td><label><input type="checkbox" value="1" id="trackerChan:' + i + ',' + j + '" class="trackerSelectNote"/>' + (j + 1) + '</label></td>';
-						trackerButtons[i][j].push('trackerChan:' + i + ',' + j);
-						res += '<td><button if="trackerSmp:' + i + ',' + j + '" class = "trackerSample">' + n.sample + '</button></td>';
-						trackerButtons[i][j].push('trackerSmp:' + i + ',' + j);
-						res += '<td><button id="trackerNote:' + i + ',' + j + '" class = "trackerNote">' + round(n.note) + '</button></td>';
-						trackerButtons[i][j].push('trackerNote:' + i + ',' + j);
-						res += '<td><button id="trackerEffect:' + i + ',' + j + '" class = trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
-						trackerButtons[i][j].push('trackerEffect:' + i + ',' + j);
+						var n = p[i][j],
+id="trackerBtn-" + i + "-" + j + "-";
+						res += '<td><label><input type="checkbox" value="1" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
+						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
+						res += '<td><button id="' + id + '2" class = "trackerNote">' + round(n.note) + '</button></td>';
+						res += '<td><button id="' + id + '3" class = trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
 						res += "<td>|</td>";
 					} //j
 					res += "</tr>";
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
-				for (var i = 0; i < trackerButtons.length; i++) {
-					for (var j = 0; j < trackerButtons[i].length; j++) {
-						for (var k = 0; k < trackerButtons[i][j].length; k++) {
-							trackerButtons[i][j][k] = $("#" + trackerButtons[i][j][k]);
-						} //k
-					} //j
-				} //i
 			}, //buildTrackerTable
 
 			trackerFocus = function () {
-				trackerButtons[trackerCurRow][trackerCurChan][trackerCurBtn].focus();
+var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
+				var t = $(id);
+				t.focus();
 			}, //trackerFocus
 
-			trackerNextButton = function () {
+			trackerNextBtn = function () {
 				var c = trackerCurChan,
-					r = trackerCurRow,
 					b = trackerCurBtn,
-					cl = trackerButtons[r].length,
-					bl = trackerButtons[r][c].length;
+					cl = song.channels,
+					bl = trackerButtonsPerChan;
 				b++; //next
 				if (b >= bl) { //next channel
 					b = 0;
@@ -257,10 +246,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 
 			trackerPrevBtn = function () {
 				var c = trackerCurChan,
-					r = trackerCurRow,
 					b = trackerCurBtn,
-					cl = trackerButtons[r].length,
-					bl = trackerButtons[r][c].length;
+					bl = trackerButtonsPerChan;
 				b--;
 				if (b < 0) {
 					b = bl - 1;
@@ -271,7 +258,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				}
 				//if we are here, the vars are fine.
 				trackerCurBtn = b;
-				trackerCurChan = c;
+ 				trackerCurChan = c;
 				trackerFocus();
 			}, //trackerPrevBtn
 
@@ -482,7 +469,6 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				v = this.value = song.channels;
 			}
 			trackerChanWidth = v;
-			alert("setting channel width to " + trackerChanWidth);
 			buildTrackerTable();
 		}); //leave focus on tracker channel width
 
@@ -503,27 +489,29 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 		}); //trackerNextChan clicked
 
 		$(document).keydown(function (e) {
+			var k = e.which,
+				c = e.ctrlKey;
 			if (c) { //if control is down,
 				if (k >= 49 && k <= 53) {
-					showPanel("files song samples patterns tracker".split()[k - 49]);
+					var b = "#" + ("btnFiles btnSamples btnSong btnPatterns btnTracker".split(" ")[k - 49])
+					$(b).click();
 				} //ctrl+1--5
 			} //ctrl down
 			if (trackerKeys) {
-				var k = e.which,
-					c = e.ctrlKey;
+c=e.shiftKey;
 				switch (k) {
 				case 37: //left arrow
 					if (c) {
 						trackerPrevChan();
 					} else {
-						trackerPrevButton();
+						trackerPrevBtn();
 					} //left
-					break;
+				break;
 				case 39: //right
 					if (c) {
 						trackerNextChan();
 					} else {
-						trackerNextButton();
+						trackerNextBtn();
 					} //right
 					break;
 				case 38: //up arrow
@@ -531,7 +519,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 						trackerPrevPattern();
 					} else {
 						trackerPrevRow();
-					} //left
+					} //up
 					break;
 				case 40: //down
 					if (c) {
