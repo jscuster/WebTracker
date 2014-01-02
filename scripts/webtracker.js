@@ -216,6 +216,7 @@ id="trackerBtn-" + i + "-" + j + "-";
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
+$(".trackerNote").click(trackerPlayNote).focus(trackerPlayNote);
 			}, //buildTrackerTable
 
 			trackerFocus = function () {
@@ -294,6 +295,10 @@ var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCu
 					trackerFocus();
 				} //if there's room, move
 			}, //trackerPrevChan
+
+trackerPlayNote = function() {
+songPlayer.quickPlayNote(trackerCurPattern, trackerCurRow, trackerCurChan);
+},
 
 			newSong = function () {
 				changed = false;
