@@ -91,3 +91,17 @@ return x;
 //initialize webaudio
 WebTracker.context = window.AudioContext || window.webkitAudioContext;
 WebTracker.context = new WebTracker.context();
+
+WebTracker.midiNoteToName = (function() {
+var notes = "c db d eb e f gb g ab a bb b".split(" "),
+floor = Math.floor,
+round = Math.round;
+return function(n) {
+if (n === 0) {
+return "-";
+} else {
+n = round(n);
+return (floor(n/12)) + notes[n % 12];
+} //if note is 0 it's a non-note.
+}; //inner
+})(); //midiNoteToName

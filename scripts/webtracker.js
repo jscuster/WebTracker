@@ -194,7 +194,6 @@ trackerButtonsPerChan = 4, //chan, samp, note, eff
 
 			buildTrackerTable = function () {
 				var p,
-					round = Math.round,
 					res = "<table>";
 				p = song.patterns[trackerCurPattern];
 				res += "<tr><th>row</th>";
@@ -209,7 +208,7 @@ trackerButtonsPerChan = 4, //chan, samp, note, eff
 id="trackerBtn-" + i + "-" + j + "-";
 						res += '<td><label><input type="checkbox" value="1" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
 						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
-						res += '<td><button id="' + id + '2" class = "trackerNote">' + round(n.note) + '</button></td>';
+						res += '<td><button id="' + id + '2" class = "trackerNote">' + WebTracker.midiNoteToName(n.note) + '</button></td>';
 						res += '<td><button id="' + id + '3" class = trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
 						res += "<td>|</td>";
 					} //j
