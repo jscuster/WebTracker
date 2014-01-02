@@ -78,7 +78,7 @@ l = that.length;
 for (var i = 0; i < l; i++) {
 dv.setInt8(doff++,  d[i]*127);
 } //i
-if ((this.length % 2) > 0) doff++; //length measured in words.
+if ((that.length % 2) > 0) doff++; //length measured in words.
 } //if length > 0
 }; //writeData
 

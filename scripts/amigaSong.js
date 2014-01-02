@@ -125,7 +125,7 @@ WebTracker.AmigaSong = function () {
 		dv.setUint8(offset, that.restartPosition);
 		offset++;
 		for (var i = 0; i < po.length; i++) {
-			dv.setUint8(offset++, that.po[i] || 0);
+			dv.setUint8(offset++, po[i] || 0);
 		} //i
 		writeString(that.channels === 4 ? "M.K." : (that.channels + "CHN"), 1080, 4); //writes first 4 bytes, IE: 8CHN or 32CH.
 
@@ -255,7 +255,7 @@ return WebTracker.effect(31, p);
 		//set efects
 		if (e === 0) {
 			return [0, 0];
-		} else if (e === 30) {
+		} else if (e === 31) {
 			e = 15;
 			return [e, effect.p1];
 		} else if (e >= 15) {
@@ -270,9 +270,9 @@ return WebTracker.effect(31, p);
 				e--;
 				return encode();
 			} else { //return 1 param;
-				if (WebTracker.sinedEffects.indexOf(e) >= 0) {
+				if (WebTracker.signedEffects.indexOf(e) >= 0) {
 					if (effect.p1 > 0) {
-						x = p1
+						x = effect.p1
 						y = 0;
 					} else {
 						x = 0;
@@ -307,7 +307,7 @@ return WebTracker.effect(31, p);
 		return function (n) {
 			var res = {};
 			if (n.note != 0) {
-				res.period = 428 * pow(f, n.note - 60);
+				res.period = 428 * pow(f, -1 * (n.note - 60));
 			} else {
 				res.period = 0;
 			} //0 note = 0 music.
@@ -316,10 +316,8 @@ return WebTracker.effect(31, p);
 			res.param = e[1];
 			res.sample = n.sample;
 			return [(res.sample & 0xf0) | ((res.period & 0xf00) >> 8), res.period & 0xff, ((res.sample & 0x0f) << 4) | res.effect, res.param];
-
 		}; //toAmigaNote
 	})(); //closure toAmigaNote
-
 }; //amigaMod
 
 WebTracker.AmigaSong.prototype = new WebTracker.Song();
