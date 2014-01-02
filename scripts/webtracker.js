@@ -102,6 +102,7 @@ trackerButtonsPerChan = 4, //chan, samp, note, eff
 
 			fillSamplePlayers = function () {
 				samplePlayers.trackerSampleChooser.samples = song.samples; //give the array to the sampler.
+				samplePlayers.trackerSampleChooser.noteCallback=trackerNoteCallback;
 				samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
 				samplePlayers.importSongSamples.samples = song.samples;
 				samplePlayers.importSamplesList.samples = importSamples;
@@ -299,6 +300,15 @@ var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCu
 trackerPlayNote = function() {
 songPlayer.quickPlayNote(trackerCurPattern, trackerCurRow, trackerCurChan);
 },
+
+trackerNoteCallback = function(s, n) {
+if (trackerCurBtn === 2) {
+song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].sample = s;
+song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].note = n;
+$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-2").html(WebTracker.midiNoteToName(n));
+$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-1").html(s);
+}
+}, //trackerNoteCallback
 
 			newSong = function () {
 				changed = false;

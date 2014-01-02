@@ -13,7 +13,7 @@ keys = "zsxdcvgbhnjmq2w3er5t6y7ui9o0p".toUpperCase(),
 octave = 5,
 transpose = 0,
 downKey = -1, //keys currently down. Must keep track so the key is not retriggerd when held.
-noteCallbacks = [],
+_noteCallback,
 player = new WebTracker.Sampler(samples, destination), //only use of destination param
 nextSampId = container + "NextSample",
 prevSampId = container + "PrevSample",
@@ -59,8 +59,8 @@ break;
 default:
 var  i = keyToNote(String.fromCharCode(e.which));
 if (i >= 0) {
-
 player.play(sptr, i);
+_noteCallback(sptr, i);
 } //note finding
 } //switch
 downKey = e.which;
@@ -226,6 +226,13 @@ player = new WebTracker.Sampler(samples, destination);
 update();
 }
 }); //samples property
+
+Object.defineProperty(this, "noteCallback", {
+set: function(nc) {
+_noteCallback= nc || function(){};
+}
+}); //noteCallback
+
 this.samples = _samples;
 initControls();
 }; //SamplePlayer
