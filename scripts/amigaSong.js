@@ -15,6 +15,9 @@ WebTracker.AmigaSong = function () {
 	that.restartPosition = 127; //rarely used
 	that.Sample = WebTracker.AmigaSample;
 	that.samples = [];
+that.minBpm = 32;
+that.maxBpm = 255;
+that.bpm = 125;
 
 	that.loadMod = function (buffer) { //pass in a DataView.
 		that.channels = that.getChannels(buffer);
@@ -77,6 +80,10 @@ WebTracker.AmigaSong = function () {
 				s[i] = smp;
 			} //for: read each sample.
 			that.samples = s;
+//set bpm if found
+			that.patterns[that.patternOrder[0]][0].forEach(function(n) { //cearch the channels in the first row of the first pattern in the patternOrder list.
+				if (n.effect === 31) that.bpm = n.effect.p1;
+			}); //find first bpm
 
 			//done reading.
 		} else {
@@ -224,7 +231,7 @@ WebTracker.AmigaSong = function () {
 		if (e === 0 && p === 0) {
 			return WebTracker.effect(e, p);
 		} else if (e === 15) {
-return WebTracker.effect(31, p);
+return WebTracker.effect(31, p <= 32 ? Math.round(750 / p) : p); //< 32 = ticks per row.
 		} else if (e === 14) {
 			e = x + 15;
 			return WebTracker.effect(e, y);
@@ -287,37 +294,68 @@ return WebTracker.effect(31, p);
 		} //< 14
 	}; //toAmigaEffect
 
-	that.amigaNote = (function () {
-		var log = Math.log,
-			d = log(Math.pow(2, 1 / 12)); //devide log(period/428)/d = note.
-		return function (n) {
+	that.amigaNote = function (n) {
 			var res = {};
 			res.period = ((n[0] & 0x0f) << 8) | n[1];
 			res.sample = (n[0] & 0xf0) | ((n[2] & 0xf0) >> 4);
 			res.effect = n[2] & 0x0f;
 			res.param = n[3];
-			var midiNote = res.period > 0 ? 60 + log(428 / res.period) / d : 0;
+			var midiNote = WebTracker.amigaPeriodToNote(res.period);
 			return WebTracker.note(res.sample, midiNote, that.amigaEffect(res.effect, res.param));
 		}; //amigaNote
-	})(); //closure for amigaNote
 
-	that.toAmigaNote = (function () {
-		var pow = Math.pow,
-			f = pow(2, 1 / 12); //12; //th root of 2
-		return function (n) {
+	that.toAmigaNote = function (n) {
 			var res = {};
-			if (n.note != 0) {
-				res.period = 428 * pow(f, -1 * (n.note - 60));
-			} else {
-				res.period = 0;
-			} //0 note = 0 music.
+res.period = WebTracker.noteToAmigaPeriod(n.note);
 			var e = that.toAmigaEffect(n.effect);
 			res.effect = e[0];
 			res.param = e[1];
 			res.sample = n.sample;
 			return [(res.sample & 0xf0) | ((res.period & 0xf00) >> 8), res.period & 0xff, ((res.sample & 0x0f) << 4) | res.effect, res.param];
 		}; //toAmigaNote
-	})(); //closure toAmigaNote
+
+that.slideNoteDown = function(bpm, start, end, amt) {
+var ticks=750/bpm,
+sp = WebTracker.noteToAmigaPeriod(start),
+ep = WebTracker.noteToAmigaPeriod(end),
+res = [end],
+tmp = sp,
+i,
+ptn = WebTracker.amigaPeriodToNote;
+for (var i = 0; i < ticks && tmp > ep; i++) {
+tmp -= amt;
+if (tmp < ep) tmp = ep;
+res[i] = ptn(tmp);
+}
+return res;
+} //slieNoteDown
+
+that.slideNoteUp = function(bpm, start, end, amt) {
+var ticks=750/bpm,
+sp = WebTracker.noteToAmigaPeriod(start),
+ep = WebTracker.noteToAmigaPeriod(end),
+res = [end],
+tmp = sp,
+i,
+ptn = WebTracker.amigaPeriodToNote;
+for (var i = 0; i < ticks && tmp < ep; i++) {
+tmp += amt;
+if (tmp > ep) tmp = ep;
+res[i] = ptn(tmp);
+}
+return res;
+} //slideNoteUp
+
+that.calculateNoteSlide = function(bpm, last, bound, amt) {
+var q;
+if (bound > last) {
+q = that.slideNoteDown(bpm, last, bound, amt);
+} else {
+q = that.slideNoteUp(bpm, last, bound, amt);
+} //if
+//alert("sliding from " + last + " to " + bound + " with points\n" + JSON.stringify(q));
+return q;
+}; //calculateNoteSlide
 }; //amigaMod
 
 WebTracker.AmigaSong.prototype = new WebTracker.Song();

@@ -4,7 +4,9 @@ WebTracker.Song = function () {
 'use strict';
 this.maxInstruments = this.maxTitleLength = this.maxChannels = this.maxPatterns = -1;
 this.minInstruments = this.maxSlots = -1;
-
+this.minBpm = 1;
+this.maxBpm=1000;
+this.rowsPerBeat=4;
 	this.fillSamples = function () {
 var samples = this.samples,
 l = samples.length;
@@ -54,7 +56,7 @@ this.samples = samples;
 	this.removePattern = function (x) {
 		if (x < this.patternCount) {
 			this.patterns.splice(x, 1);
-			var o = _patternOrder;
+			var o = this.patternOrder;
 			for (var i = 0; i < this.slots; i++) {
 				if (o[i] > x) {
 					o[i]--;
@@ -68,7 +70,7 @@ this.samples = samples;
 			} //while
 		} else { //doesn't exist
 			throw {
-				message: "Pattern doesn't exist, should be between 0 and " + _patternCount + "."
+				message: "Pattern doesn't exist, should be between 0 and " + this.patternCount + "."
 			};
 		} //else
 	}; //removePattern
@@ -110,7 +112,8 @@ WebTracker.Song.init = function(obj) {
 		_samples = [],
 		_patterns = [],
 		_channels = 1,
-		_patternOrder = [];
+		_patternOrder = [],
+_bpm = 120;
 
 	Object.defineProperty(obj, "title", {
 		get: function () {
@@ -174,5 +177,17 @@ WebTracker.Song.init = function(obj) {
 			} //if
 		}
 	}); //samples property
+
+Object.defineProperty(obj, 'bpm', {
+get: function() {
+return _bpm;
+},
+set: function(v) {
+if (v >= obj.minBpm && v <= obj.maxBpm) {
+_bpm = v;
+} //if
+} //set
+}); //bpm property
+
 
 }; //Song.init

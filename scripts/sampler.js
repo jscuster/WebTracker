@@ -3,6 +3,7 @@ WebTracker.Sampler = function (samples, destination) {
 var context = WebTracker.context;
 	destination = destination || context.destination;
 		var lastSample = -1,
+smp,
 		node,
 gain = context.createGain(),
 		panner = context.createPanner();
@@ -15,7 +16,7 @@ gain = context.createGain(),
 			when = when || 0;
 			this.stop(when - 0.0001);
 
-			var smp = samples[s],
+			smp = samples[s],
 			rate = smp.factor * Math.pow(1.0595, note-60),
 			buffer = smp.data;
 			if (buffer) {
@@ -63,4 +64,9 @@ if (tmp > 1) tmp = 1;
 if (tmp < 0) tmp = 0;
 gain.gain.linearRampToValueAtTime(tmp, endTime);
 }; //slideVolume
+
+this.setNote = function(n, endTime) {
+var rate = smp.factor * Math.pow(1.0595, n-60);
+node.playbackRate.setValueAtTime(rate, endTime);
+}; //slideNote
 }; //SamplePlayer

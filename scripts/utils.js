@@ -105,3 +105,23 @@ return (floor(n/12)) + notes[n % 12];
 } //if note is 0 it's a non-note.
 }; //inner
 })(); //midiNoteToName
+
+WebTracker.noteToAmigaPeriod = (function() {
+var pow = Math.pow,
+f = pow(2, 1 / 12); //12; //th root of 2
+return function(n) {
+			if (n != 0) {
+return 428 * pow(f, -1 * (n - 60));
+} else {
+return 0;
+} //0 note = 0 music.
+}; //inner
+})(); //noteToAmigaPeriod
+
+WebTracker.amigaPeriodToNote = (function() {
+var log = Math.log,
+d = log(Math.pow(2, 1 / 12)); //devide log(period/428)/d = note.
+return function(p) {
+return p > 0 ? 60 + log(428 / p) / d : 0;
+}; //amigaPeriodToNote
+})(); //closure amigaPeriodToNote

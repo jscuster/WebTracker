@@ -11,28 +11,17 @@ curPattern = 0, //not the current pattern but the current spot in the pattern or
 playPatternOnly = false,
 playInterval = 100,
 lookAhead = 1,
-tpr = 6, //frames per row
-bpm = 125,
+_bpm = song.bpm,
 time = 0,
-timePerTick = 0.02, //set in setTimePerTick
+tpr = 0.125, //set in setTimePerTick
 donePlaying = true,
 playTimer = 0,
 donePlayingCallback,
+lastNotes = [],
+slideBounds = [],
 
-setTimePerTick = function(x) {
-var r = 750/x; 
-//ticks = 60/(4*bpm*0.02), bpm=60/(4*ticks*0.02), simplifying, = (60/(4*0.02) = 750
-if (x < 32) { //setting ticks, r = bpm
-tpr = x;
-bpm = Math.round(r);
-timePerTick = 0.02; //ticks tied to VSync, static number.
-} else { //setting by bpm, r = ticks
-tpr = Math.round(r);
-bpm = x;
-timePerTick = 60/(4*tpr*bpm*1.25);
-} //tick or bpm if
-WebTracker.logger.log("tpr is " + tpr + ", bpm = " + bpm);
-WebTracker.logger.log("timePerTick is " + timePerTick);
+setTimePerRow = function() {
+tpr = 60/(_bpm * song.rowsPerBeat);
 }, //setTimePerTick
 
 preload = function() {
@@ -94,9 +83,7 @@ var p = song.patterns[patternCursor][rowCursor];
 for (var i = 0; i < channelCount; i++) {
 playNote(p[i], i);
 } //i (channels)
-for (var k = 0; k < tpr; k++) {
-tick();
-} //k (ticks)
+time += tpr;
 bumpRowCursor();
 }, //playRow
 
@@ -107,32 +94,43 @@ playRow();
 } //while
 }, //play
 
-tick = function() {
-time += timePerTick;
-WebTracker.logger.log("time: " + time);
-}, //frame
+applySlide = function(s, ch) {
+var t = tpr / s.length;
+for (var i = 0; i < s.length; i++) {
+ch.setNote(s[i], time + (t*i));
+} //i
+}, //applySlide
 
 playNote = function(note, chan) {
 var s = channels[chan];
-//alert(JSON.stringify(note));
 switch (note.effect.effect) {
+case 4:
+if (note.note > 0) {
+slideBounds[chan] = note.note;
+}
+var slideNotes = song.calculateNoteSlide(_bpm, lastNotes[chan], slideBounds[chan], note.effect.p1);
+lastNotes[chan] = slideNotes[slideNotes.length - 1];
+applySlide(slideNotes, s);
+break;
 case 11: //slide volume
 var delta = note.effect.p1;
 delta = delta / 64;
 delta *= (tpr-1);
-s.slideVolume(delta, time + (tpr*timePerTick));
+s.slideVolume(delta, time + (tpr));
 break;
 case 13: //set volume
 s.setVolume(note.effect.p1/64);
 break;
 case 31: //set speed
-setTimePerTick(note.effect.p1);
+_bpm = note.effect.p1;
+setTimePerRow();
 break;
 default:
 WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
 } //switch
-if (note.sample != 0) {
+if (note.sample !== 0 && note.effect.effect !== 4) {
 s.play(note.sample-1, note.note, time);
+lastNotes[chan] = note.note;
 } //if
 }; //playNote
 
@@ -187,11 +185,13 @@ channels[chan].stop(time+1);
 
 Object.defineProperty(this, 'bpm', {
 get: function() {
-return bpm;
+return _bpm;
 }, //get
 set: function(v) {
 v = v < 32 ? 32 : v;
-setTimePerTick(v);
+alert("setting bpm to " + v);
+_bpm = v;
+setTimePerRow();
 } //set
 }); //defineProperty
 
