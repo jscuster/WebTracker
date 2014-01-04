@@ -130,6 +130,25 @@ Sample Chooser goes here.
 <div id="trackerTable">
 Tracker table goes here.
 </div>
+<div id="trackerEffects">
+<table>
+<tr>
+<td><button id="effectCancel">Cancel</button></td>
+<td></td>
+<td><button id="effectSave">Save</button></td>
+</tr>
+<tr></tr>
+<tr>
+<td><label><input type="number" id="effectSample" min="1" value="1">Sample</label></td>
+<td><label><input type="number" id="effectNote" min="0" max="127" value="60">Note</label></td>
+<td><input type="number" id="effectPeriod" min="1" value="428">Amiga Period</label></td>
+</tr><tr>
+<td><label><select id="effectEffects"></select>Effect</label></td>
+<td><label id="effectP1" for=effectP1Box">P1</label><input type="number" id="effectP1Box" value="0"></td>
+<td><label id="effectP2" for="effectP2Box">P2</label><input type="number" id="effectP2Box" value="0"></td>
+</tr>
+</table>
+</div>
 </div>
 <div id="footer" class = "footer">
 Copyright 2013, Jason Custer

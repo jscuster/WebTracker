@@ -80,6 +80,18 @@ trackerButtonsPerChan = 4, //chan, samp, note, eff
 				} //activate import player
 			}, //showPanel
 
+updateEffectsPanel = function() {
+var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
+$("#effectNote").val(n.note);
+$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(n.note));
+$("#effectSample").val(n.sample);
+$("#effectP1Box").val(n.effect.p1);
+$("#effectP2Box").val(n.effect.p2 || 0);
+$("#effectP1").text(WebTracker.effectParams[n.effect.effect][0]);
+$("#effectP2").text((WebTracker.effectParams[n.effect.effect][1]) || "unused");
+$("#effectEffects").val(n.effect.effect);
+}, //updateEffects
+
 			update = function () {
 				document.title = song.title + ": Web Tracker";
 				$("#songTitle").prop('value', song.title)
@@ -210,15 +222,40 @@ id="trackerBtn-" + i + "-" + j + "-";
 						res += '<td><label><input type="checkbox" value="1" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
 						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
 						res += '<td><button id="' + id + '2" class = "trackerNote">' + WebTracker.midiNoteToName(n.note) + '</button></td>';
-						res += '<td><button id="' + id + '3" class = trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
+						res += '<td><button id="' + id + '3" class="trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
 						res += "<td>|</td>";
 					} //j
 					res += "</tr>";
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
-$(".trackerNote").click(trackerPlayNote).focus(trackerPlayNote);
+$(".trackerNote").click(function() {
+setTrackerVarsFromId(this).attr("id");
+trackerPlayNote();
+}).focus(function() {
+setTrackerVarsFromId($(this).attr("id"));
+trackerPlayNote();
+});
+$(".trackerEffect").focus(function() {
+setTrackerVarsFromId($(this).attr("id"));
+updateEffectsPanel();
+samplePlayers.trackerSampleChooser.active = false;
+trackerKeys = false;
+}).click(function() {
+$("#trackerTable").hide();
+setTrackerVarsFromId($(this).attr("id"));
+updateEffectsPanel();
+$("#trackerEffects").show();
+});
 			}, //buildTrackerTable
+
+setTrackerVarsFromId = function(id) {
+//alert("setting id from " + id);
+var v = id.split("-");
+trackerCurRow = v[1];
+trackerCurChan = v[2];
+trackerCurBtn = v[3];
+}, //setTrackerVarsFromId
 
 			trackerFocus = function () {
 var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
@@ -333,6 +370,12 @@ $("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-1").html(s);
 				destination.connect(context.destination);
 				newSong();
 				$(".first").click();
+$("#trackerEffects").hide();
+var lst = "";
+for (var i = 0; i < WebTracker.effects.length; i++) {
+lst += '<option value="' + i + '">' + WebTracker.effects[i] + "</option>"
+} //i
+$("#effectEffects").append(lst).val(0);
 			}; //initialize the program
 
 		$(".menu").click(function () {
@@ -547,6 +590,38 @@ c=e.shiftKey;
 				} //arrows
 			} //trackerKeys
 		}); //keydown
+
+$("#effectNote").focusout(function() {
+$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(this.value));
+}); //effectNote lose focus
+
+$("#effectPeriod").focusout(function() {
+$("#effectNote").val(WebTracker.amigaPeriodToNote(this.value));
+}); //effectPeriod loose focus
+
+$("#effectCancel").click( function() {
+$("#trackerEffects").hide();
+buildTrackerTable();
+$("#trackerTable").show();
+trackerFocus();
+samplePlayers.trackerSampleChooser.active = true;
+trackerKeys = true;
+}); //effectCancel click
+
+$("#effectSave").click(function() {
+$("#trackerEffects").hide();
+var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
+n.sample = $("#effectSample").val();
+n.note = $("#effectNote").val();
+n.effect.effect = $("#effectEffects").val();
+n.effect.p1 = $("#effectP1Box").val();
+n.effect.p2 = $("#effectP2Box").val();
+buildTrackerTable();
+$("#trackerTable").show();
+trackerFocus();
+samplePlayers.trackerSampleChooser.active = true;
+trackerKeys = true;
+}); //save click
 
 		init();
 	}); //ready
