@@ -231,7 +231,8 @@ that.bpm = 125;
 		if (e === 0 && p === 0) {
 			return WebTracker.effect(e, p);
 		} else if (e === 15) {
-return WebTracker.effect(31, p <= 32 ? Math.round(750 / p) : p); //< 32 = ticks per row.
+var r = p <= 32 ? Math.round(750 / p) : p
+return WebTracker.effect(31, r); //< 32 = ticks per row.
 		} else if (e === 14) {
 			e = x + 15;
 			return WebTracker.effect(e, y);
@@ -315,6 +316,7 @@ res.period = WebTracker.noteToAmigaPeriod(n.note);
 		}; //toAmigaNote
 
 that.slideNoteDown = function(bpm, start, end, amt) {
+end = end || 48; //min amiga slide
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),
@@ -331,6 +333,7 @@ return res;
 } //slieNoteDown
 
 that.slideNoteUp = function(bpm, start, end, amt) {
+end = end || 83.0554563; //max if sliding without bound.
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),

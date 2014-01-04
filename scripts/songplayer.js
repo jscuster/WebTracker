@@ -102,8 +102,19 @@ ch.setNote(s[i], time + (t*i));
 }, //applySlide
 
 playNote = function(note, chan) {
-var s = channels[chan];
+var s = channels[chan],
+isNote = true; //is the note to be played or a param.
 switch (note.effect.effect) {
+case 0: //do nothing but don't log it as unknown.
+break;
+case 2: //slide up
+applySlide(song.slideNoteUp(note.note || lastNotes[chan], 0, note.effect.p1), s);
+isNote = false;
+break;
+case 3: //slide up
+applySlide(song.slideNoteDown(note.note || lastNotes[chan], 0, note.effect.p1), s);
+isNote = false;
+break;
 case 4:
 if (note.note > 0) {
 slideBounds[chan] = note.note;
@@ -111,6 +122,7 @@ slideBounds[chan] = note.note;
 var slideNotes = song.calculateNoteSlide(_bpm, lastNotes[chan], slideBounds[chan], note.effect.p1);
 lastNotes[chan] = slideNotes[slideNotes.length - 1];
 applySlide(slideNotes, s);
+isNote = false;
 break;
 case 11: //slide volume
 var delta = note.effect.p1;
@@ -124,11 +136,12 @@ break;
 case 31: //set speed
 _bpm = note.effect.p1;
 setTimePerRow();
+alert("set bpm: " + _bpm + ", tpr: " + tpr);
 break;
 default:
 WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
 } //switch
-if (note.sample !== 0 && note.effect.effect !== 4) {
+if (note.sample !== 0 && isNote && note.note != 0) {
 s.play(note.sample-1, note.note, time);
 lastNotes[chan] = note.note;
 } //if
