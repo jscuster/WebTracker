@@ -17,7 +17,7 @@ tpr = 0.125, //set in setTimePerTick
 donePlaying = true,
 playTimer = 0,
 donePlayingCallback,
-lastNotes = [],
+chanStore,
 slideBounds = [],
 
 setTimePerRow = function() {
@@ -30,6 +30,8 @@ channels = [];
 patternCursor = 0;
 rowCursor = 0;
 curPattern = 0;
+chanStore = [];
+
 //load channels with samplers.
 channelCount = song.channels;
 for (var i = 0; i < channelCount; i++) {
@@ -40,7 +42,12 @@ if (mod === 0 || mod === 3) {
 channels[i].setPan(-0.25, 0, 0); //left
 } else {
 channels[i].setPan(0.25, 0, 0); //right
-} 
+}  //if pan
+chanStore[i] = {
+lastNote: 0,
+slideBound: 0,
+sample: 0
+};
 } //i
 playPatternOnly = false;
 donePlaying = true;
@@ -103,24 +110,32 @@ ch.setNote(s[i], time + (t*i));
 
 playNote = function(note, chan) {
 var s = channels[chan],
-isNote = true; //is the note to be played or a param.
+isNote = true, //is the note to be played or a param.
+slideNotes,
+noteStore = chanStore[chan];
+//alert(chanStore);
+//alert(noteStore);
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
 case 2: //slide up
-applySlide(song.slideNoteUp(note.note || lastNotes[chan], 0, note.effect.p1), s);
+slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
+applySlide(slideNotes, s);
+noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
 case 3: //slide up
-applySlide(song.slideNoteDown(note.note || lastNotes[chan], 0, note.effect.p1), s);
+slideNotes = song.slideNoteDown(note.note || noteStore.lastNote, 0, note.effect.p1);
+applySlide(slideNotes, s);
+noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
 case 4:
 if (note.note > 0) {
-slideBounds[chan] = note.note;
+noteStore.slideBound = note.note;
 }
-var slideNotes = song.calculateNoteSlide(_bpm, lastNotes[chan], slideBounds[chan], note.effect.p1);
-lastNotes[chan] = slideNotes[slideNotes.length - 1];
+slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, note.effect.p1);
+noteStore.lastNote = slideNotes[slideNotes.length - 1];
 applySlide(slideNotes, s);
 isNote = false;
 break;
@@ -136,14 +151,14 @@ break;
 case 31: //set speed
 _bpm = note.effect.p1;
 setTimePerRow();
-alert("set bpm: " + _bpm + ", tpr: " + tpr);
+//alert("set bpm: " + _bpm + ", tpr: " + tpr);
 break;
 default:
 WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
 } //switch
 if (note.sample !== 0 && isNote && note.note != 0) {
 s.play(note.sample-1, note.note, time);
-lastNotes[chan] = note.note;
+noteStore.lastNote = note.note;
 } //if
 }; //playNote
 
