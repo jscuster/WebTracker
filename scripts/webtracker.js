@@ -270,6 +270,7 @@ trackerCurBtn = v[3];
 				if (b >= bl) {
 if (c < cl-1) { //next channel
 c++;
+b=0;
 } else {
 b--;
 } //if channels
@@ -601,6 +602,13 @@ trackerFocus();
 samplePlayers.trackerSampleChooser.active = true;
 trackerKeys = true;
 }); //save click
+
+$("#trackerCurrentPattern").focusout(function() {
+trackerCurPattern = this.value;
+trackerCurRow = trackerCurBtn = 0;
+buildTrackerTable();
+trackerFocus();
+}); //trackerCurrentPattern focus out
 
 		init();
 	}); //ready
