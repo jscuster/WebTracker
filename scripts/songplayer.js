@@ -156,9 +156,12 @@ break;
 default:
 WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
 } //switch
-if (note.sample !== 0 && isNote && note.note != 0) {
-s.play(note.sample-1, note.note, time);
-noteStore.lastNote = note.note;
+if (isNote && note.note != 0) {
+if (note.sample) {
+noteStore.sample = note.sample - 1;
+}
+noteStore.note = note.note;
+s.play(noteStore.sample, note.note, time);
 } //if
 }; //playNote
 
