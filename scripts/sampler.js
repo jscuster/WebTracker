@@ -69,4 +69,11 @@ this.setNote = function(n, endTime) {
 var rate = smp.factor * Math.pow(1.0595, n-60);
 node.playbackRate.setValueAtTime(rate, endTime);
 }; //slideNote
+
+this.changeVolume = function(x, t) {
+var v = gain.gain.value;v += x;
+if (v > 1) v = 1;
+if (v < 0) v = 0;
+gain.gain.setValueAtTime(v, t);
+}; //changeVolume
 }; //SamplePlayer

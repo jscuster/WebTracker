@@ -148,6 +148,12 @@ break;
 case 13: //set volume
 s.setVolume(note.effect.p1/64);
 break;
+case 25:
+s.changeVolume(note.effect.p1, time);
+break;
+case 26:
+s.changeVolume(-note.effect.p1, time);
+break;
 case 31: //set speed
 _bpm = note.effect.p1;
 setTimePerRow();

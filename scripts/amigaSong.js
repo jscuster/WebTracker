@@ -228,15 +228,30 @@ that.bpm = 125;
 		var x = ((p & 0xf0) >> 4),
 			y = p & 0x0f;
 		//set efects
-		if (e === 0 && p === 0) {
-			return WebTracker.effect(e, p);
-		} else if (e === 15) {
+		switch(e) {
+			case 0:
+			if (p === 0) {
+				return WebTracker.effect(e, p);
+			}
+break;
+case 14:
+			e = x + 15;
+switch (e) {
+//next ones fall through, be ware!
+case 25:
+case 26:
+y = y / 64;
+break;
+default:
+} //sub-switch, modify y.
+			return WebTracker.effect(e, y);
+break;
+case 15:
 var r = p <= 32 ? Math.round(750 / p) : p
 return WebTracker.effect(31, r); //< 32 = ticks per row.
-		} else if (e === 14) {
-			e = x + 15;
-			return WebTracker.effect(e, y);
-		} else if (WebTracker.effectParams[e + 1].length >= 2) {
+break;
+default:
+if (WebTracker.effectParams[e + 1].length >= 2) {
 			return WebTracker.effect(e + 1, x, y);
 		} else {
 			if (WebTracker.signedEffects.indexOf(e + 1) >= 0) {
@@ -249,6 +264,7 @@ return WebTracker.effect(31, r); //< 32 = ticks per row.
 			e++;
 			return WebTracker.effect(e, p);
 		} //1 or 2 params
+} //switch
 	}; //amigaEffect
 
 	that.toAmigaEffect = function (effect) {
