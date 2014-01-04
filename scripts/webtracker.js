@@ -239,12 +239,12 @@ trackerPlayNote();
 $(".trackerEffect").focus(function() {
 setTrackerVarsFromId($(this).attr("id"));
 updateEffectsPanel();
-samplePlayers.trackerSampleChooser.active = false;
-trackerKeys = false;
 }).click(function() {
 $("#trackerTable").hide();
 setTrackerVarsFromId($(this).attr("id"));
 updateEffectsPanel();
+samplePlayers.trackerSampleChooser.active = false;
+trackerKeys = false;
 $("#trackerEffects").show();
 });
 			}, //buildTrackerTable
@@ -258,27 +258,24 @@ trackerCurBtn = v[3];
 }, //setTrackerVarsFromId
 
 			trackerFocus = function () {
-var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
-				var t = $(id);
-				t.focus();
+				$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn).focus();
 			}, //trackerFocus
 
 			trackerNextBtn = function () {
 				var c = trackerCurChan,
 					b = trackerCurBtn,
-					cl = song.channels,
+					cl = trackerStartChan + trackerChanWidth,
 					bl = trackerButtonsPerChan;
 				b++; //next
-				if (b >= bl) { //next channel
-					b = 0;
-					c++;
-				}
-				if (c >= cl) { //end of row
-					return false; //at the end of the row, don't move.
-				}
-				//if we're here, the vars are fine, set them back and focus on the button.
-				trackerCurBtn = b;
-				trackerCurChan = c;
+				if (b >= bl) {
+if (c < cl-1) { //next channel
+c++;
+} else {
+b--;
+} //if channels
+} //if buttons
+trackerCurBtn = b;
+trackerCurChan = c;
 				trackerFocus();
 			}, //trackerNextBtn
 
@@ -288,13 +285,13 @@ var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCu
 					bl = trackerButtonsPerChan;
 				b--;
 				if (b < 0) {
+if (c > trackerStartChan) {
 					b = bl - 1;
 					c--;
-				}
-				if (c < 0) {
-					return false; //beginning of row, do nothing.
-				}
-				//if we are here, the vars are fine.
+				} else {
+b++; //put it back
+} //move channels?
+} //b out of bounds
 				trackerCurBtn = b;
  				trackerCurChan = c;
 				trackerFocus();
@@ -546,44 +543,26 @@ $("#effectEffects").append(lst).val(0);
 		}); //trackerNextChan clicked
 
 		$(document).keydown(function (e) {
-			var k = e.which,
-				c = e.ctrlKey;
-			if (c) { //if control is down,
+			var k = e.which;
+			if (e.ctrlKey) { //if control is down,
 				if (k >= 49 && k <= 53) {
 					var b = "#" + ("btnFiles btnSamples btnSong btnPatterns btnTracker".split(" ")[k - 49])
 					$(b).click();
 				} //ctrl+1--5
 			} //ctrl down
 			if (trackerKeys) {
-c=e.shiftKey;
 				switch (k) {
 				case 37: //left arrow
-					if (c) {
-						trackerPrevChan();
-					} else {
-						trackerPrevBtn();
-					} //left
+					trackerPrevBtn();
 				break;
 				case 39: //right
-					if (c) {
-						trackerNextChan();
-					} else {
-						trackerNextBtn();
-					} //right
+					trackerNextBtn();
 					break;
 				case 38: //up arrow
-					if (c) {
-						trackerPrevPattern();
-					} else {
-						trackerPrevRow();
-					} //up
+					trackerPrevRow();
 					break;
 				case 40: //down
-					if (c) {
-						trackerNextPattern();
-					} else {
-						trackerNextRow();
-					} //down
+					trackerNextRow();
 					break;
 				default:
 					break;

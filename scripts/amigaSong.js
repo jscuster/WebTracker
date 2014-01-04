@@ -277,12 +277,24 @@ if (WebTracker.effectParams[e + 1].length >= 2) {
 			}; //encode
 
 		//set efects
-		if (e === 0) {
+switch (e) {
+case 0:
 			return [0, 0];
-		} else if (e === 31) {
+break;
+//the next falls through, be ware
+case 25: //volume, p1 factor of 64.
+case 26:
+x = e-15;
+e = 14;
+y = effect.p1 * 64;
+return encode();
+break;
+case 31:
 			e = 15;
 			return [e, effect.p1];
-		} else if (e >= 15) {
+break;
+default:
+if (e >= 15) {
 			x = e - 15;
 			e = 14;
 			y = effect.p1;
@@ -309,6 +321,7 @@ if (WebTracker.effectParams[e + 1].length >= 2) {
 				} //what to return
 			} //1 or 2 params
 		} //< 14
+} //switch
 	}; //toAmigaEffect
 
 	that.amigaNote = function (n) {
