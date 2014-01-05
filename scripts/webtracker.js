@@ -258,7 +258,9 @@ trackerCurBtn = v[3];
 }, //setTrackerVarsFromId
 
 			trackerFocus = function () {
-				$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn).focus();
+var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
+//alert(id);
+				$(id).focus();
 			}, //trackerFocus
 
 			trackerNextBtn = function () {
@@ -299,22 +301,24 @@ b++; //put it back
 			}, //trackerPrevBtn
 
 			trackerPrevRow = function () {
-				trackerCurRow = trackerCurRow >= 1 ? trackerCurRow - 1 : trackerCurRow; //do nothing if 0.
+				trackerCurRow = trackerCurRow >= 1 ? +trackerCurRow - 1 : +trackerCurRow; //do nothing if 0.
 				trackerFocus();
 			}, //trackerPrevRow
 
 			trackerNextRow = function () {
-				trackerCurRow = trackerCurRow < song.patterns[trackerCurPattern].length - 1 ? trackerCurRow + 1 : trackerCurRow; //do nothing if already at end
+				trackerCurRow = trackerCurRow < song.patterns[trackerCurPattern].length - 1 ? +trackerCurRow + 1 : +trackerCurRow; //do nothing if already at end
 				trackerFocus();
 			}, //trackerNextRow
 
 			trackerPrevPattern = function () {
 				trackerCurPattern = trackerCurPattern >= 1 ? trackerCurPattern - 1 : trackerCurPattern; //do nothing if 0.
+				buildTrackerTable();
 				trackerFocus();
 			}, //trackerPrevRow
 
 			trackerNextPattern = function () {
 				trackerCurPattern = trackerCurPattern < song.patterns.length - 1 ? trackerCurPattern + 1 : trackerCurPattern; //do nothing if already at end
+				buildTrackerTable();
 				trackerFocus();
 			}, //trackerNextPattern
 
