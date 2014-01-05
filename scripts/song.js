@@ -7,6 +7,8 @@ this.minInstruments = this.maxSlots = -1;
 this.minBpm = 1;
 this.maxBpm=1000;
 this.rowsPerBeat=4;
+this.defaultRowsPerPattern = 64;
+
 	this.fillSamples = function () {
 var samples = this.samples,
 l = samples.length;
@@ -41,10 +43,13 @@ this.samples = samples;
 
 	this.createPattern = function (rows) {
 		if (this.patternCount < this.maxPatterns) {
-			rows = rows || 0;
+			rows = rows || this.defaultRowsPerPattern;
 			var p = [];
 			for (var i = 0; i < rows; i++) {
 				p[i] = [];
+for (var j = 0; j < this.channels; j++) {
+p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+} //j
 			} //i
 			this.patterns.push(p);
 			return true;

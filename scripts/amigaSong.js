@@ -18,6 +18,8 @@ WebTracker.AmigaSong = function () {
 that.minBpm = 32;
 that.maxBpm = 255;
 that.bpm = 125;
+that.defaultRowsPerPattern = 64;
+that.channels = 4;
 
 	that.loadMod = function (buffer) { //pass in a DataView.
 		that.channels = that.getChannels(buffer);
