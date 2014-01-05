@@ -125,3 +125,13 @@ return function(p) {
 return p > 0 ? 60 + log(428 / p) / d : 0;
 }; //amigaPeriodToNote
 })(); //closure amigaPeriodToNote
+
+WebTracker.getRectPoints = function(p1, p2) {
+var res = [];
+for (var i = p1.x; i <= p2.x; i++) {
+for (var  j = p1.y; j <= p2.y; j++) {
+res.push({x: i, y: j});
+} //j
+} //i
+return res;
+}; //getRectPoints
