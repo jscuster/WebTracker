@@ -109,7 +109,7 @@ p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
 		} //if
 	}; //movePatternDown
 
-this.getNotesInRect(pat, p1, p2) {
+this.getNotesInRect = function(pat, p1, p2) {
 var p = this.patterns[pat],
 copyNote = WebTracker.copyNote,
 rows = p.length,
@@ -128,7 +128,7 @@ res[i][j] = copyNote(p[i][j]);
 return res;
 }; // getNotesInRect
 
-this.putNotesInRect(pat, row, chan, notes) {
+this.putNotesInRect = function(pat, row, chan, notes) {
 var p = this.patterns[pat],
 res;
 res = [];
@@ -150,11 +150,11 @@ notes[i][j].note += transpose;
 } //i
 }; //transposeNotes
 
-this.clearNote(pat, row, chan) {
+this.clearNote = function(pat, row, chan) {
 var n = this.patterns[pat][ros][chan];
 this.patterns[pat][row][chan] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
 return n;
-}
+}; //clearNote
 }; //Song
 
 WebTracker.Song.init = function(obj) {

@@ -496,7 +496,7 @@ $("#effectEffects").append(lst).val(0);
 			}; //for
 		}); //fileImportAdd change (in file/open menu
 
-		$("#songPlay").click(function () {
+		$(".songPlay").click(function () {
 			songPlayer.playSong();
 		});
 
@@ -520,6 +520,10 @@ $("#effectEffects").append(lst).val(0);
 				songPlayer.bpm = v;
 			} //if
 		}); //tempo loose focus
+
+$("#trackerPlay").click(function() {
+songPlayer.playPattern(trackerCurPattern);
+}); //trackerPlay click
 
 		$("#trackerChannelWidth").focusout(function () {
 			var v = +this.value;
