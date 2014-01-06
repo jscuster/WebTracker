@@ -26,6 +26,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 trackerButtonsPerChan = 4, //chan, samp, note, eff
 			trackerCurBtn = 0,
 			trackerKeys = false,
+trackerClipboard,
 
 			deactivatePlayers = function () {
 				for (var i in samplePlayers) {

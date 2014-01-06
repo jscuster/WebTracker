@@ -127,11 +127,38 @@ return p > 0 ? 60 + log(428 / p) / d : 0;
 })(); //closure amigaPeriodToNote
 
 WebTracker.getRectPoints = function(p1, p2) {
-var res = [];
-for (var i = p1.x; i <= p2.x; i++) {
-for (var  j = p1.y; j <= p2.y; j++) {
-res.push({x: i, y: j});
-} //j
+var ctrStats = function(a, b) {
+var diff = b-a,
+dir = diff < 0 ? -1 : 1;
+return {diff:diff, dir:dir};
+}, //ctrStats
+tmp,
+res = [],
+xdir = ctrStats(p1.x, p2.x);
+ydir = ctrStats(p1.y, p2.y);
+//fix crazy points.
+if (p1.x > p2.x && p1.y > p2.y) {
+tmp = p2;
+p2=p1;
+p1=tmp;
+} //swap if backwards.
+else if (p1.x > p2.x) {
+tmp = p2.x;
+p2.x = p1.x;
+p1.x = tmp;
+} //if p1.x > p2.x
+else if (p1.y > p2.y) {
+tmp = p2.y;
+p2.y = p1.y;
+p1.y = tmp;
+} //if points are crazy
+for (var j = p1.y; j !== p1.y + ydir.diff + ydir.dir; j += ydir.dir) {
+var jIdx = j-p1.y;
+res[jIdx] = [];
+for (var i = p1.x; i !== p1.x + xdir.diff + xdir.dir; i += xdir.dir) {
+var iIdx = i-p1.x;
+res[jIdx][iIdx] = {x: i, y: j};
 } //i
+} //j
 return res;
 }; //getRectPoints
