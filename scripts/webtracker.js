@@ -634,6 +634,11 @@ $("#trackerSelectRect").click(function() {
 
 }); //select rectangle
 
+$("#trackerSelectAll").click(function() {
+$(".trackerSelectNote").attr("checked", true);
+$(".trackerRowSelect").attr("checked", true);
+}); //selectAll click
+
 		init();
 	}); //ready
 } else {
