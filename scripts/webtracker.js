@@ -630,14 +630,41 @@ buildTrackerTable();
 trackerFocus();
 }); //trackerCurrentPattern focus out
 
-$("#trackerSelectRect").click(function() {
-
-}); //select rectangle
-
 $("#trackerSelectAll").click(function() {
 $(".trackerSelectNote").attr("checked", true);
 $(".trackerRowSelect").attr("checked", true);
 }); //selectAll click
+
+$("#trackerSelectRect").click(function() {
+var rows = $(".trackerRowSelect:checked");
+if (rows.length >= 2) {
+var start = +rows[0].value,
+end = +rows[rows.length-1].value;
+for (var i = start+1; i < end; i++) {
+var btn = $("#trackerRow-" + i);
+if(!btn.prop('checked')) {
+btn.click();
+} //if not checked already, click it.
+} // i
+} else { //if it's not the rows, it's the notes.
+var n = $(".trackerSelectNote:checked");
+if (n.length !== 2) {
+alert("Error, to select inside a boundary of notes, exactly two notes can be checked.");
+} else {//if not 2 notes
+var p1 = n[0].value.split(":"),
+p2 = n[n.length-1].value.split(":");
+p1 = {x: +p1[1], y: +p1[0]};
+p2 = {x: +p2[1], y: +p2[0]};
+var rect = WebTracker.getRectPoints(p1, p2);
+for (var i = 0; i < rect.length; i++) {
+for (var j = 0; j < rect[i].length; j++) {
+var p = rect[i][j];
+$("#trackerBtn-" + p.y + "-" + p.x + "-0").prop("checked", true);
+} //j
+} //i
+} //if length is right
+} //if rows or notes
+}); //select rectangle
 
 		init();
 	}); //ready
