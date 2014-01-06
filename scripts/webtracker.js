@@ -216,11 +216,11 @@ $("#effectEffects").val(n.effect.effect);
 				} //j
 				res += "</tr>"
 				for (var i = 0; i < p.length; i++) {
-					res += '<tr><td><label><input type="checkbox" id="trackerRow"' + i + '">' + (i + 1) + '</label></td>';
+					res += '<tr><td><label><input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect">' + (i + 1) + '</label></td>';
 					for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
 						var n = p[i][j],
 id="trackerBtn-" + i + "-" + j + "-";
-						res += '<td><label><input type="checkbox" value="1" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
+						res += '<td><label><input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
 						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
 						res += '<td><button id="' + id + '2" class = "trackerNote">' + WebTracker.midiNoteToName(n.note) + '</button></td>';
 						res += '<td><button id="' + id + '3" class="trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
@@ -247,7 +247,20 @@ updateEffectsPanel();
 samplePlayers.trackerSampleChooser.active = false;
 trackerKeys = false;
 $("#trackerEffects").show();
+$("#effectSample").focus();
 });
+$(".trackerRowSelect").click(function() {
+var r = +this.value,
+c=this.checked;
+for (var i = trackerStartChan; i < trackerChanWidth - trackerStartChan; i++) {
+$("#trackerBtn-" + r + "-" + i + "-0").attr('checked', c);
+} //i
+}); //row checkbox clicked
+$(".trackerSelectNote").click(function() {
+if (!this.checked) {
+$("#trackerRow-" + +this.value.split(":")[0]).attr('checked', false);
+} //if not checked
+}); //note selector clicked
 			}, //buildTrackerTable
 
 setTrackerVarsFromId = function(id) {
@@ -616,6 +629,10 @@ trackerCurRow = trackerCurBtn = 0;
 buildTrackerTable();
 trackerFocus();
 }); //trackerCurrentPattern focus out
+
+$("#trackerSelectRect").click(function() {
+
+}); //select rectangle
 
 		init();
 	}); //ready
