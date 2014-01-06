@@ -60,7 +60,7 @@ default:
 var  i = keyToNote(String.fromCharCode(e.which));
 if (i >= 0) {
 player.play(sptr, i);
-_noteCallback(sptr, i);
+if (_noteCallback) _noteCallback(sptr, i);
 } //note finding
 } //switch
 downKey = e.which;
@@ -71,6 +71,7 @@ downKey = e.which;
 
 keyUp = function (e) {
 if (that.active) {
+
 var i = keyToNote(String.fromCharCode(e.which));
 if (e.which === downKey) {
 if (i >= 0) {

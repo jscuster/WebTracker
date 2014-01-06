@@ -387,7 +387,6 @@ q = that.slideNoteDown(bpm, last, bound, amt);
 } else {
 q = that.slideNoteUp(bpm, last, bound, amt);
 } //if
-//alert("sliding from " + last + " to " + bound + " with points\n" + JSON.stringify(q));
 return q;
 }; //calculateNoteSlide
 }; //amigaMod

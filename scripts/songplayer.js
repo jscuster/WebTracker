@@ -124,13 +124,13 @@ applySlide(slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
-case 3: //slide up
+case 3: //slide down
 slideNotes = song.slideNoteDown(note.note || noteStore.lastNote, 0, note.effect.p1);
 applySlide(slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
-case 4:
+case 4: //slide to note
 if (note.note > 0) {
 noteStore.slideBound = note.note;
 }
@@ -166,7 +166,7 @@ if (isNote && note.note != 0) {
 if (note.sample) {
 noteStore.sample = note.sample - 1;
 }
-noteStore.note = note.note;
+noteStore.lastNote = note.note;
 s.play(noteStore.sample, note.note, time);
 } //if
 }; //playNote
