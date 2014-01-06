@@ -113,8 +113,6 @@ var s = channels[chan],
 isNote = true, //is the note to be played or a param.
 slideNotes,
 noteStore = chanStore[chan];
-//alert(chanStore);
-//alert(noteStore);
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
@@ -157,7 +155,6 @@ break;
 case 31: //set speed
 _bpm = note.effect.p1;
 setTimePerRow();
-//alert("set bpm: " + _bpm + ", tpr: " + tpr);
 break;
 default:
 WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
@@ -226,7 +223,6 @@ return _bpm;
 }, //get
 set: function(v) {
 v = v < 32 ? 32 : v;
-alert("setting bpm to " + v);
 _bpm = v;
 setTimePerRow();
 } //set

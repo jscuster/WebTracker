@@ -250,7 +250,6 @@ $("#trackerEffects").show();
 			}, //buildTrackerTable
 
 setTrackerVarsFromId = function(id) {
-//alert("setting id from " + id);
 var v = id.split("-");
 trackerCurRow = v[1];
 trackerCurChan = v[2];
@@ -259,7 +258,6 @@ trackerCurBtn = v[3];
 
 			trackerFocus = function () {
 var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
-//alert(id);
 				$(id).focus();
 			}, //trackerFocus
 
