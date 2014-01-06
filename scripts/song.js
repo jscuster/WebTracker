@@ -109,6 +109,52 @@ p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
 		} //if
 	}; //movePatternDown
 
+this.getNotesInRect(pat, p1, p2) {
+var p = this.patterns[pat],
+copyNote = WebTracker.copyNote,
+rows = p.length,
+rect = WebTracker.getRectPoints(p1, p2),
+res = [],
+rp1 = rect[0][0],
+rp2 = rect[rect.length-1][rect[rect.length-1].length-1]; //yup, the lastest point in the array
+if (rp1.y < rows && rp2.y < rows && rp1.x < this.channels && rp2.x < this.channels) {
+for (var i = 0; i < rect.length; i++) {
+res[i] = [];
+for (var j = 0; j < rect[i].length; j++) {
+res[i][j] = copyNote(p[i][j]);
+} //j
+} //i
+} //if the rect is valid
+return res;
+}; // getNotesInRect
+
+this.putNotesInRect(pat, row, chan, notes) {
+var p = this.patterns[pat],
+res;
+res = [];
+for (var i = 0; i < notes.length; i++) {
+res[i] = [];
+for (var j = 0; j < notes[i].length; j++) {
+res[i][j] = p[row+i][chan+j];
+p[row+i][chan+j] = notes[i][j];
+} //j
+} //i
+return res; //get back the old notes.
+}; //putNotesInRect
+
+this.transposeNotes = function(notes, transpose) {
+for (var i = 0; i < notes.length; i++) {
+for (var j = 0; j < notes[i].length; j++) {
+notes[i][j].note += transpose;
+} //j
+} //i
+}; //transposeNotes
+
+this.clearNote(pat, row, chan) {
+var n = this.patterns[pat][ros][chan];
+this.patterns[pat][row][chan] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+return n;
+}
 }; //Song
 
 WebTracker.Song.init = function(obj) {

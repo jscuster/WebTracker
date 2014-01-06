@@ -145,3 +145,12 @@ var qq = e.effect;
 	} //if any params
 	return res;
 }; //effectToString
+
+WebTracker.copyNote = (function() {
+var note = WebTracker.note,
+effect = WebTracker.effect;
+return function(n) {
+var e = note.effect;
+return note(n.sample, n.note, effect(e.effect, e.p1, e.p2));
+}; //copyNote
+})(); //closure for copyNote
