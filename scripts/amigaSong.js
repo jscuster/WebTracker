@@ -234,7 +234,12 @@ that.channels = 4;
 			case 0:
 			if (p === 0) {
 				return WebTracker.effect(e, p);
-			}
+			} else {
+return WebTracker.effect(e, x, y);
+}
+break;
+case 12:
+return [e+1, p/64];
 break;
 case 14:
 			e = x + 15;
@@ -282,6 +287,9 @@ if (WebTracker.effectParams[e + 1].length >= 2) {
 switch (e) {
 case 0:
 			return [0, 0];
+break;
+case 13: //set volume
+return [e-1, p*64];
 break;
 //the next falls through, be ware
 case 25: //volume, p1 factor of 64.
@@ -389,6 +397,11 @@ q = that.slideNoteUp(bpm, last, bound, amt);
 } //if
 return q;
 }; //calculateNoteSlide
+
+this.calcVolumeSlide = function(bpm, p) {
+return (750 * p)/(bpm * 64); //ticks per row * p, all over 64. 64 = max amiga volume.
+}; //calcVolumeSlide
+
 }; //amigaMod
 
 WebTracker.AmigaSong.prototype = new WebTracker.Song();

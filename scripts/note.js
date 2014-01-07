@@ -1,3 +1,4 @@
+
 var WebTracker = WebTracker || {};
 WebTracker.effects = [
 'none', //0
@@ -78,7 +79,7 @@ true];
 })(); //anonymous var setter
 
 WebTracker.effectParams = [
-[], //0
+['none'], //0
  ['Second Note', 'Third Note'],
  ['new Period'],
  ['new Period'],
@@ -132,7 +133,6 @@ WebTracker.note = function (s, n, e) {
 }; //note factory
 
 WebTracker.effectToString = function (e) {
-var qq = e.effect;
 	var res = WebTracker.effects[e.effect];
 	var p = WebTracker.effectParams[e.effect];
 	if (p.length) {

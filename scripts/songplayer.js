@@ -113,6 +113,10 @@ var s = channels[chan],
 isNote = true, //is the note to be played or a param.
 slideNotes,
 noteStore = chanStore[chan];
+if (!note.effect) {
+alert("bad note at pattern " + patternCursor + ", row " + rowCursor + ", chan " + chan);
+}
+
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
@@ -138,10 +142,7 @@ applySlide(slideNotes, s);
 isNote = false;
 break;
 case 11: //slide volume
-var delta = note.effect.p1;
-delta = delta / 64;
-delta *= (tpr-1);
-s.slideVolume(delta, time + (tpr));
+s.slideVolume(song.calcVolumeSlide(_bpm, n.effect.p1), time + (tpr));
 break;
 case 13: //set volume
 s.setVolume(note.effect.p1/64);

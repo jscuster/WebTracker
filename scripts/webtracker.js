@@ -227,6 +227,7 @@ id="trackerBtn-" + i + "-" + j + "-";
 						res += "<td>|</td>";
 					} //j
 					res += "</tr>";
+//alert("i: " + i + ", note: " + WebTracker.midiNoteToName(p[i][0].note) + ", effect: " + WebTracker.effectToString(p[i][0].effect));
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
@@ -658,6 +659,7 @@ trackerKeys = true;
 
 $("#trackerCurrentPattern").focusout(function() {
 trackerCurPattern = this.value;
+alert("changing to pattern " + trackerCurPattern);
 trackerCurRow = trackerCurBtn = 0;
 buildTrackerTable();
 trackerFocus();
