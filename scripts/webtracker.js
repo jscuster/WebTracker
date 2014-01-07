@@ -580,7 +580,7 @@ songPlayer.playPattern(trackerCurPattern);
 			buildTrackerTable();
 		}); //trackerNextChan clicked
 
-		$(document).keydown(function (e) {
+		$(document).keyup(function (e) {
 			var k = e.which;
 			if (e.ctrlKey) { //if control is down,
 				if (k >= 49 && k <= 53) {
@@ -602,6 +602,22 @@ songPlayer.playPattern(trackerCurPattern);
 				case 40: //down
 					trackerNextRow();
 					break;
+case 51: //#
+if (e.shiftKey) $("#trackerTranspose").click();
+break;
+case 220: //\
+if (e.shiftKey) { // |
+$("#trackerSelectRect").click();
+} else { // \
+$("#trackerCopy").click();
+} //| or \
+break;
+case 191: // /
+if (e.shiftKey) { // ?
+$("#trackerSelectAll").click();
+} else { // /
+$("#trackerPaste").click();
+} // ? or /
 				default:
 					break;
 				} //arrows
@@ -616,7 +632,7 @@ $("#effectPeriod").focusout(function() {
 $("#effectNote").val(WebTracker.amigaPeriodToNote(this.value));
 }); //effectPeriod loose focus
 
-$("#effectCancel").click( function() {
+$(".effectCancel").click( function() {
 $("#trackerEffects").hide();
 buildTrackerTable();
 $("#trackerTable").show();
@@ -625,7 +641,7 @@ samplePlayers.trackerSampleChooser.active = true;
 trackerKeys = true;
 }); //effectCancel click
 
-$("#effectSave").click(function() {
+$(".effectSave").click(function() {
 $("#trackerEffects").hide();
 var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
 n.sample = $("#effectSample").val();
@@ -699,7 +715,7 @@ trackerFocus();
 } //if the clibpoard isn't empty
 }); //trackerPaste click
 
-$("trackerSelectNone").click(selectNoNotes) //clear selection
+$("#trackerSelectNone").click(selectNoNotes) //clear selection
 
 $("#trackerTranspose").click(function() {
 var n = getSelectedNotes() 

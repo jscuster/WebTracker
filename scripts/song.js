@@ -126,13 +126,9 @@ copyNote = WebTracker.copyNote,
 res = [],
 x,
 y;
-alert(p.length + " is the number of rows.");
-alert("note length: " + notes.length);
 for (var i = 0; i < notes.length; i++) {
 x = +notes[i].x + xoff;
 y = +notes[i].y + yoff;
-alert("i: " + i);
-alert("Attempting to paste note " + y + ", " + x + " on pattern " + pat);
 res[i] = copyNote(p[y][x]);
 p[y][x] = copyNote(notes[i].note);
 } //i
