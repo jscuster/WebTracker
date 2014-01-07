@@ -275,6 +275,23 @@ var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCu
 				$(id).focus();
 			}, //trackerFocus
 
+getSelectedNotes = function() {
+var res = [];
+$(".trackerSelectNote:checked").each(function(box) {
+var p = this.value.split(":");
+res.push({x: p[1], y: p[0]});
+}); //for each selected box
+if (res.length === 0) {
+res.push({x: trackerCurChan, y: trackerCurRow});
+} //if none are checked, we want to copy the currently active note.
+return song.getNotesAtPoints(trackerCurPattern, res);
+}, //getSelectedNotes
+
+selectNoNotes = function() {
+$(".trackerSelectNote:checked").prop('checked', false);
+$(".trackerSelectRow:checked").prop('checked', false);
+},
+
 			trackerNextBtn = function () {
 				var c = trackerCurChan,
 					b = trackerCurBtn,
@@ -666,6 +683,39 @@ $("#trackerBtn-" + p.y + "-" + p.x + "-0").prop("checked", true);
 } //if rows or notes
 }); //select rectangle
 
+$("#trackerCopy").click(function() {
+trackerClipboard = getSelectedNotes();
+selectNoNotes();
+}); //trackerCopy click
+
+$("#trackerPaste").click(function() {
+if (trackerClipboard.length > 0) {
+var p = trackerClipboard[0],
+xoff = trackerCurChan - p.x,
+yoff = trackerCurRow - p.y;
+song.putNotesAtPoints(trackerCurPattern, xoff, yoff, trackerClipboard);
+buildTrackerTable();
+trackerFocus();
+} //if the clibpoard isn't empty
+}); //trackerPaste click
+
+$("trackerSelectNone").click(selectNoNotes) //clear selection
+
+$("#trackerTranspose").click(function() {
+var n = getSelectedNotes() 
+if (n.length > 0) {
+var t = +prompt("Please enter the number of simitones to transpose (negative `-~ numbers transpose down.)");
+if (!isNaN(t)) {
+song.transposeNotes(n, t);
+buildTrackerTable();
+trackerFocus();
+} else { //now it's not a number.
+alert("Error: Please enter a valid number. Ecamples: -5: transpose down 5 simitones; 9: transpose up 9 simitones.");
+} //if the user entered a number
+} else { //now we know no notes were selected.
+alert("Error: Please select the notes to transpose first.");
+} //if we have notes
+}); //tracker transpose
 		init();
 	}); //ready
 } else {

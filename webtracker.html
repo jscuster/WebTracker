@@ -131,9 +131,9 @@ Pattern table goes here.
 <td><button id="trackerSelectRect">Select Inside</button></td>
 <td><button id="trackerSelectAll">Select All</button></td>
 <td><button id="trackerCopy">Copy</button></td>
-<td></td>
+<td><button id="trackerSelectNone">Clear Selection</button></td>
 <td><button id="trackerPaste">Paste</button></td>
-<td></td>
+<td><button id="trackerTranspose">Transpose Selection</button></td>
 </tr>
 </table>
 </div>
@@ -146,9 +146,9 @@ Tracker table goes here.
 <div id="trackerEffects">
 <table>
 <tr>
-<td><button id="effectCancel">Cancel</button></td>
+<td><button class="effectCancel">Cancel</button></td>
 <td></td>
-<td><button id="effectSave">Save</button></td>
+<td><button class="effectSave">Save</button></td>
 </tr>
 <tr></tr>
 <tr>
@@ -159,6 +159,12 @@ Tracker table goes here.
 <td><label><select id="effectEffects"></select>Effect</label></td>
 <td><label id="effectP1" for=effectP1Box">P1</label><input type="number" id="effectP1Box" value="0"></td>
 <td><label id="effectP2" for="effectP2Box">P2</label><input type="number" id="effectP2Box" value="0"></td>
+</tr>
+<tr></tr>
+<tr>
+<td><button class="effectCancel">Cancel</button></td>
+<td></td>
+<td><button class="effectSave">Save</button></td>
 </tr>
 </table>
 </div>

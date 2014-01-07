@@ -150,7 +150,7 @@ WebTracker.copyNote = (function() {
 var note = WebTracker.note,
 effect = WebTracker.effect;
 return function(n) {
-var e = note.effect;
+var e = n.effect;
 return note(n.sample, n.note, effect(e.effect, e.p1, e.p2));
 }; //copyNote
 })(); //closure for copyNote
