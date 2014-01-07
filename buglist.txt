@@ -1,0 +1,4 @@
+Nobody likes em, but they are here.
+
+1. Add button in pattern order panel doesn't add.
+2. buildTrackerTable doesn't seem to render the table correctly for some patterns, IE pattern 2 of valley of the sea (_vally.mod).

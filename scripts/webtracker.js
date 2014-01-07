@@ -131,6 +131,8 @@ $("#effectEffects").val(n.effect.effect);
 					res += '<td><button class="patternDown" id="down:' + i + '">Move Down</button></td>'
 					res += "</tr>";
 				} //i
+res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
+
 				res += "</table>";
 				$("#editorInfo").html(res);
 				$(".patternPlay").click(function () {
@@ -153,6 +155,10 @@ $("#effectEffects").val(n.effect.effect);
 					changed = true;
 					song.movePatternDown(idx);
 				}); //down click
+$("#patternAddPattern").click( function() {
+song.createPattern();
+buildPatternEditor();
+});
 			}, //buildPatternEditor
 
 			buildPatternTable = function () {
