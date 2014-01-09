@@ -142,7 +142,7 @@ applySlide(slideNotes, s);
 isNote = false;
 break;
 case 11: //slide volume
-s.slideVolume(song.calcVolumeSlide(_bpm, n.effect.p1), time + (tpr));
+s.slideVolume(song.calcVolumeSlide(_bpm, note.effect.p1), time + (tpr));
 break;
 case 13: //set volume
 s.setVolume(note.effect.p1/64);

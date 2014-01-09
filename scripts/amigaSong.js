@@ -226,53 +226,74 @@ that.channels = 4;
 		return that.getChannels(buffer) > 0;
 	}; //isValid
 
-	that.amigaEffect = function (e, p) {
+	that.amigaEffect = (function() {
+var effect = WebTracker.effect;
+return function (e, p) {
 		var x = ((p & 0xf0) >> 4),
 			y = p & 0x0f;
 		//set efects
 		switch(e) {
 			case 0:
 			if (p === 0) {
-				return WebTracker.effect(e, p);
+				return effect(e, p);
 			} else {
-return WebTracker.effect(e, x, y);
+return effect(e, x, y);
 }
 break;
-case 12:
-return [e+1, p/64];
+//falls through
+case 1: //slide up
+case 2: //slide down
+case 3: //slide to note
+return effect(e+1, p);
 break;
-case 14:
+case 4: //vibrato
+return effect(5, x, y);
+break;
+//next ones fall through
+case 5: //continue note slide + slice volume
+case 6: //continue note slide + vibrato
+return effect(e+1, x > 0 ? x : -y);
+break;
+case 7: //tremolo
+return effect(e, x, y);
+break;
+case 8: //supposed to be unused, suspect pan.
+return effect(e+1, p);
+break;
+case 9: //set ssample offset
+return effect(10, p << 8);
+break;
+case 10: //volume slide
+return effect(e+1, x > 0 ? x : -y);
+break;
+case 11: //position jump
+return effect(e+1, p);
+break;
+case 12:  //set volume
+return effect(13, p/64);
+break;
+case 13: //pattern break
+return effect(14, (x*10) + y);
+break;
+case 14: //sub-effect
 			e = x + 15;
 switch (e) {
 //next ones fall through, be ware!
-case 25:
-case 26:
+case 25: //slide volume up
+case 26: //slide volume down
 y = y / 64;
 break;
 default:
 } //sub-switch, modify y.
-			return WebTracker.effect(e, y);
+			return effect(e, y);
 break;
-case 15:
+case 15: //set tempo
 var r = p <= 32 ? Math.round(750 / p) : p
-return WebTracker.effect(31, r); //< 32 = ticks per row.
+return effect(31, r); //< 32 = ticks per row.
 break;
-default:
-if (WebTracker.effectParams[e + 1].length >= 2) {
-			return WebTracker.effect(e + 1, x, y);
-		} else {
-			if (WebTracker.signedEffects.indexOf(e + 1) >= 0) {
-				if (x) {
-					p = x;
-				} else {
-					p = -y;
-				} //+x or -y
-			} //if signed
-			e++;
-			return WebTracker.effect(e, p);
-		} //1 or 2 params
 } //switch
 	}; //amigaEffect
+})(); //closure amegaEffect
 
 	that.toAmigaEffect = function (effect) {
 		var e = effect.effect,

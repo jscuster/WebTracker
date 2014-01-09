@@ -23,7 +23,7 @@ gain = context.createGain(),
 				node = context.createBufferSource();
 				node.buffer = buffer;
 				//volume
-				this.setVolume(smp.volume);
+				this.setVolume(smp.volume, when);
 				if (s !== lastSample) {
 					lastSample = s;
 				} //if different sample

@@ -135,7 +135,7 @@ WebTracker.note = function (s, n, e) {
 WebTracker.effectToString = function (e) {
 	var res = WebTracker.effects[e.effect];
 	var p = WebTracker.effectParams[e.effect];
-	if (p.length) {
+	if (p && p.length) {
 		if (p.length == 2) {
 			res += ": " + p[0] + " " + e.p1;
 			res += ", " + p[1] + " " + e.p2;
