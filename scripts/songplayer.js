@@ -18,7 +18,7 @@ donePlaying = true,
 playTimer = 0,
 donePlayingCallback,
 chanStore,
-slideBounds = [],
+samples = song.samples,
 
 setTimePerRow = function() {
 tpr = 60/(_bpm * song.rowsPerBeat);
@@ -111,14 +111,22 @@ ch.setNote(s[i], time + (t*i));
 playNote = function(note, chan) {
 var s = channels[chan],
 isNote = true, //is the note to be played or a param.
-slideNotes,
 noteStore = chanStore[chan];
-if (!note.effect) {
-alert("bad note at pattern " + patternCursor + ", row " + rowCursor + ", chan " + chan);
+if (note.sample ) {
+noteStore.sample = note.sample - 1;
+noteStore.volume = samples[noteStore.sample].volume;
 }
 
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
+break;
+case 1: //Arpeggio
+isNote = true;
+s.play(noteStore.sample, note.note, time);
+s.play(noteStore.sample, note.note + note.effect.p1, time + (tpr/3));
+s.play(noteStore.sample, note.note + note.effect.p2, time + (2 * (tpr/3)));
+s.play(noteStore.sample, note.note, time);
+noteStore.lastNote = note.note;
 break;
 case 2: //slide up
 slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
@@ -142,28 +150,27 @@ applySlide(slideNotes, s);
 isNote = false;
 break;
 case 11: //slide volume
-s.slideVolume(song.calcVolumeSlide(_bpm, note.effect.p1), time + (tpr));
+s.slideVolume(noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1), time + (tpr));
 break;
 case 13: //set volume
-s.setVolume(note.effect.p1/64);
+s.setVolume(noteStore.volume = note.effect.p1);
 break;
 case 25:
 s.changeVolume(note.effect.p1, time);
+noteStore.volume += note.effect.p1;
 break;
 case 26:
 s.changeVolume(-note.effect.p1, time);
+noteStore.volume -= note.effect.p1;
 break;
 case 31: //set speed
 _bpm = note.effect.p1;
 setTimePerRow();
 break;
 default:
-WebTracker.logger.log("unlogged event: " + JSON.stringify(note));
+WebTracker.logger.log("unhandled event: " + JSON.stringify(note));
 } //switch
 if (isNote && note.note != 0) {
-if (note.sample) {
-noteStore.sample = note.sample - 1;
-}
 noteStore.lastNote = note.note;
 s.play(noteStore.sample, note.note, time);
 } //if

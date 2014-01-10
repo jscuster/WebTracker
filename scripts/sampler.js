@@ -58,17 +58,14 @@ this.setVolume = function (volume, when) {
 	gain.gain.setValueAtTime(volume, when);
 }; //setVolume
 
-this.slideVolume = function(delta, endTime) {
-var tmp = gain.gain.value + delta;
-if (tmp > 1) tmp = 1;
-if (tmp < 0) tmp = 0;
-gain.gain.linearRampToValueAtTime(tmp, endTime);
+this.slideVolume = function(newVolume, endTime) {
+gain.gain.linearRampToValueAtTime(newVolume, endTime);
 }; //slideVolume
 
 this.setNote = function(n, endTime) {
 var rate = smp.factor * Math.pow(1.0595, n-60);
 node.playbackRate.setValueAtTime(rate, endTime);
-}; //slideNote
+}; //setNote
 
 this.changeVolume = function(x, t) {
 var v = gain.gain.value;v += x;

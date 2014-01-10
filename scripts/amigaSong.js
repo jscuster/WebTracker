@@ -419,8 +419,9 @@ q = that.slideNoteUp(bpm, last, bound, amt);
 return q;
 }; //calculateNoteSlide
 
-this.calcVolumeSlide = function(bpm, p) {
-return (750 * p)/(bpm * 64); //ticks per row * p, all over 64. 64 = max amiga volume.
+this.calcVolumeSlide = function(bpm, vol, p) {
+vol += ((750 * p)/(bpm * 64)); //ticks per row * p, all over 64. 64 = max amiga volume.
+vol = WebTracker.restrictRange(vol, 0, 1);
 }; //calcVolumeSlide
 
 }; //amigaMod
