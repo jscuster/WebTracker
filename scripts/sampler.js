@@ -3,7 +3,7 @@ WebTracker.Sampler = function (samples, destination) {
 var context = WebTracker.context;
 	destination = destination || context.destination;
 		var lastSample = -1,
-smp,
+sptr,
 		node,
 gain = context.createGain(),
 		panner = context.createPanner();
@@ -15,8 +15,8 @@ gain = context.createGain(),
 		if (note != 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
-
-			smp = samples[s],
+sptr = s;
+			var smp = samples[s],
 			rate = smp.factor * Math.pow(1.0595, note-60),
 			buffer = smp.data;
 			if (buffer) {
@@ -54,23 +54,28 @@ this.setPan = function (x, y, z) {
 	panner.setPosition(x, y, z);
 }; //setPan
 
-this.setVolume = function (volume, when) {
+this .setVolume = function (volume, when) {
 	gain.gain.setValueAtTime(volume, when);
+//alert("setting to " + volume);
 }; //setVolume
 
 this.slideVolume = function(newVolume, endTime) {
 gain.gain.linearRampToValueAtTime(newVolume, endTime);
 }; //slideVolume
 
-this.setNote = function(n, endTime) {
-var rate = smp.factor * Math.pow(1.0595, n-60);
-node.playbackRate.setValueAtTime(rate, endTime);
+this.setNote = function(s, n, when) {
+if (s === sptr) {
+var rate = samples[s].factor * Math.pow(1.0595, n-60);
+node.playbackRate.setValueAtTime(rate, when);
+} else {
+this.play(s, n, when);
+} //if not already playing, start it fresh.
 }; //setNote
 
 this.changeVolume = function(x, t) {
-var v = gain.gain.value;v += x;
-if (v > 1) v = 1;
-if (v < 0) v = 0;
+var v = gain.gain.value;
+v += x;
+WebTracker.restrictRange(v, 0, 1);
 gain.gain.setValueAtTime(v, t);
 }; //changeVolume
 }; //SamplePlayer

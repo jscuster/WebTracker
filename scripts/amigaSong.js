@@ -237,7 +237,7 @@ return function (e, p) {
 			if (p === 0) {
 				return effect(e, p);
 			} else {
-return effect(e, x, y);
+return effect(1, x, y);
 }
 break;
 //falls through
@@ -264,7 +264,7 @@ case 9: //set ssample offset
 return effect(10, p << 8);
 break;
 case 10: //volume slide
-return effect(e+1, x > 0 ? x : -y);
+return effect(11, x > 0 ? x : -y);
 break;
 case 11: //position jump
 return effect(e+1, p);

@@ -101,14 +101,15 @@ playRow();
 } //while
 }, //play
 
-applySlide = function(s, ch) {
+applySlide = function(samp, s, ch) {
 var t = tpr / s.length;
 for (var i = 0; i < s.length; i++) {
-ch.setNote(s[i], time + (t*i));
+ch.setNote(samp, s[i], time + (t*i));
 } //i
 }, //applySlide
 
 playNote = function(note, chan) {
+try {
 var s = channels[chan],
 isNote = true, //is the note to be played or a param.
 noteStore = chanStore[chan];
@@ -116,27 +117,28 @@ if (note.sample ) {
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
 }
+var slideNotes;
 
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
 case 1: //Arpeggio
-isNote = true;
+isNote = false;
+var tprot = tpr/3;
 s.play(noteStore.sample, note.note, time);
-s.play(noteStore.sample, note.note + note.effect.p1, time + (tpr/3));
-s.play(noteStore.sample, note.note + note.effect.p2, time + (2 * (tpr/3)));
-s.play(noteStore.sample, note.note, time);
-noteStore.lastNote = note.note;
+s.setNote(noteStore.sample, note.note + note.effect.p1, time + tprot);
+s.setNote(noteStore.sample, note.note + note.effect.p2, time + (2 * tprot));
+s.setNote(noteStore.sample, note.note, time + tpr);
 break;
 case 2: //slide up
 slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
-applySlide(slideNotes, s);
+applySlide(noteStore.sample, slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
 case 3: //slide down
 slideNotes = song.slideNoteDown(note.note || noteStore.lastNote, 0, note.effect.p1);
-applySlide(slideNotes, s);
+applySlide(noteStore.sample, slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
@@ -146,14 +148,15 @@ noteStore.slideBound = note.note;
 }
 slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, note.effect.p1);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
-applySlide(slideNotes, s);
+applySlide(noteStore.sample, slideNotes, s);
 isNote = false;
 break;
 case 11: //slide volume
 s.slideVolume(noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1), time + (tpr));
 break;
 case 13: //set volume
-s.setVolume(noteStore.volume = note.effect.p1);
+noteStore.volume = note.effect.p1;
+s.setVolume(noteStore.volume, time);
 break;
 case 25:
 s.changeVolume(note.effect.p1, time);
@@ -174,6 +177,10 @@ if (isNote && note.note != 0) {
 noteStore.lastNote = note.note;
 s.play(noteStore.sample, note.note, time);
 } //if
+} catch (e) {
+alert("Playing note " + JSON.stringify(note) + "\non channel " + chan);
+alert(JSON.stringify(e));
+} //catch
 }; //playNote
 
 this.playSong = function() {
