@@ -46,7 +46,8 @@ channels[i].setPan(0.25, 0, 0); //right
 chanStore[i] = {
 lastNote: 0,
 slideBound: 0,
-sample: 0
+sample: 0,
+volume: 0
 };
 } //i
 playPatternOnly = false;
@@ -66,6 +67,7 @@ channels[i].stop(time);
 if (donePlayingCallback) {
 donePlayingCallback();
 } //if
+preload(); //reset things back.
 }, //stop audio and end playback
 
 bumpRowCursor = function() {
@@ -112,23 +114,28 @@ playNote = function(note, chan) {
 try {
 var s = channels[chan],
 isNote = true, //is the note to be played or a param.
-noteStore = chanStore[chan];
+noteStore = chanStore[chan],
+slideNotes,
+startNote = function() {
+noteStore.lastNote = note.note ? note.note : noteStore.lastNote;
+s.play(noteStore.sample, noteStore.lastNote, time);
+}; //starts the note playing.
+
 if (note.sample ) {
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
 }
-var slideNotes;
 
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
 case 1: //Arpeggio
 isNote = false;
-var tprot = tpr/3;
-s.play(noteStore.sample, note.note, time);
-s.setNote(noteStore.sample, note.note + note.effect.p1, time + tprot);
-s.setNote(noteStore.sample, note.note + note.effect.p2, time + (2 * tprot));
-s.setNote(noteStore.sample, note.note, time + tpr);
+if (note.note !== 0 && note.note !== noteStore.lastNote) {
+startNote();
+} //don't start if already playing.
+slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
+applySlide(noteStore.sample, slideNotes, s);
 break;
 case 2: //slide up
 slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
@@ -173,13 +180,13 @@ break;
 default:
 WebTracker.logger.log("unhandled event: " + JSON.stringify(note));
 } //switch
-if (isNote && note.note != 0) {
-noteStore.lastNote = note.note;
-s.play(noteStore.sample, note.note, time);
+if (isNote && note.note !== 0) {
+startNote();
 } //if
 } catch (e) {
 alert("Playing note " + JSON.stringify(note) + "\non channel " + chan);
 alert(JSON.stringify(e));
+throw e;
 } //catch
 }; //playNote
 

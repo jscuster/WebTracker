@@ -713,6 +713,7 @@ selectNoNotes();
 }); //trackerCopy click
 
 $("#trackerPaste").click(function() {
+alert("pasting.");
 if (trackerClipboard.length > 0) {
 var p = trackerClipboard[0],
 xoff = trackerCurChan - p.x,

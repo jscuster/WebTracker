@@ -419,6 +419,24 @@ q = that.slideNoteUp(bpm, last, bound, amt);
 return q;
 }; //calculateNoteSlide
 
+this.calcArpeggio = function(bpm, base, o1, o2) {
+var t = 750 / bpm,
+i = 0,
+res = [],
+notes = [base,
+base + o1,
+base + o2];
+res[i] = notes[i % 3];
+i++;
+while (i < t) {
+for (var j = 0; j < 3; j++) {
+res[i] = notes[i % 3];
+i++;
+} //j
+} //while
+return res;
+}; //calcArpeggio
+
 this.calcVolumeSlide = function(bpm, vol, p) {
 vol += ((750 * p)/(bpm * 64)); //ticks per row * p, all over 64. 64 = max amiga volume.
 vol = WebTracker.restrictRange(vol, 0, 1);
