@@ -114,6 +114,7 @@ playNote = function(note, chan) {
 try {
 var s = channels[chan],
 isNote = true, //is the note to be played or a param.
+newSample = false, //new sample or the last one.
 noteStore = chanStore[chan],
 slideNotes,
 startNote = function() {
@@ -124,6 +125,7 @@ s.play(noteStore.sample, noteStore.lastNote, time);
 if (note.sample ) {
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
+newSample = true;
 }
 
 switch (note.effect.effect) {
@@ -138,13 +140,19 @@ slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.ef
 applySlide(noteStore.sample, slideNotes, s);
 break;
 case 2: //slide up
+isNote = false;
 slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
+if (newSample) {
+startNote();
+} //if it's a new sample, it's a new note.
 applySlide(noteStore.sample, slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
-isNote = false;
 break;
 case 3: //slide down
 slideNotes = song.slideNoteDown(note.note || noteStore.lastNote, 0, note.effect.p1);
+if (newSample) {
+startNote();
+} //if it's a new sample, it's a new note.
 applySlide(noteStore.sample, slideNotes, s);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
