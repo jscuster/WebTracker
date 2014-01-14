@@ -52,6 +52,7 @@ p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
 } //j
 			} //i
 			this.patterns.push(p);
+this.patternOrder.push(this.patternCount-1);
 			return true;
 		} else { //can't have more than 127 patterns.
 			return false;

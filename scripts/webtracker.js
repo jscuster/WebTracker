@@ -132,7 +132,6 @@ $("#effectEffects").val(n.effect.effect);
 					res += "</tr>";
 				} //i
 res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
-
 				res += "</table>";
 				$("#editorInfo").html(res);
 				$(".patternPlay").click(function () {
@@ -156,9 +155,13 @@ res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
 					song.movePatternDown(idx);
 				}); //down click
 $("#patternAddPattern").click( function() {
-song.createPattern();
+//alert("Creating pattern.");
+if (song.createPattern()) {
 buildPatternEditor();
-});
+buildPatternTable();
+$("#patternAddPattern").focus();
+} //if successfully created pattern
+}); //patternAddPattern click
 			}, //buildPatternEditor
 
 			buildPatternTable = function () {
