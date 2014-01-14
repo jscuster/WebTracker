@@ -178,7 +178,7 @@ $("#patternAddPattern").focus();
 				$("#patternTable").html(res);
 				$("#patternOrderAdd").click(function () {
 					if (song.patternCount > 0) {
-						song.patternOrder[song.totalPatterns++] = 0;
+						song.patternOrder.push(0);
 						changed = true;
 						update();
 						$("#patternOrderAdd").focus();
