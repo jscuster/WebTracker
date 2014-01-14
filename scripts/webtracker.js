@@ -638,6 +638,52 @@ case 13:
 $("#trackerPlay").click();
 return false;
 break;
+case 33: //pjup
+if (e.shiftKey) {
+if (trackerCurPattern - 1 > 0) {
+trackerCurPattern -= 1;
+buildTrackerTable();
+trackerFocus();
+$("#trackerCurrentPattern").val(trackerCurPattern);
+} //if we can change patterns.
+} else { //no shift key
+trackerCurRow = 0;
+trackerFocus();
+} //if shift or not
+return false;
+break;
+case 34: //pjdwn
+if (e.shiftKey) {
+if (trackerCurPattern + 1 < song.patternCount) {
+trackerCurPattern += 1;
+buildTrackerTable();
+trackerFocus();
+$("#trackerCurrentPattern").val(trackerCurPattern);
+} //if can switch pattern
+} else { //if shift key was down
+trackerCurRow = song.patterns[trackerCurPattern].length - 1;
+trackerFocus();
+} //shift or not
+return false;
+break;
+case 36: //home
+if (e.shiftKey) {
+trackerCurPattern = 0;
+} else { //no shift
+trackerCurChan = trackerStartChan;
+} //shift or not
+trackerFocus();
+return false;
+break;
+case 35: //end
+if (e.shiftKey) {
+trackerCurPattern = song.patternCount - 1;
+} else { //shift not down.
+trackerCurChan = trackerStartChan + trackerChanWidth - 1;
+} //shift or not
+trackerFocus();
+return false;
+break;
 				default:
 					break;
 				} //arrows
