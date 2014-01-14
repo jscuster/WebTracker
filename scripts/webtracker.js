@@ -377,7 +377,8 @@ songPlayer.quickPlayNote(trackerCurPattern, trackerCurRow, trackerCurChan);
 },
 
 trackerNoteCallback = function(s, n) {
-if (trackerCurBtn === 2) {
+if (+trackerCurBtn === 2) {
+s++;
 song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].sample = s;
 song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].note = n;
 $("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-2").html(WebTracker.midiNoteToName(n));

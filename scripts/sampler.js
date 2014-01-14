@@ -17,7 +17,7 @@ gain = context.createGain(),
 			this.stop(when - 0.0001);
 sptr = s;
 			var smp = samples[s],
-			rate = smp.factor * Math.pow(1.0595, note-60),
+rate = smp.factor * Math.pow(1.0595, note-60),
 			buffer = smp.data;
 			if (buffer) {
 				node = context.createBufferSource();
@@ -68,6 +68,7 @@ if (s === sptr) {
 var rate = samples[s].factor * Math.pow(1.0595, n-60);
 node.playbackRate.setValueAtTime(rate, when);
 } else {
+//alert("slide sample not started, have, s: " + s + ", n: " + n);
 this.play(s, n, when);
 } //if not already playing, start it fresh.
 }; //setNote

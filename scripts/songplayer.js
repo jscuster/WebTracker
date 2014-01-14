@@ -118,11 +118,15 @@ newSample = false, //new sample or the last one.
 noteStore = chanStore[chan],
 slideNotes,
 startNote = function() {
-noteStore.lastNote = note.note ? note.note : noteStore.lastNote;
+if (note.note !== 0 && note.note !== noteStore.lastNote) {
+noteStore.lastNote = note.note;
+} //set the note if not 0.
+if (note.note !== 0 && note.sample !== 0) {
 s.play(noteStore.sample, noteStore.lastNote, time);
+} //if not playing 0 note or 0 sample
 }; //starts the note playing.
 
-if (note.sample ) {
+if (note.sample > 0) {
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
 newSample = true;
@@ -173,7 +177,19 @@ case 13: //set volume
 noteStore.volume = note.effect.p1;
 s.setVolume(noteStore.volume, time);
 break;
-case 25:
+case 16: //fine slide up
+startNote();
+isNote = false;
+noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1 * -1);
+s.setNote(noteStore.sample, noteStore.lastNote, time);
+break;
+case 17: //fine slide down
+startNote();
+isNote = false;
+noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1);
+s.setNote(noteStore.sample, noteStore.lastNote, time);
+break;
+case 25: 
 s.changeVolume(note.effect.p1, time);
 noteStore.volume += note.effect.p1;
 break;

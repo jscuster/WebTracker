@@ -380,7 +380,7 @@ end = end || 48; //min amiga slide
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),
-res = [end],
+res = [start],
 tmp = sp,
 i,
 ptn = WebTracker.amigaPeriodToNote;
@@ -397,7 +397,7 @@ end = end || 83.0554563; //max if sliding without bound.
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),
-res = [end],
+res = [start],
 tmp = sp,
 i,
 ptn = WebTracker.amigaPeriodToNote;
@@ -436,6 +436,11 @@ i++;
 } //while
 return res;
 }; //calcArpeggio
+
+this.calcFineSlide = function(n, x) {
+var p = WebTracker.noteToAmigaPeriod(n);
+return WebTracker.amigaPeriodToNote(x + p);
+}; //calcFineSlide
 
 this.calcVolumeSlide = function(bpm, vol, p) {
 vol += ((750 * p)/(bpm * 64)); //ticks per row * p, all over 64. 64 = max amiga volume.
