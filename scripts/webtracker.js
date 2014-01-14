@@ -386,6 +386,10 @@ song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].sample = s;
 song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].note = n;
 $("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-2").html(WebTracker.midiNoteToName(n));
 $("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-1").html(s);
+if (+trackerCurRow + trackerAddRows < song.patterns[trackerCurPattern].length) {
+trackerCurRow = +trackerCurRow + trackerAddRows;
+trackerFocus();
+} //if can add rows.
 }
 }, //trackerNoteCallback
 
@@ -727,10 +731,7 @@ trackerKeys = true;
 
 $("#trackerCurrentPattern").focusout(function() {
 trackerCurPattern = this.value;
-alert("changing to pattern " + trackerCurPattern);
-trackerCurRow = trackerCurBtn = 0;
 buildTrackerTable();
-trackerFocus();
 }); //trackerCurrentPattern focus out
 
 $("#trackerSelectAll").click(function() {
