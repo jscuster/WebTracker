@@ -647,7 +647,7 @@ return false;
 break;
 case 33: //pjup
 if (e.shiftKey) {
-if (trackerCurPattern - 1 > 0) {
+if (trackerCurPattern - 1 >= 0) {
 trackerCurPattern -= 1;
 buildTrackerTable();
 trackerFocus();
