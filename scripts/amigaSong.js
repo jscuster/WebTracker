@@ -297,6 +297,8 @@ break;
 
 	that.toAmigaEffect = function (effect) {
 		var e = effect.effect,
+p1=effect.p1,
+p2=effect.p2,
 			x, y, p,
 
 			encode = function () {
@@ -306,53 +308,90 @@ break;
 
 		//set efects
 switch (e) {
-case 0:
-			return [0, 0];
+case 0: //no effect
+return [0, 0];
 break;
-case 13: //set volume
-return [e-1, p*64];
+			case 1: //arpeggio
+x = p1;
+y = p2;
+e = 0;
+return encode();
 break;
-//the next falls through, be ware
-case 25: //volume, p1 factor of 64.
+//falls through
+case 2: //slide up
+case 3: //slide down
+case 4: //slide to note
+return [e-1, p1];
+break;
+case 5: //vibrato
+e--;
+x=p1;
+y=p2;
+return encode();
+break;
+//next ones fall through
+case 6: //continue note slide + slice volume
+case 7: //continue note slide + vibrato
+e--;
+x=y=0;
+if (p1 > 0) {
+x=p1;
+} else { //p1 negative
+y = p1 * -1;
+} //x or y for p1
+return encode();
+break;
+case 8: //tremolo
+x=p1;
+y=p2;
+e--;
+return encode();
+break;
+case 9: //supposed to be unused, suspect pan.
+return [e-1, p1];
+break;
+case 10: //set ssample offset
+return [9, p1 >> 8];
+break;
+case 11: //volume slide
+e--;
+x=y=0;
+if (p1 > 0) {
+x=p1;
+} else { //p1 negative
+y = p1 * -1;
+} //x or y for p1
+return encode();
+break;
+case 12: //position jump
+return [e-1, p1];
+break;
+case 13:  //set volume
+return [12, p1 * 64];
+break;
+case 14: //pattern break
+e--;
+y = p1 % 10;
+x = (p1 - y) / 10;
+return encode();
+break;
+//next ones fall through, be ware.
+case 25:
 case 26:
-x = e-15;
-e = 14;
-y = effect.p1 * 64;
+x=e-15;
+y=p1 * 64;
+e=14;
 return encode();
 break;
 case 31:
-			e = 15;
-			return [e, effect.p1];
+return [15, p1];
 break;
-default:
-if (e >= 15) {
-			x = e - 15;
-			e = 14;
-			y = effect.p1;
-			return encode();
-		} else { //e < 14
-			if (WebTracker.effectParams[e].length >= 2) {
-				x = effect.p1;
-				y = effect.p2;
-				e--;
-				return encode();
-			} else { //return 1 param;
-				if (WebTracker.signedEffects.indexOf(e) >= 0) {
-					if (effect.p1 > 0) {
-						x = effect.p1
-						y = 0;
-					} else {
-						x = 0;
-						y = -effect.p1; //negative to posative without abs.
-					} //+x or -y
-					e--;
-					return encode();
-				} else { //1 unsigned param
-					return [e - 1, effect.p1];
-				} //what to return
-			} //1 or 2 params
-		} //< 14
-} //switch
+default: // the others
+x = e-15;
+e=14;
+y=p1;
+return encode();
+break;} //switch
 	}; //toAmigaEffect
 
 	that.amigaNote = function (n) {
