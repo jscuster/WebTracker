@@ -600,18 +600,23 @@ songPlayer.playPattern(trackerCurPattern);
 				switch (k) {
 				case 37: //left arrow
 					trackerPrevBtn();
+return false;
 				break;
 				case 39: //right
 					trackerNextBtn();
+return false;
 					break;
 				case 38: //up arrow
 					trackerPrevRow();
+return false;
 					break;
 				case 40: //down
 					trackerNextRow();
+return false;
 					break;
 case 51: //#
 if (e.shiftKey) $("#trackerTranspose").click();
+return false;
 break;
 case 220: //\
 if (e.shiftKey) { // |
@@ -619,6 +624,7 @@ $("#trackerSelectRect").click();
 } else { // \
 $("#trackerCopy").click();
 } //| or \
+return false;
 break;
 case 191: // /
 if (e.shiftKey) { // ?
@@ -626,6 +632,12 @@ $("#trackerSelectAll").click();
 } else { // /
 $("#trackerPaste").click();
 } // ? or /
+return false;
+break;
+case 13:
+$("#trackerPlay").click();
+return false;
+break;
 				default:
 					break;
 				} //arrows
