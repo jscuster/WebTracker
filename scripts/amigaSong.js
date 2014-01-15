@@ -296,14 +296,12 @@ break;
 })(); //closure amegaEffect
 
 	that.toAmigaEffect = function (effect) {
-		var e = effect.effect,
-p1=effect.p1,
-p2=effect.p2,
-			x, y, p,
+		var e = +effect.effect,
+p1=+effect.p1,
+p2=+effect.p2,
 
-			encode = function () {
-				p = ((x << 4) | y);
-				return [e, p];
+			encode = function (e, x, y) {
+				return [e, (x << 4) | y];
 			}; //encode
 
 		//set efects
@@ -312,10 +310,7 @@ case 0: //no effect
 return [0, 0];
 break;
 			case 1: //arpeggio
-x = p1;
-y = p2;
-e = 0;
-return encode();
+return encode(0, p1, p2);
 break;
 //falls through
 case 2: //slide up
@@ -324,28 +319,19 @@ case 4: //slide to note
 return [e-1, p1];
 break;
 case 5: //vibrato
-e--;
-x=p1;
-y=p2;
-return encode();
+return encode(e-1, p1, p2);
 break;
 //next ones fall through
 case 6: //continue note slide + slice volume
 case 7: //continue note slide + vibrato
-e--;
-x=y=0;
-if (p1 > 0) {
-x=p1;
-} else { //p1 negative
-y = p1 * -1;
+if (p1 < 0) {
+return encode(e-1, 0, p1 * -1);
+} else { //p1 posative
+return encode(e-1, p1, 0);
 } //x or y for p1
-return encode();
 break;
 case 8: //tremolo
-x=p1;
-y=p2;
-e--;
-return encode();
+return encode(7, p1, p2);
 break;
 case 9: //supposed to be unused, suspect pan.
 return [e-1, p1];
@@ -354,14 +340,11 @@ case 10: //set ssample offset
 return [9, p1 >> 8];
 break;
 case 11: //volume slide
-e--;
-x=y=0;
-if (p1 > 0) {
-x=p1;
-} else { //p1 negative
-y = p1 * -1;
+if (p1 < 0) {
+return encode(e-1, 0, p1 * -1);
+} else { //p1 posative
+return encode(e-1, p1, 0);
 } //x or y for p1
-return encode();
 break;
 case 12: //position jump
 return [e-1, p1];
@@ -370,28 +353,21 @@ case 13:  //set volume
 return [12, p1 * 64];
 break;
 case 14: //pattern break
-e--;
-y = p1 % 10;
-x = (p1 - y) / 10;
-return encode();
+var y = p1 % 10;
+return encode(13, (p1 - y) / 10, y);
 break;
 //next ones fall through, be ware.
 case 25:
 case 26:
-x=e-15;
-y=p1 * 64;
-e=14;
-return encode();
+return encode(14, e - 15, p1 * 64);
 break;
-case 31:
+case 31: //set tempo
 return [15, p1];
 break;
 default: // the others
-x = e-15;
-e=14;
-y=p1;
-return encode();
-break;} //switch
+return encode(14, e - 15, p1 * 64);
+break;
+} //switch
 	}; //toAmigaEffect
 
 	that.amigaNote = function (n) {

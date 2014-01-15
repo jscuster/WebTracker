@@ -758,12 +758,12 @@ trackerKeys = true;
 
 $(".effectSave").click(function() {
 $("#trackerEffects").hide();
-var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
-n.sample = $("#effectSample").val();
-n.note = $("#effectNote").val();
-n.effect.effect = $("#effectEffects").val();
-n.effect.p1 = $("#effectP1Box").val();
-n.effect.p2 = $("#effectP2Box").val();
+song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan] = WebTracker.note(+$("#effectSample").val(),
++$("#effectNote").val(),
+WebTracker.effect(+$("#effectEffects").val(),
++$("#effectP1Box").val(),
++$("#effectP2Box").val())); //new note
+alert("Just built " + JSON.stringify(song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan]));
 buildTrackerTable();
 $("#trackerTable").show();
 trackerFocus();
