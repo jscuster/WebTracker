@@ -39,6 +39,7 @@ keyDown = function (e) {
 if (that.active) {
 if (!e.ctrlKey) {
 if (downKey !== e.which) {
+downKey = e.which;
 switch (e.which) {
 case 187: // =
 that.nextSample();
@@ -72,7 +73,6 @@ if (_noteCallback) _noteCallback(sptr, i);
 return false;
 } //note finding
 } //switch
-downKey = e.which;
 } //if key not pressed
 } //if ctrl not pushed
 } //if active
@@ -80,14 +80,13 @@ downKey = e.which;
 
 keyUp = function (e) {
 if (that.active) {
-
 var i = keyToNote(String.fromCharCode(e.which));
 if (e.which === downKey) {
+downKey = -1;
 if (i >= 0) {
 player.stop();
 return false;
 } //if matching note
-downKey = -1;
 } //if the key had been pressed
 } //if active
 }, //keyUp

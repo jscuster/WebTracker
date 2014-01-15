@@ -159,7 +159,6 @@ res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
 					song.movePatternDown(idx);
 				}); //down click
 $("#patternAddPattern").click( function() {
-//alert("Creating pattern.");
 if (song.createPattern()) {
 buildPatternEditor();
 buildPatternTable();
@@ -221,11 +220,10 @@ $("#patternAddPattern").focus();
 
 updateSamplesPanel = function() {
 var s = song.samples[samplesCurSample];
-alert("sample: " + JSON.stringify(s));
+$("#samplesLength").html(s.length + " bytes");
 $("#samplesTitle").val(s.title);
 $("#samplesVolume").val(s.volume);
 $("#samplesFineTune").val(s.tune);
-$("#samplesLength").html(s.length + " bytes");
 $("#samplesLoopStart").prop('max', s.length).val(s.loopStart);
 $("#samplesLoopEnd").prop('max', s.length).val(s.loopEnd);
 $("#samplesLoopStartSlide").prop('max', s.length).val(s.loopStart);
@@ -253,7 +251,6 @@ id="trackerBtn-" + i + "-" + j + "-";
 						res += "<td>|</td>";
 					} //j
 					res += "</tr>";
-//alert("i: " + i + ", note: " + WebTracker.midiNoteToName(p[i][0].note) + ", effect: " + WebTracker.effectToString(p[i][0].effect));
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
@@ -605,6 +602,38 @@ filename = this.value;
 			} //if
 		}); //tempo loose focus
 
+$("#samplesTitle").focusout(function() {
+song.samples[samplesCurSample].title = this.value;
+}); //title focus out
+
+$("#samplesVolume").focusout(function() {
+song.samples[samplesCurSample].volume = WebTracker.restrictRange(+this.value, 0, 1);
+}); // sample volume focus out
+
+$("#samplesFineTune").focusout(function() {
+song.samples[samplesCurSample].tune = WebTracker.restrictRange(+this.value,-8, 7);
+}); // samples finetune focus out
+
+$("#samplesLoopStart").focusout(function() {
+song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+updateSamplesPanel();
+}); //samplesLoopStart focus out
+
+$("#samplesLoopEnd").focusout(function() {
+song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+updateSamplesPanel();
+}); //samplesLoopEnd
+
+$("#samplesLoopStartSlide").focusout(function() {
+song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+updateSamplesPanel();
+}); //samplesLoopStartSlide focus out
+
+$("#samplesLoopEndSlide").focusout(function() {
+song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+updateSamplesPanel();
+}); //samplesLoopEndSlide
+
 $("#trackerPlay").click(function() {
 songPlayer.playPattern(trackerCurPattern);
 }); //trackerPlay click
@@ -640,13 +669,13 @@ switch(e.which) {
 //falls through
 case 9:
 case 13:
-case 9:
 return false;
 default:
 return true;
 } //switch
 } //if trackerKeys is active
 }); //keyDown
+
 		$(document).keyup(function (e) {
 			var k = e.which;
 			if (e.ctrlKey) { //if control is down,
@@ -789,7 +818,6 @@ song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan] = WebTracker.not
 WebTracker.effect(+$("#effectEffects").val(),
 +$("#effectP1Box").val(),
 +$("#effectP2Box").val())); //new note
-alert("Just built " + JSON.stringify(song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan]));
 buildTrackerTable();
 $("#trackerTable").show();
 trackerFocus();
@@ -844,7 +872,6 @@ selectNoNotes();
 }); //trackerCopy click
 
 $("#trackerPaste").click(function() {
-alert("pasting.");
 if (trackerClipboard.length > 0) {
 var p = trackerClipboard[0],
 xoff = trackerCurChan - p.x,
