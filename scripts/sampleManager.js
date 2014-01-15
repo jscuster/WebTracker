@@ -14,6 +14,7 @@ octave = 5,
 transpose = 0,
 downKey = -1, //keys currently down. Must keep track so the key is not retriggerd when held.
 _noteCallback,
+_sampleCallback,
 player = new WebTracker.Sampler(samples, destination), //only use of destination param
 nextSampId = container + "NextSample",
 prevSampId = container + "PrevSample",
@@ -25,6 +26,7 @@ transUpId = container+"TransposeUp",
 transDownId = container+"TransposeDown",
 transNameId = container + "TransposeName",
 keyboardClass = container + "Keyboard",
+
 keyToNote = function(key) {
 var k = keys.indexOf(key);
 if (k >= 0) {
@@ -38,29 +40,36 @@ if (that.active) {
 if (!e.ctrlKey) {
 if (downKey !== e.which) {
 switch (e.which) {
-case 187:
+case 187: // =
 that.nextSample();
+return false;
 break;
-case 189:
+case 189: // -
 that.prevSample();
+return false;
 break;
-case 219:
+case 219: // [
 that.prevOctave();
+return false;
 break;
-case 221:
+case 221: // ]
 that.nextOctave();
+return false;
 break;
-case 186:
+case 186: // ;
 that.transposeDown();
+return false;
 break;
-case 222:
+case 222: // '
 that.transposeUp();
+return false;
 break;
 default:
 var  i = keyToNote(String.fromCharCode(e.which));
 if (i >= 0) {
 player.play(sptr, i);
 if (_noteCallback) _noteCallback(sptr, i);
+return false;
 } //note finding
 } //switch
 downKey = e.which;
@@ -76,6 +85,7 @@ var i = keyToNote(String.fromCharCode(e.which));
 if (e.which === downKey) {
 if (i >= 0) {
 player.stop();
+return false;
 } //if matching note
 downKey = -1;
 } //if the key had been pressed
@@ -137,12 +147,15 @@ if (active) {
 } //if
 } //set
 }); //active property
+
 this.update = update;
+
 this.nextSample = function() {
 sptr++;
 if (sptr >= samples.length) {
 sptr = 0;
 } //we move to the next sample in the list.
+if (_sampleCallback) _sampleCallback(sptr);
 update();
 }; //nextSample
 
@@ -151,6 +164,7 @@ sptr--;
 if (sptr < 0) {
 sptr = samples.length - 1;
 }
+if (_sampleCallback) _sampleCallback(sptr);
 update();
 }; //prevSample
 
@@ -233,6 +247,12 @@ set: function(nc) {
 _noteCallback= nc || function(){};
 }
 }); //noteCallback
+
+Object.defineProperty(this, "sampleCallback", {
+set: function(sc) {
+_sampleCallback = sc || function(){};
+}
+}); //sampleCallback
 
 this.samples = _samples;
 initControls();

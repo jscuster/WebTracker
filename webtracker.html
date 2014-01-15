@@ -72,13 +72,36 @@ Samples currently in the song.
 Sample player goes here.
 </div>
 <div id="samplesSampleEditor">
-Edit info for current sample
+<table>
+<tr>
+<td>name</td>
+<td><input type="text" id="samplesTitle"></td>
+</tr><tr>
+<td>size</td>
+<td id="samplesLength"></td>
+</tr><tr>
+<td>Volume</td><td><input type="number" value="1" min="0" max="1" id="samplesVolume"></td>
+</tr><tr>
+<td>Finetune</td><td><input type="number" id="sampleFineTune" value="0" min="-8" max="7"> eights of a simitone</td>
+</tr><tr>
+<td>loop Start</td>
+<td><input type="number" id="samplesLoopStart"></td>
+</tr><tr>
+<td>loop End</td>
+<td><input type="number" id="samplesLoopEnd"></td>
+</tr>
+</table>
+<h4><center>Loop Start</center></h4>
+<input type="range" width="100%" min="0" max="0" value="0" id="samplesLoopStartSlide">
+<br>
+<h4><center>Loop End</center></h4>
+<input type="range" width="100%" min="0" max="0" value="0" id="samplesLoopEndSlide">
 </div>
 </div>
 <div id="song" class = "mainPanel">
 <center><H1>Song Info</H1></center>
 <table>
-<tr><
+<tr>
 <td><button class="songPlay">Play Song</button></td>
 <td></td>
 </tr>

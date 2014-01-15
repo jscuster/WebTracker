@@ -16,6 +16,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			},
 			importSelected = false,
 			importSamples = [],
+samplesCurSample = 0,
 			songPlayer,
 			trackerStartChan = 0,
 			trackerChanWidth = 4,
@@ -113,7 +114,8 @@ $("#effectEffects").val(n.effect.effect);
 				$("#patternTempo").val(songPlayer.bpm);
 $("#songPatterns").html(song.patternCount);
 $("#songChannels").val(song.channels);
-			}, //updatesafter changes are made.
+updateSamplesPanel();			
+}, //updates after changes are made.
 
 			fillSamplePlayers = function () {
 				samplePlayers.trackerSampleChooser.samples = song.samples; //give the array to the sampler.
@@ -216,6 +218,19 @@ $("#patternAddPattern").focus();
 					songPlayer.playFromSlot(v);
 				}); //play from pattern
 			}, //build pattern order html table
+
+updateSamplesPanel = function() {
+var s = song.samples[samplesCurSample];
+alert("sample: " + JSON.stringify(s));
+$("#samplesTitle").val(s.title);
+$("#samplesVolume").val(s.volume);
+$("#samplesFineTune").val(s.tune);
+$("#samplesLength").html(s.length + " bytes");
+$("#samplesLoopStart").prop('max', s.length).val(s.loopStart);
+$("#samplesLoopEnd").prop('max', s.length).val(s.loopEnd);
+$("#samplesLoopStartSlide").prop('max', s.length).val(s.loopStart);
+$("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
+}, //updateSamplesPanel
 
 			buildTrackerTable = function () {
 				var p,
@@ -437,6 +452,10 @@ for (var i = 0; i < WebTracker.effects.length; i++) {
 lst += '<option value="' + i + '">' + WebTracker.effects[i] + "</option>"
 } //i
 $("#effectEffects").append(lst).val(0);
+				samplePlayers.samplesSampleChooser.sampleCallback = function(sptr) {
+					samplesCurSample = sptr;
+					updateSamplesPanel();
+				}; //sampleCallback
 			}; //initialize the program
 
 		$(".menu").click(function () {
