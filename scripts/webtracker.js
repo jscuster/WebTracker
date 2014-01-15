@@ -285,7 +285,7 @@ var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCu
 				$(id).focus();
 			}, //trackerFocus
 
-getSelectedNotes = function() {
+getSelectedPoints = function() {
 var res = [];
 $(".trackerSelectNote:checked").each(function(box) {
 var p = this.value.split(":");
@@ -294,13 +294,26 @@ res.push({x: p[1], y: p[0]});
 if (res.length === 0) {
 res.push({x: trackerCurChan, y: trackerCurRow});
 } //if none are checked, we want to copy the currently active note.
-return song.getNotesAtPoints(trackerCurPattern, res);
+return res;
+}, //getSelectedPoints
+
+getSelectedNotes = function() {
+return song.getNotesAtPoints(trackerCurPattern, getSelectedPoints());
 }, //getSelectedNotes
 
 selectNoNotes = function() {
 $(".trackerSelectNote:checked").prop('checked', false);
 $(".trackerSelectRow:checked").prop('checked', false);
 },
+
+clearSelectedNotes = function() {
+var p = getSelectedPoints();
+var pat = song.patterns[trackerCurPattern];
+for (var i = 0; i < p.length; i++) {
+var pt = p[i];
+pat[pt.y][pt.x] = new WebTracker.note(0, 0, new WebTracker.effect(0, 0, 0));
+} //i
+}, //clearSelectedNotes
 
 			trackerNextBtn = function () {
 				var c = trackerCurChan,
@@ -369,7 +382,7 @@ b++; //put it back
 			}, //trackerNextChan
 
 			trackerPrevChan = function () {
-				if (trackerCurChan > trackerStarChan) {
+				if (trackerCurChan > trackerStartChan) {
 					trackerCurChan--;
 					trackerFocus();
 				} //if there's room, move
@@ -595,6 +608,19 @@ songPlayer.playPattern(trackerCurPattern);
 			buildTrackerTable();
 		}); //trackerNextChan clicked
 
+		$(document).keydown(function (e) {
+			if (trackerKeys) {
+switch(e.which) {
+//falls through
+case 9:
+case 13:
+case 9:
+return false;
+default:
+return true;
+} //switch
+} //if trackerKeys is active
+}); //keyDown
 		$(document).keyup(function (e) {
 			var k = e.which;
 			if (e.ctrlKey) { //if control is down,
@@ -689,6 +715,22 @@ trackerCurPattern = song.patternCount - 1;
 trackerCurChan = trackerStartChan + trackerChanWidth - 1;
 } //shift or not
 trackerFocus();
+return false;
+break;
+//falls through
+case 8: //backspace
+case 46: //delete
+clearSelectedNotes();
+buildTrackerTable();
+trackerFocus();
+return false;
+break;
+case 9:
+if (e.shiftKey) {
+trackerPrevChan();
+} else {
+trackerNextChan();
+}
 return false;
 break;
 				default:
