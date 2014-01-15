@@ -41,6 +41,8 @@ When it is placed on a server, it will upload the file and give the user a downl
 </P>
 <P>For now, simply rename the file to [yourname].zip, and extract to enjoy.
 </P>
+<input type="text" id="saveFilename" value="untitled.mod">
+<br>
 <button id="saveButton">Save</button>
 <div id="saveLink"></div>
 </div>
@@ -85,13 +87,13 @@ Edit info for current sample
 <td><input type="text" value="untitled" id="songTitle" maxlength="20"></td>
 </tr><tr>
 <td>Channels:</td>
-<td id="songChannels"></td>
+<td><input type="number" min="0" max="32" id="songChannels" value="0"></td>
 </tr><tr>
-<td>Patterns</td>
-<td id="songPatterns">
+<td>Patterns:</td>
+<td id="songPatterns">0</td>
 </tr><tr>
 <td>Message<BR>sample titles</td>
-<td><div id="songMessage"></div></td>
+<td id="songMessage"></td>
 </tr>
 </table>
 </div>

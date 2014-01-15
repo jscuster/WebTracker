@@ -111,6 +111,8 @@ $("#effectEffects").val(n.effect.effect);
 				buildTrackerTable();
 				songPlayer.update();
 				$("#patternTempo").val(songPlayer.bpm);
+$("#songPatterns").html(song.patternCount);
+$("#songChannels").val(song.channels);
 			}, //updatesafter changes are made.
 
 			fillSamplePlayers = function () {
@@ -477,6 +479,11 @@ $("#effectEffects").append(lst).val(0);
 				newSong();
 			} //if
 		}); //new file creation
+
+$("#saveFilename").focusout(function() {
+filename = this.value;
+}); //saveFilename focus out
+//***some kind of filename parsing goes in that func above.
 
 		$("#saveButton").click(function () {
 			var zip = new JSZip();
