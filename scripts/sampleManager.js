@@ -1,5 +1,5 @@
 var WebTracker = WebTracker || {};
-WebTracker.SamplePlayer = function(_samples, destination, container) { 
+WebTracker.SamplePlayer = function(_samples, destination, container, keyboardContainer) { 
 //allows the player to select and play a sample.
 'use strict';
 if (!container) { //must know where to generate html and which controls to listen to.
@@ -26,6 +26,7 @@ transUpId = container+"TransposeUp",
 transDownId = container+"TransposeDown",
 transNameId = container + "TransposeName",
 keyboardClass = container + "Keyboard",
+makeKeyTextBox = keyboardContainer && keyboardContainer.length > 0,
 
 keyToNote = function(key) {
 var k = keys.indexOf(key);
@@ -105,6 +106,9 @@ res += '<td><button id="' + prevSampId + '">Previous Sample</button></td>';
 res += '<td><button id="' + prevOctId + '">- 1</button></td>';
 res += '<td><button id="' + transDownId + '">- 1</button></td>';
 res += '</tr></table>';
+if (makeKeyTextBox) {
+res += '<input type="text" value="Click here to use keyboard." class="' + keyboardContainer + '"><br>';
+} //if make textbox
 res += '<table><tr><td><a class="' + keyboardClass + '">';
 res += "c c# d d# e f f# g g# a a# b".split(" ").join('</a></td><td><a class="' + keyboardClass + '">');
 res += "</A></td></tr></table>";
@@ -121,8 +125,8 @@ $("#" + prevOctId).click(that.prevOctave);
 $("#" + transUpId).click(that.transposeUp);
 $("#" + transDownId).click(that.transposeDown);
 //key bindings
-$(document).keydown(keyDown);
-$(document).keyup(keyUp);
+$('.' + keyboardContainer).keydown(keyDown);
+$('.' + keyboardContainer).keyup(keyUp);
 update();
 },
 
@@ -198,6 +202,7 @@ transpose = 11;
 }
 update();
 }; //transposeUp
+
 Object.defineProperty(this, 'sample', {
 get: function() {
 return samples[sptr];
@@ -252,6 +257,13 @@ set: function(sc) {
 _sampleCallback = sc || function(){};
 }
 }); //sampleCallback
+
+if ((typeof keyboardContainer === String) && keyboardContainer.length > 0) {
+makeKeyTextBox = false;
+} else {
+makeKeyTextBox = true;
+keyboardContainer = container + "SamplesKeyBox";
+} //if no good container, make one.
 
 this.samples = _samples;
 initControls();
