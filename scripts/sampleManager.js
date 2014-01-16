@@ -125,8 +125,8 @@ $("#" + prevOctId).click(that.prevOctave);
 $("#" + transUpId).click(that.transposeUp);
 $("#" + transDownId).click(that.transposeDown);
 //key bindings
-$('.' + keyboardContainer).keydown(keyDown);
-$('.' + keyboardContainer).keyup(keyUp);
+$(document).on('keydown', '.' + keyboardContainer, keyDown);
+$(document).on('keyup', '.' + keyboardContainer, keyUp);
 update();
 },
 
@@ -258,7 +258,7 @@ _sampleCallback = sc || function(){};
 }
 }); //sampleCallback
 
-if ((typeof keyboardContainer === String) && keyboardContainer.length > 0) {
+if ((typeof keyboardContainer === "string") && keyboardContainer.length > 0) {
 makeKeyTextBox = false;
 } else {
 makeKeyTextBox = true;

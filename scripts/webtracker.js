@@ -12,7 +12,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				importSamplesList: new WebTracker.SamplePlayer([], destination, "importSamplesList"),
 				importSongSamples: new WebTracker.SamplePlayer([], destination, "importSongSamples"),
 				samplesSampleChooser: new WebTracker.SamplePlayer([], destination, "samplesSampleChooser"),
-				trackerSampleChooser: new WebTracker.SamplePlayer([], destination, "trackerSampleChooser")
+				trackerSampleChooser: new WebTracker.SamplePlayer([], destination, "trackerSampleChooser", "trackerNote")
 			},
 			importSelected = false,
 			importSamples = [],
@@ -240,11 +240,13 @@ $("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
 				} //j
 				res += "</tr>"
 				for (var i = 0; i < p.length; i++) {
-					res += '<tr><td><label><input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect">' + (i + 1) + '</label></td>';
+					res += '<tr><td><label for="trackerRow-' + i + '">'+ (i + 1) + '</label>';
+res += '<input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect"></td>';
 					for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
 						var n = p[i][j],
 id="trackerBtn-" + i + "-" + j + "-";
-						res += '<td><label><input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" class="trackerSelectNote">' + (j + 1) + '</label></td>';
+						res += '<td><label for="' + id + '0">' + (j + 1) + '</label>';
+res += '<input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" class="trackerSelectNote"></td>';
 						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
 						res += '<td><button id="' + id + '2" class = "trackerNote">' + WebTracker.midiNoteToName(n.note) + '</button></td>';
 						res += '<td><button id="' + id + '3" class="trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
