@@ -35,28 +35,25 @@ rate = smp.factor * Math.pow(1.0595, note-60),
 			} //if
 			node.connect(destination);
 				node.playbackRate.value = rate;
-			WebTracker.logger.log("setting playback rate: " + node.playbackRate);
 			node.start(when);
 		} //if valid buffer
 	} //if valid note
 } //play func
 
 this.stop = function (when) {
-	WebTracker.logger.log("stopping at time " + when);
 	if (node) {
 		when = when || 0;
 		node.stop(when);
+node = undefined; //if it's stopping, we're done with it.
 	} //if
 }; //stop
 
 this.setPan = function (x, y, z) {
-	WebTracker.logger.log("setting pan to: x = " + x + ", y = " + y + ", z = " + z);
 	panner.setPosition(x, y, z);
 }; //setPan
 
 this .setVolume = function (volume, when) {
 	gain.gain.setValueAtTime(volume, when);
-//alert("setting to " + volume);
 }; //setVolume
 
 this.slideVolume = function(newVolume, endTime) {
@@ -68,7 +65,6 @@ if (s === sptr) {
 var rate = samples[s].factor * Math.pow(1.0595, n-60);
 node.playbackRate.setValueAtTime(rate, when);
 } else {
-//alert("slide sample not started, have, s: " + s + ", n: " + n);
 this.play(s, n, when);
 } //if not already playing, start it fresh.
 }; //setNote

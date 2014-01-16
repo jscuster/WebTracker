@@ -1,3 +1,19 @@
+W3C
+
+Web Audio API
+
+W3C Editor's Draft
+
+This version:
+https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+Latest published version:
+http://www.w3.org/TR/webaudio/
+Previous version:
+http://www.w3.org/TR/2012/WD-webaudio-20120315/
+Editor:
+Chris Rogers, Google <crogers@google.com>
+Copyright © 2012 W3C® (MIT, ERCIM, Keio), All Rights Reserved. W3C liability, trademark and document use rules apply.
+
 Abstract
 
 This specification describes a high-level JavaScript API for processing and synthesizing audio in web applications. The primary paradigm is of an audio routing graph, where a number of AudioNode objects are connected together to define the overall audio rendering. The actual processing will primarily take place in the underlying implementation (typically optimized Assembly / C / C++ code), but direct JavaScript processing and synthesis is also supported.
@@ -8,8 +24,7 @@ This API is designed to be used in conjunction with other APIs and elements on t
 
 Status of this Document
 
-This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found incurrenttime
- the W3C technical reports index at http://www.w3.org/TR/.
+This section describes the status of this document at the time of its publication. Other documents may supersede this document. A list of current W3C publications and the latest revision of this technical report can be found in the W3C technical reports index at http://www.w3.org/TR/.
 
 This is the Editor's Draft of the Web Audio API specification. It has been produced by the W3C Audio Working Group , which is part of the W3C WebApps Activity.
 
@@ -392,7 +407,7 @@ interface AudioContext : EventTarget {
 
 
     // AudioNode creation 
-    Audio	BufferSourceNode createBufferSource();
+    AudioBufferSourceNode createBufferSource();
 
     MediaElementAudioSourceNode createMediaElementSource(HTMLMediaElement mediaElement);
 
@@ -840,7 +855,7 @@ The endTime parameter is the time in the same time coordinate system as AudioCon
 
 The value during the time interval T0 <= t < T1 (where T0 is the time of the previous event and T1 is the endTime parameter passed into this method) will be calculated as:
 
-      v(t                ) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))
+      v(t) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))
       
 Where V0 is the value at the time T0 and V1 is the value parameter passed into this method.
 
@@ -2525,13 +2540,13 @@ Usage: convolve input_file impulse_response_file output_file
 
 Recording Setup
 
-recording setup 
+recording setup
 
 Audio Interface: Metric Halo Mobile I/O 2882 
 
 
 
-microphones speaker 
+microphones speaker
 
 microphone speaker 
 
@@ -2540,7 +2555,7 @@ Microphones: AKG 414s, Speaker: Mackie HR824
 
 The Warehouse Space
 
-warehouse 
+warehouse
 
 13. JavaScript Synthesis and Processing
 
