@@ -1,5 +1,9 @@
 var WebTracker = WebTracker || {};
 
+//initialize webaudio
+WebTracker.context = window.AudioContext || window.webkitAudioContext;
+WebTracker.context = new WebTracker.context();
+
 WebTracker.readString = function (buffer, offset, length) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 res = [],
@@ -88,10 +92,6 @@ x = max;
 return x;
 }; //restrictRange
 
-//initialize webaudio
-WebTracker.context = window.AudioContext || window.webkitAudioContext;
-WebTracker.context = new WebTracker.context();
-
 WebTracker.midiNoteToName = (function() {
 var notes = "c db d eb e f gb g ab a bb b".split(" "),
 floor = Math.floor,
@@ -162,3 +162,22 @@ res[jIdx][iIdx] = {x: i, y: j};
 } //j
 return res;
 }; //getRectPoints
+
+WebTracker.resample = function(buffer, oldRate, newRate, callback) {
+var context = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+var playRate = oldRate / newRate,
+newLen = Math.ceil(buffer.length * (newRate / oldRate)),
+chans=buffer.numberOfChannels,
+src;
+context = new context(chans, newLen, WebTracker.context.sampleRate); //it's the constructor we get, instanciate it.
+src = context.createBufferSource();
+src.buffer = buffer;
+src.playbackRate.value = playRate;
+src.start(0); //starts when renderBuffer called.
+src.connect(context.destination);
+context.oncomplete = function(e) {
+callback(e.renderedBuffer);
+}; //resampleCallback
+//setup complete. Play the sample.
+context.startRendering();
+}; //resample

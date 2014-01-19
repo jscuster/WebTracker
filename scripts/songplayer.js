@@ -1,7 +1,6 @@
 var WebTracker = WebTracker || {};
 WebTracker.SongPlayer = function(song, destination) {
 'use strict';
-WebTracker.logger.log("created mod player.");
 var context = WebTracker.context,
 channels = [],
 channelCount = 0,
