@@ -3,6 +3,7 @@ WebTracker.Sample = function () {
 'use strict';
 	this.maxTitleLength = -1;
 this.maxSampleLength = -1;
+this.clean = true; //dirty if waiting for resampler.
 
 	this.toMono = function () {
 if (this.channels > 1) {
@@ -47,7 +48,25 @@ WebTracker.Sample.init = function(obj) {
 
 		setFactor = function () {
 			_factor = (_sampRate * Math.pow(1.007247, _tune)) / context.sampleRate;
-		}; //setFactor
+		}, //setFactor
+
+	setupDataVars = function() {
+		_length = _data.length;
+		_channels = _data.numberOfChannels;
+		_sampRate = _data.sampleRate;
+		setFactor();
+	}, //setupDataVars
+
+resample = function() {
+if (obj.requiredSampleRate > 0 && obj.requiredSampleRate !== _data.sampleRate) {
+clean = false;
+WebTracker.resample(_data, _data.sampleRate, obj.requiredSampleRate, function(d) {
+_data = d;
+setupDataVars();
+clean = true;
+}); //resample
+} //if different;
+}; //resample
 
 	Object.defineProperty(obj, "monoOnly", {
 		get: function () {
@@ -154,13 +173,18 @@ return _loopEnd-_loopStart;
 		},
 		set: function (value) {
 			_data = value;
-			_length = value.length;
-			_channels = value.numberOfChannels;
-			_sampRate = value.sampleRate;
 			if (this.monoOnly && value.numberOfChannels > 1) {
 				obj.toMono();
 			}
-			setFactor();
+			setupDataVars();
+			resample(); //only resamples if diferent.
+		}
+	}); //data property
+
+	Object.defineProperty(obj, "rawData", {
+		set: function (value) {
+			_data = value;
+			setupDataVars();
 		}
 	}); //data property
 
