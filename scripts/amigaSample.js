@@ -4,6 +4,7 @@ WebTracker.AmigaSample = function() {
 'use strict';
 var that = this;
 that.requiredSampleRate = that.sampleRate = 8287.2;this.monoOnly = true;
+that.eightBit = true;
 that.maxTitleLength = 22;
 that.maxSampleLength = 131070; //0xffff is max size for length, measured in words, 65535*2.
 WebTracker.Sample.init(this);

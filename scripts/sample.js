@@ -5,7 +5,7 @@ WebTracker.Sample = function () {
 this.maxSampleLength = -1;
 this.clean = true; //dirty if waiting for resampler.
 this.requiredSampleRae = -1; //no requirement
-
+this.eightBit = false;
 	this.toMono = function () {
 if (this.channels > 1) {
 		var buffer = this.data,
@@ -59,19 +59,29 @@ WebTracker.Sample.init = function(obj) {
 	}, //setupDataVars
 
 resample = function() {
-alert("resampling: rate = " + obj.requiredSampleRate);
 if (obj.requiredSampleRate > 0 && obj.requiredSampleRate !== _data.sampleRate) {
 obj.clean = false;
-alert("no match.");
 WebTracker.resample(_data, _data.sampleRate, obj.requiredSampleRate, function(d) {
-alert("in callback. old length: " + _data.length + ", new length: " + d.length);
 _data = d;
 setupDataVars();
 obj.sampleRate = obj.requiredSampleRate; //we resampled it, set it up right.
 obj.clean = true;
 }); //resample
 } //if different;
-}; //resample
+}, //resample
+
+eightBitify = function() {
+var round = Math.round;
+for (var i = 0; i < _channels; i++) {
+var b = _data.getChannelData(i),
+l=b.length;
+for (var j = 0; j < l; j++) {
+//alert("old: " + b[j]);
+b[j] = round(b[j] * 127) / 127; //allowed samples are from -128 to 127, round each sample to this constraint.
+//alert("new: " + b[j]);
+} //j
+} //i
+}; //eightBitify
 
 	Object.defineProperty(obj, "monoOnly", {
 		get: function () {
@@ -181,6 +191,9 @@ return _loopEnd-_loopStart;
 			if (this.monoOnly && value.numberOfChannels > 1) {
 				obj.toMono();
 			}
+if (obj.eightBit) {
+eightBitify();
+} //if eight bits required
 			setupDataVars();
 			resample(); //only resamples if diferent.
 		}
