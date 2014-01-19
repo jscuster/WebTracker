@@ -2,12 +2,12 @@ var WebTracker = WebTracker || {};
 
 WebTracker.AmigaSample = function() {
 'use strict';
-WebTracker.Sample.init(this);
-this.monoOnly = true;
-this.maxTitleLength = 22;
-this.maxSampleLength = 131070; //0xffff is max size for length, measured in words, 65535*2.
 var that = this;
-that.sampleRate = 8287.2;
+that.requiredSampleRate = that.sampleRate = 8287.2;this.monoOnly = true;
+that.maxTitleLength = 22;
+that.maxSampleLength = 131070; //0xffff is max size for length, measured in words, 65535*2.
+WebTracker.Sample.init(this);
+
 
 this.readSample = function(buffer, ptrs) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,

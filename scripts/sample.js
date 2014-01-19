@@ -4,6 +4,7 @@ WebTracker.Sample = function () {
 	this.maxTitleLength = -1;
 this.maxSampleLength = -1;
 this.clean = true; //dirty if waiting for resampler.
+this.requiredSampleRae = -1; //no requirement
 
 	this.toMono = function () {
 if (this.channels > 1) {
@@ -58,12 +59,16 @@ WebTracker.Sample.init = function(obj) {
 	}, //setupDataVars
 
 resample = function() {
+alert("resampling: rate = " + obj.requiredSampleRate);
 if (obj.requiredSampleRate > 0 && obj.requiredSampleRate !== _data.sampleRate) {
-clean = false;
+obj.clean = false;
+alert("no match.");
 WebTracker.resample(_data, _data.sampleRate, obj.requiredSampleRate, function(d) {
+alert("in callback. old length: " + _data.length + ", new length: " + d.length);
 _data = d;
 setupDataVars();
-clean = true;
+obj.sampleRate = obj.requiredSampleRate; //we resampled it, set it up right.
+obj.clean = true;
 }); //resample
 } //if different;
 }; //resample
@@ -204,7 +209,7 @@ return _loopEnd-_loopStart;
 		}
 	}); //channels property
 
-	obj.data = context.createBuffer(1, 1, WebTracker.context.sampleRate);
+	obj.rawData = context.createBuffer(1, 1, WebTracker.context.sampleRate);
 obj.data.getChannelData(0)[0] = 0;
 } //init
 
