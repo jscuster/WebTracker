@@ -36,7 +36,7 @@ hoff += 2;
 readData = function() {
 if (len > 0) {
 var d = WebTracker.context.createBuffer(1, len, WebTracker.context.sampleRate);
-that.data = d;
+that.rawData = d;
 d = d.getChannelData(0);
 for (var i = 0; i < len; i++) {
 d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1

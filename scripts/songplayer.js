@@ -109,13 +109,50 @@ ch.setNote(samp, s[i], time + (t*i));
 } //i
 }, //applySlide
 
-playNote = function(note, chan) {
-try {
-var s = channels[chan],
-isNote = true, //is the note to be played or a param.
-newSample = false, //new sample or the last one.
-noteStore = chanStore[chan],
+playNote = (function() {
+//compile these funcs so they're ready.
+var noteStore,
+note,
+chan,
+s, //sampler
+isNote = true,
+newSample = false,
 slideNotes,
+
+checkSample = function() {
+if (note.sample > 0) {
+noteStore.sample = note.sample - 1;
+noteStore.volume = samples[noteStore.sample].volume;
+newSample = true;
+} else {
+newSample = false;
+} //if note has a sample
+}, //checkSample
+
+arpeggio = function() {
+isNote = false;
+startNote();
+slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
+applySlide(noteStore.sample, slideNotes, s);
+}, //arpeggio
+
+slideToNote = function(useEffectParam) {
+if (note.note > 0) {
+noteStore.slideBound = note.note;
+} //if valid note
+if (useEffectParam) {
+noteStore.lastSlideAmt = note.effect.p1;
+} //if useEffectParam
+slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
+noteStore.lastNote = slideNotes[slideNotes.length - 1];
+applySlide(noteStore.sample, slideNotes, s);
+isNote = false;
+}, //slideToNote
+
+slideVolume = function() {
+s.slideVolume(noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1), time + (tpr));
+}, //slideVolume
+
 startNote = function() {
 if (note.note !== 0 && note.note !== noteStore.lastNote) {
 noteStore.lastNote = note.note;
@@ -125,22 +162,19 @@ s.play(noteStore.sample, noteStore.lastNote, time);
 } //if not playing 0 note or 0 sample
 }; //starts the note playing.
 
-if (note.sample > 0) {
-noteStore.sample = note.sample - 1;
-noteStore.volume = samples[noteStore.sample].volume;
-newSample = true;
-}
-
+return function(n, c) {
+note = n;
+chan = c;
+try {
+s = channels[chan];
+isNote = true; //is the note to be played or a param.
+noteStore = chanStore[chan],
+checkSample(); //set vars if new sample
 switch (note.effect.effect) {
 case 0: //do nothing but don't log it as unknown.
 break;
 case 1: //Arpeggio
-isNote = false;
-if (note.note !== 0 && note.note !== noteStore.lastNote) {
-startNote();
-} //don't start if already playing.
-slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
-applySlide(noteStore.sample, slideNotes, s);
+arpeggio();
 break;
 case 2: //slide up
 isNote = false;
@@ -161,16 +195,10 @@ noteStore.lastNote = slideNotes[slideNotes.length - 1];
 isNote = false;
 break;
 case 4: //slide to note
-if (note.note > 0) {
-noteStore.slideBound = note.note;
-}
-slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, note.effect.p1);
-noteStore.lastNote = slideNotes[slideNotes.length - 1];
-applySlide(noteStore.sample, slideNotes, s);
-isNote = false;
+slideToNote(true);
 break;
 case 11: //slide volume
-s.slideVolume(noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1), time + (tpr));
+slideVolume();
 break;
 case 13: //set volume
 noteStore.volume = note.effect.p1;
@@ -211,7 +239,8 @@ alert("Playing note " + JSON.stringify(note) + "\non channel " + chan);
 alert(JSON.stringify(e));
 throw e;
 } //catch
-}; //playNote
+}; //inner, playNote
+})(); //outer playNote
 
 this.playSong = function() {
 stopMusic();
