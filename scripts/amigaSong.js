@@ -322,10 +322,10 @@ case 5: //vibrato
 return encode(e-1, p1, p2);
 break;
 //next ones fall through
-case 6: //continue note slide + slice volume
+case 6: //continue note slide + slide volume
 case 7: //continue note slide + vibrato
 if (p1 < 0) {
-return encode(e-1, 0, p1 * -1);
+return encode(e-1, 0, -1 * p1);
 } else { //p1 posative
 return encode(e-1, p1, 0);
 } //x or y for p1
@@ -458,8 +458,12 @@ return WebTracker.amigaPeriodToNote(x + p);
 }; //calcFineSlide
 
 this.calcVolumeSlide = function(bpm, vol, p) {
-vol += ((750 * p)/(bpm * 64)); //ticks per row * p, all over 64. 64 = max amiga volume.
-vol = WebTracker.restrictRange(vol, 0, 1);
+var ticks = 750 / bpm,
+off = p * (ticks-1),
+amigaVolume = vol * 64;
+amigaVolume += off;
+vol = WebTracker.restrictRange(amigaVolume / 64, 0, 1);
+return vol;
 }; //calcVolumeSlide
 
 }; //amigaMod

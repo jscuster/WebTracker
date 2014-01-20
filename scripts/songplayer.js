@@ -150,7 +150,8 @@ isNote = false;
 }, //slideToNote
 
 slideVolume = function() {
-s.slideVolume(noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1), time + (tpr));
+noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
+s.slideVolume(noteStore.volume, time + tpr);
 }, //slideVolume
 
 startNote = function() {
@@ -197,11 +198,17 @@ break;
 case 4: //slide to note
 slideToNote(true);
 break;
+case 6: //note and volume slide
+slideToNote(false);
+slideVolume();
+break;
 case 11: //slide volume
 slideVolume();
 break;
 case 13: //set volume
+isNote = false; //start note before setting volume.
 noteStore.volume = note.effect.p1;
+startNote();
 s.setVolume(noteStore.volume, time);
 break;
 case 16: //fine slide up
