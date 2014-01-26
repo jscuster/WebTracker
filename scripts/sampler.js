@@ -21,7 +21,7 @@ gain.gain.value = amp;
 this.start = lfo.start;
 this.stop = lfo.stop;
 this.connect = gain.connect;
-object.defineProperty(this, "type", {
+Object.defineProperty(this, "type", {
 set: function(t) {
 lfo.type = t;
 },
@@ -69,8 +69,8 @@ this.stop = function (when) {
 		when = when || 0;
 		node.stop(when);
 node = undefined; //if it's stopping, we're done with it.
-stopVibrato(when);
-stopTremolo(when);
+this.stopVibrato(when);
+this.stopTremolo(when);
 	} //if
 }; //stop
 
@@ -104,8 +104,8 @@ gain.gain.setValueAtTime(v, t);
 
 this.vibratoType = this.tremoloType = "sine";
 
-this.vibrato(freq, amp, when) {
-stopVibrato(when);
+this.vibrato = function(freq, amp, when) {
+this.stopVibrato(when);
 vibratoOsc = new Modulator(freq, amp);
 vibratoOsc.connect(node.playbackRate);
 vibratoOn = true;
@@ -121,8 +121,8 @@ vibratoOn = false;
 } //vibratoOn
 }; //stopVibrato
 
-this.tremolo(freq, amp, when) {
-stopTremolo(when);
+this.tremolo = function(freq, amp, when) {
+this.stopTremolo(when);
 tremoloOsc = new Modulator(freq, amp);
 tremoloOsc.connect(gain.gain);
 tremoloOn = true;

@@ -46,7 +46,9 @@ chanStore[i] = {
 lastNote: 0,
 slideBound: 0,
 sample: 0,
-volume: 0
+volume: 0,
+vibratoRetrigger: false,
+tremoloRetrigger: false
 };
 } //i
 playPatternOnly = false;
@@ -118,6 +120,10 @@ s, //sampler
 isNote = true,
 newSample = false,
 slideNotes,
+waveTypes = [
+  "sine",
+  "sawtooth",
+  "square"],
 
 checkSample = function() {
 if (note.sample > 0) {
@@ -153,10 +159,45 @@ vibrato = function() {
 var e = note.effect,
 simi = e.p2,
 cycles = e.p1;
-noteStore.vibratoAmp = simi !== 0 ? simi / 16 : noteStore.vibratoAmp;
-noteStore.vibratoCycles = cycles !== 0 ? cycles * 64 : noteStore.vibratoCycles;
-simi=noteStore.vibratoAmp;
-cycles = noteStore.vibratoCycles;
+if (cycles !== 0) {
+cycles = song.calcCycles(_bpm, cycles);
+noteStore.vibratoCycles = cycles;
+} //if cycles
+if (simi !== 0) {
+simi=song.calcSimitones(simi);
+noteStore.vibratoAmp = simi;
+} //if simi
+s.vibrato(cycles, simi, time);
+if (!noteStore.vibratoRetrigger) {
+s.stopVibrato(time + tpr);
+} //if not retrigger
+}, //vibrato
+
+tremolo = function() {
+var e = note.effect,
+amp = e.p2,
+cycles = e.p1;
+if (cycles !== 0) {
+cycles = song.calcCycles(_bpm, cycles);
+noteStore.tremoloCycles = cycles;
+} //if cycles
+if (amp !== 0) {
+amp=song.calcTremoloAmplitude(amp);
+noteStore.tremoloAmp = amp;
+} //if simi
+s.tremolo(cycles, amp, time);
+if (!noteStore.tremoloRetrigger) {
+s.stopTremolo(time + tpr);
+} //if not retrigger
+}, //tremolo
+
+randomWave = (function() {
+var floor = Math.floor,
+random = Math.random;
+return function() {
+return floor(random() * 3);
+} //inner
+})(), //outer randomWave
 
 slideVolume = function() {
 noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
@@ -207,9 +248,19 @@ break;
 case 4: //slide to note
 slideToNote(true);
 break;
+case 5: //vibrato
+vibrato();
+break;
 case 6: //note and volume slide
 slideToNote(false);
 slideVolume();
+break;
+case 7: //vibrato and note slide
+slideToNote(false);
+vibrato();
+break;
+case 8: //tremolo
+tremolo();
 break;
 case 11: //slide volume
 slideVolume();
@@ -231,6 +282,30 @@ startNote();
 isNote = false;
 noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
+break;
+case 19: //vibrato waveform select
+var w = note.effect.p1;
+if (w < 4) {
+noteStore.vibratoRetrigger = true;
+} else {
+w -= 4;
+} //if < 4
+if (w === 3) {
+w = randomWave();
+}
+s.vibratoType = waveTypes[w];
+break;
+case 22: //set tremolo waveform
+var w = note.effect.p1;
+if (w < 4) {
+noteStore.tremoloRetrigger = true;
+} else {
+w -= 4;
+} //if < 4
+if (w === 3) {
+w = randomWave();
+}
+s.tremoloType = waveTypes[w];
 break;
 case 25: 
 s.changeVolume(note.effect.p1, time);

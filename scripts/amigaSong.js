@@ -466,6 +466,17 @@ vol = WebTracker.restrictRange(amigaVolume / 64, 0, 1);
 return vol;
 }; //calcVolumeSlide
 
+this.calcCycles = function(bpm, c) {
+return (c * 750) / (bpm * 64);
+} //calcCycles
+
+this.calcSimitones = function(s) {
+return s / 16;
+}; //calcSimitones
+
+this.calcTremoloAmplitude = function(bpm, amp) {
+return (750 * amp) / bpm;
+}; //calcTremoloAmplitude
 }; //amigaMod
 
 WebTracker.AmigaSong.prototype = new WebTracker.Song();
