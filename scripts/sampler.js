@@ -6,7 +6,31 @@ var context = WebTracker.context;
 sptr,
 		node,
 gain = context.createGain(),
-		panner = context.createPanner();
+		panner = context.createPanner(),
+tremoloOn = false,
+tremoloOsc,
+vibratoOn = false,
+vibratoOsc,
+
+Modulator = function(freq, amp) {
+var gain = context.createGain(),
+lfo = context.createOscillator();
+lfo.connect(gain);
+lfo.frequency.value = freq;
+gain.gain.value = amp;
+this.start = lfo.start;
+this.stop = lfo.stop;
+this.connect = gain.connect;
+object.defineProperty(this, "type", {
+set: function(t) {
+lfo.type = t;
+},
+get: function() {
+return lfo.type;
+}
+}); //type
+}; //Modulator
+
 	gain.connect(destination);
 	panner.connect(gain);
 	destination = panner;
@@ -45,6 +69,8 @@ this.stop = function (when) {
 		when = when || 0;
 		node.stop(when);
 node = undefined; //if it's stopping, we're done with it.
+stopVibrato(when);
+stopTremolo(when);
 	} //if
 }; //stop
 
@@ -75,4 +101,41 @@ v += x;
 WebTracker.restrictRange(v, 0, 1);
 gain.gain.setValueAtTime(v, t);
 }; //changeVolume
+
+this.vibratoType = this.tremoloType = "sine";
+
+this.vibrato(freq, amp, when) {
+stopVibrato(when);
+vibratoOsc = new Modulator(freq, amp);
+vibratoOsc.connect(node.playbackRate);
+vibratoOn = true;
+vibratoOsc.type = vibratoType;
+vibratoOsc.start(when);
+} //vibrato
+
+this.stopVibrato = function(when) {
+if (vibratoOn) {
+vibratoOsc.stop(when);
+vibratoOsc = undefined;
+vibratoOn = false;
+} //vibratoOn
+}; //stopVibrato
+
+this.tremolo(freq, amp, when) {
+stopTremolo(when);
+tremoloOsc = new Modulator(freq, amp);
+tremoloOsc.connect(gain.gain);
+tremoloOn = true;
+tremoloOsc.type = tremoloType;
+tremoloOsc.start(when);
+} //tremolo
+
+this.stopTremolo = function(when) {
+if (tremoloOn) {
+tremoloOsc.stop(when);
+tremoloOsc = undefined;
+tremoloOn = false;
+} //if tremolo
+}; //stopTremolo
+
 }; //SamplePlayer

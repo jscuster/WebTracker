@@ -149,6 +149,15 @@ applySlide(noteStore.sample, slideNotes, s);
 isNote = false;
 }, //slideToNote
 
+vibrato = function() {
+var e = note.effect,
+simi = e.p2,
+cycles = e.p1;
+noteStore.vibratoAmp = simi !== 0 ? simi / 16 : noteStore.vibratoAmp;
+noteStore.vibratoCycles = cycles !== 0 ? cycles * 64 : noteStore.vibratoCycles;
+simi=noteStore.vibratoAmp;
+cycles = noteStore.vibratoCycles;
+
 slideVolume = function() {
 noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
 s.slideVolume(noteStore.volume, time + tpr);
