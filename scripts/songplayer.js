@@ -21,7 +21,7 @@ samples = song.samples,
 
 setTimePerRow = function() {
 tpr = 60/(_bpm * song.rowsPerBeat);
-}, //setTimePerTick
+}, //setTimePerRow
 
 preload = function() {
 //initialize variables
@@ -140,7 +140,7 @@ arpeggio = function() {
 isNote = false;
 startNote();
 slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
-applySlide(noteStore.sample, slideNotes, s);
+applySlide(noteStore.sample, slideNotes, s, tpr);
 }, //arpeggio
 
 slideToNote = function(useEffectParam) {
@@ -152,7 +152,7 @@ noteStore.lastSlideAmt = note.effect.p1;
 } //if useEffectParam
 slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
-applySlide(noteStore.sample, slideNotes, s);
+applySlide(noteStore.sample, slideNotes, s, tpr);
 isNote = false;
 }, //slideToNote
 
@@ -229,22 +229,18 @@ case 1: //Arpeggio
 arpeggio();
 break;
 case 2: //slide up
-isNote = false;
-slideNotes = song.slideNoteUp(note.note || noteStore.lastNote, 0, note.effect.p1);
-if (newSample) {
 startNote();
-} //if it's a new sample, it's a new note.
-applySlide(noteStore.sample, slideNotes, s);
+isNote = false; //starting below.
+slideNotes = song.slideNoteDown(_bpm, noteStore.lastNote, 0, note.effect.p1);
+applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 break;
 case 3: //slide down
-slideNotes = song.slideNoteDown(note.note || noteStore.lastNote, 0, note.effect.p1);
-if (newSample) {
 startNote();
-} //if it's a new sample, it's a new note.
-applySlide(noteStore.sample, slideNotes, s);
+isNote = false; //starting below.
+slideNotes = song.slideNoteUp(_bpm, noteStore.lastNote, 0, note.effect.p1);
+applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
-isNote = false;
 break;
 case 4: //slide to note
 slideToNote(true);
@@ -388,8 +384,7 @@ get: function() {
 return _bpm;
 }, //get
 set: function(v) {
-v = v < 32 ? 32 : v;
-_bpm = v;
+_bpm = v < 32 ? 32 : v;
 setTimePerRow();
 } //set
 }); //defineProperty

@@ -20,7 +20,7 @@ that.maxBpm = 255;
 that.bpm = 125;
 that.defaultRowsPerPattern = 64;
 that.channels = 4;
-
+that.rowsPerBeat = 4;
 	that.loadMod = function (buffer) { //pass in a DataView.
 		that.channels = that.getChannels(buffer);
 		if (that.channels >= 0) {
@@ -391,7 +391,7 @@ res.period = WebTracker.noteToAmigaPeriod(n.note);
 		}; //toAmigaNote
 
 that.slideNoteDown = function(bpm, start, end, amt) {
-end = end || 48; //min amiga slide
+end = end || 83.0554563; //max if sliding without bound.
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),
@@ -408,7 +408,7 @@ return res;
 } //slieNoteDown
 
 that.slideNoteUp = function(bpm, start, end, amt) {
-end = end || 83.0554563; //max if sliding without bound.
+end = end || 48; //min amiga slide
 var ticks=750/bpm,
 sp = WebTracker.noteToAmigaPeriod(start),
 ep = WebTracker.noteToAmigaPeriod(end),

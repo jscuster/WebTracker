@@ -129,7 +129,7 @@ updateSamplesPanel();
 				var res = "<table>",
 					c = song.patternCount;
 				for (var i = 0; i < c; i++) {
-					res += '<tr><td>' + (i + 1) + '</td><td><button class="patternPlay" id="play:' + i + '">Play Pause</button></td>';
+					res += '<tr><td>' + i + '</td><td><button class="patternPlay" id="play:' + i + '">Play Pause</button></td>';
 					res += '<td><button class="patternRemove" id="remove:' + i + '">Remove</button></td>';
 					res += '<td><button class="patternUp" id="up:' + i + '">Move Up</button></td>';
 					res += '<td><button class="patternDown" id="down:' + i + '">Move Down</button></td>'
@@ -169,7 +169,7 @@ $("#patternAddPattern").focus();
 
 			buildPatternTable = function () {
 				var res = "<table><tr>",
-					num = 1;
+					num = 0;
 				song.patternOrder.forEach(function (o) {
 					res += '<td><a class="patternOrderPlay">' + num + ':</a> <input type="text" class = "patternOrderValue" value="' + (o + 1) + '" id = "patternOrder:' + (num - 1) + '"></td>';
 					if (num % 4 == 0) {
@@ -232,7 +232,7 @@ $("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
 
 			buildTrackerTable = function () {
 				var p,
-					res = "<table>";
+					res = '<table class="trackerTable">';
 				p = song.patterns[trackerCurPattern];
 				res += "<tr><th>row</th>";
 				for (var j = 0; j < trackerChanWidth; j++) {
@@ -665,7 +665,17 @@ songPlayer.playPattern(trackerCurPattern);
 			buildTrackerTable();
 		}); //trackerNextChan clicked
 
-		$(document).keydown(function (e) {
+		$(document).keyup(function (e) {
+			var k = e.which;
+			if (e.ctrlKey) { //if control is down,
+				if (k >= 49 && k <= 53) {
+					var b = "#" + ("btnFiles btnSamples btnSong btnPatterns btnTracker".split(" ")[k - 49])
+					$(b).click();
+				} //ctrl+1--5
+			} //ctrl down
+		}); //keydown
+
+		$(document).on('keydown', '.trackerTable', function (e) {
 			if (trackerKeys) {
 switch(e.which) {
 //falls through
@@ -678,14 +688,8 @@ return true;
 } //if trackerKeys is active
 }); //keyDown
 
-		$(document).keyup(function (e) {
+$(document).on('keyup', '.trackerTable', function (e) {
 			var k = e.which;
-			if (e.ctrlKey) { //if control is down,
-				if (k >= 49 && k <= 53) {
-					var b = "#" + ("btnFiles btnSamples btnSong btnPatterns btnTracker".split(" ")[k - 49])
-					$(b).click();
-				} //ctrl+1--5
-			} //ctrl down
 			if (trackerKeys) {
 				switch (k) {
 				case 37: //left arrow
