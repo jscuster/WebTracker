@@ -209,7 +209,7 @@ startNote = function() {
 if (note.note !== 0 && note.note !== noteStore.lastNote) {
 noteStore.lastNote = note.note;
 } //set the note if not 0.
-if (note.note !== 0 && note.sample !== 0) {
+if (note.note !== 0) {
 s.play(noteStore.sample, noteStore.lastNote, time);
 } //if not playing 0 note or 0 sample
 }; //starts the note playing.
