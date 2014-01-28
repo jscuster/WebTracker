@@ -104,8 +104,9 @@ playRow();
 } //while
 }, //play
 
-applySlide = function(samp, s, ch) {
-var t = tpr / s.length;
+applySlide = function(samp, s, ch, dur) {
+dur = dur || tpr;
+var t = dur / s.length;
 for (var i = 0; i < s.length; i++) {
 ch.setNote(samp, s[i], time + (t*i));
 } //i
@@ -169,7 +170,7 @@ noteStore.vibratoAmp = simi;
 } //if simi
 s.vibrato(cycles, simi, time);
 if (!noteStore.vibratoRetrigger) {
-s.stopVibrato(time + tpr);
+//s.stopVibrato(time + tpr);
 } //if not retrigger
 }, //vibrato
 
@@ -249,7 +250,7 @@ case 4: //slide to note
 slideToNote(true);
 break;
 case 5: //vibrato
-vibrato();
+//vibrato();
 break;
 case 6: //note and volume slide
 slideToNote(false);
@@ -257,7 +258,7 @@ slideVolume();
 break;
 case 7: //vibrato and note slide
 slideToNote(false);
-vibrato();
+//vibrato();
 break;
 case 8: //tremolo
 tremolo();

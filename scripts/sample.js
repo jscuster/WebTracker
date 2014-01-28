@@ -6,29 +6,39 @@ this.maxSampleLength = -1;
 this.clean = true; //dirty if waiting for resampler.
 this.requiredSampleRae = -1; //no requirement
 this.eightBit = false;
+
 	this.toMono = function () {
-if (this.channels > 1) {
-		var buffer = this.data,
-			l = buffer.length,
-			c = buffer.numberOfChannels,
-			data = [];
-		if (c > 1) {
+		if (this.data.numberOfChannels > 1) {
+			var buffer = this.data,
+				l = buffer.length,
+				c = buffer.numberOfChannels,
+				d,
+				chanData = [];
+			this.rawData = WebTracker.context.createBuffer(1, l, buffer.sampleRate);
+d = this.data.getChannelData(0);
 			for (var i = 0; i < c; i++) {
-				data[i] = buffer.getChannelData(i);
+				chanData[i] = buffer.getChannelData(i);
 			} //get each channel
-			mono = context.createBuffer(1, l, buffer.sampleRate),
-			chan = mono.getChannelData(0);
 			for (var i = 0; i < l; i++) {
 				var avg = 0;
 				for (var j = 0; j < c; j++) {
-					avg += data[j][i]; //add the channels together
+					avg += chanData[j][i]; //add the channels together
 				} //j
-				chan[i] = avg / c;
+				d[i] = avg / c;
 			} //i
-			this.data = mono;
 		} //if
-} //if not mono already
 	}; //toMono
+
+this.eightBitify = function() {
+alert("eightbiting.");var round = Math.round;
+for (var i = 0; i < this.channels; i++) {
+var b = this.data.getChannelData(i),
+l=b.length;
+for (var j = 0; j < l; j++) {
+b[j] = round(b[j] * 127) / 127; //allowed samples are from -128 to 127, round each sample to this constraint.
+} //j
+} //i
+}; //eightBitify
 
 }; //Sample
 
@@ -68,20 +78,7 @@ obj.sampleRate = obj.requiredSampleRate; //we resampled it, set it up right.
 obj.clean = true;
 }); //resample
 } //if different;
-}, //resample
-
-eightBitify = function() {
-var round = Math.round;
-for (var i = 0; i < _channels; i++) {
-var b = _data.getChannelData(i),
-l=b.length;
-for (var j = 0; j < l; j++) {
-//alert("old: " + b[j]);
-b[j] = round(b[j] * 127) / 127; //allowed samples are from -128 to 127, round each sample to this constraint.
-//alert("new: " + b[j]);
-} //j
-} //i
-}; //eightBitify
+}; //resample
 
 	Object.defineProperty(obj, "monoOnly", {
 		get: function () {
@@ -188,11 +185,11 @@ return _loopEnd-_loopStart;
 		},
 		set: function (value) {
 			_data = value;
-			if (this.monoOnly && value.numberOfChannels > 1) {
+			if (_monoOnly && value.numberOfChannels > 1) {
 				obj.toMono();
 			}
 if (obj.eightBit) {
-eightBitify();
+obj.eightBitify();
 } //if eight bits required
 			setupDataVars();
 			resample(); //only resamples if diferent.

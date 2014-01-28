@@ -828,7 +828,7 @@ trackerKeys = true;
 }); //save click
 
 $("#trackerCurrentPattern").focusout(function() {
-trackerCurPattern = this.value;
+trackerCurPattern = +this.value;
 buildTrackerTable();
 }); //trackerCurrentPattern focus out
 

@@ -3,12 +3,12 @@ var WebTracker = WebTracker || {};
 WebTracker.AmigaSample = function() {
 'use strict';
 var that = this;
+WebTracker.Sample.init(this);
 that.requiredSampleRate = that.sampleRate = 8287.2;this.monoOnly = true;
 that.eightBit = true;
+that.monoOnly = true;
 that.maxTitleLength = 22;
 that.maxSampleLength = 131070; //0xffff is max size for length, measured in words, 65535*2.
-WebTracker.Sample.init(this);
-
 
 this.readSample = function(buffer, ptrs) {
 var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
@@ -43,7 +43,7 @@ d[i] = dataView.getInt8(doff++) / 128; //scale down to -1 .. 1
 } //i
 } else { //now there is no real sample data, just need a buffer.
 var d = WebTracker.context.createBuffer(1, 1, WebTracker.context.sampleRate);
-that.data = d;
+that.rawData = d;
 d = d.getChannelData(0);
 d[0] = 0;
 } //load data or create empty buffer

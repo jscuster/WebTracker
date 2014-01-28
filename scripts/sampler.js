@@ -13,14 +13,23 @@ vibratoOn = false,
 vibratoOsc,
 
 Modulator = function(freq, amp) {
-var gain = context.createGain(),
+var depth = context.createGain(),
 lfo = context.createOscillator();
-lfo.connect(gain);
+lfo.connect(depth);
 lfo.frequency.value = freq;
-gain.gain.value = amp;
-this.start = lfo.start;
-this.stop = lfo.stop;
-this.connect = gain.connect;
+depth.gain.value = amp;
+this.start = function(when) {
+lfo.start(when);
+}; //start
+
+this.stop = function(when) {
+lfo.stop(when);
+}; //stop
+
+this.connect = function(c) {
+depth.connect(c);
+}; //conect
+
 Object.defineProperty(this, "type", {
 set: function(t) {
 lfo.type = t;
@@ -29,7 +38,18 @@ get: function() {
 return lfo.type;
 }
 }); //type
-}; //Modulator
+}, //Modulator
+
+hackedVibrato = function(modulator) { //if can't connect osc to playbackRate, use setCurveAtTime.
+var proc = context.createScriptProcessor(4096, 1, 1),
+durration = proc.bufferSize / context.sampleRate,
+n = node;
+modulator.connect(proc);
+proc.connect(context.destination); //will always be 0, but need to connect to work.
+proc.onaudioprocess = function(e) {
+n.playbackRate.setcurveAtTime(e.inputBuffer.getChannelData(0), e.playbackTime, durration);
+}; //onaudioprocess
+}; //hackedVibrato
 
 	gain.connect(destination);
 	panner.connect(gain);
@@ -107,9 +127,11 @@ this.vibratoType = this.tremoloType = "sine";
 this.vibrato = function(freq, amp, when) {
 this.stopVibrato(when);
 vibratoOsc = new Modulator(freq, amp);
+//there's a bug in most browsers, this doesn't work.
 vibratoOsc.connect(node.playbackRate);
+//hackedVibrato(vibratoOsc); //use scriptProcessor instead.
 vibratoOn = true;
-vibratoOsc.type = vibratoType;
+vibratoOsc.type = this.vibratoType;
 vibratoOsc.start(when);
 } //vibrato
 
