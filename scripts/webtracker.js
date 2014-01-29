@@ -240,7 +240,7 @@ $("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
 				} //j
 				res += "</tr>"
 				for (var i = 0; i < p.length; i++) {
-					res += '<tr><td><label for="trackerRow-' + i + '">'+ (i + 1) + '</label>';
+					res += '<tr><td><label for="trackerRow-' + i + '">' + (i + 1) + '</label>';
 res += '<input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect"></td>';
 					for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
 						var n = p[i][j],

@@ -325,7 +325,7 @@ startNote();
 } catch (e) {
 alert("Playing note " + JSON.stringify(note) + "\non channel " + chan);
 alert(JSON.stringify(e));
-throw e;
+WebTracker.logger.log(JSON.stringify(e));
 } //catch
 }; //inner, playNote
 })(); //outer playNote
