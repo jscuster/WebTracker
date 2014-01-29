@@ -277,14 +277,6 @@ return effect(14, (x*10) + y);
 break;
 case 14: //sub-effect
 			e = x + 15;
-switch (e) {
-//next ones fall through, be ware!
-case 25: //slide volume up
-case 26: //slide volume down
-y = y / 64;
-break;
-default:
-} //sub-switch, modify y.
 			return effect(e, y);
 break;
 case 15: //set tempo
@@ -359,7 +351,7 @@ break;
 //next ones fall through, be ware.
 case 25:
 case 26:
-return encode(14, e - 15, p1 * 64);
+return encode(14, e - 15, p1);
 break;
 case 31: //set tempo
 return [15, p1];
@@ -458,9 +450,9 @@ return WebTracker.amigaPeriodToNote(x + p);
 }; //calcFineSlide
 
 this.calcVolumeSlide = function(bpm, vol, p) {
-var ticks = 750 / bpm,
-off = WebTracker.restrictRange(vol + ((p * (ticks-1)) / 64), 0, 1);
-return off;
+var activeTicks = (750 / bpm) - 1,
+newVol = WebTracker.restrictRange(vol + ((p * activeTicks) / 64), 0, 1);
+return newVol;
 }; //calcVolumeSlide
 
 this.calcCycles = function(bpm, c) {

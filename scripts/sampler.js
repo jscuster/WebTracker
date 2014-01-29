@@ -115,13 +115,6 @@ this.play(s, n, when);
 } //if not already playing, start it fresh.
 }; //setNote
 
-this.changeVolume = function(x, t) {
-var v = gain.gain.value;
-v += x;
-WebTracker.restrictRange(v, 0, 1);
-gain.gain.setValueAtTime(v, t);
-}; //changeVolume
-
 this.vibratoType = this.tremoloType = "sine";
 
 this.vibrato = function(freq, amp, when) {

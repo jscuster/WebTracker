@@ -126,26 +126,8 @@ waveTypes = [
   "sawtooth",
   "square"],
 
-checkIsNote = function() {
-switch(note.effect.effect) {
-//all fall through. Seems quicker than writing if blocks.
-case 1:
-case 2:
-case 3:
-case 4:
-case 13:
-case 16:
-case 17:
-isNote = false;
-break;
-default:
-isNote = true;
-} //switch
-}, //checkIsNote
-
 checkSample = function() {
-checkIsNote();
-if (isNote && note.sample > 0 && note.note !== 0) {
+if (note.sample > 0 && note.note !== 0) {
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
 newSample = true;
@@ -155,6 +137,7 @@ newSample = false;
 }, //checkSample
 
 arpeggio = function() {
+isNote = false;
 startNote();
 slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
 applySlide(noteStore.sample, slideNotes, s, tpr);
@@ -165,11 +148,12 @@ if (note.note > 0) {
 noteStore.slideBound = note.note;
 } //if valid note
 if (useEffectParam) {
-noteStore.lastSlideAmt = note.effect.p1;
+noteStore.lastSlideAmt = note.effect.p1 || noteStore.lastSlideAmt;
 } //if useEffectParam
 slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 applySlide(noteStore.sample, slideNotes, s, tpr);
+isNote = false;
 }, //slideToNote
 
 vibrato = function() {
@@ -230,12 +214,12 @@ if (note.note !== 0) {
 s.play(noteStore.sample, noteStore.lastNote, time);
 } //if not playing 0 note or 0 sample
 }; //starts the note playing.
-
 return function(n, c) {
 note = n;
 chan = c;
 try {
 s = channels[chan];
+isNote = true; //is the note to be played or a param.
 noteStore = chanStore[chan],
 checkSample(); //set vars if new sample
 switch (note.effect.effect) {
@@ -246,12 +230,14 @@ arpeggio();
 break;
 case 2: //slide up
 startNote();
+isNote = false; //starting below.
 slideNotes = song.slideNoteDown(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 break;
 case 3: //slide down
 startNote();
+isNote = false; //starting below.
 slideNotes = song.slideNoteUp(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
@@ -267,7 +253,7 @@ slideToNote(false);
 slideVolume();
 break;
 case 7: //vibrato and note slide
-slideToNote(false);
+slideVolume();
 //vibrato();
 break;
 case 8: //tremolo
@@ -277,17 +263,20 @@ case 11: //slide volume
 slideVolume();
 break;
 case 13: //set volume
+isNote = false; //start note before setting volume.
 noteStore.volume = note.effect.p1;
 startNote();
 s.setVolume(noteStore.volume, time);
 break;
 case 16: //fine slide up
 startNote();
+isNote = false;
 noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1 * -1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
 case 17: //fine slide down
 startNote();
+isNote = false;
 noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
@@ -316,12 +305,12 @@ w = randomWave();
 s.tremoloType = waveTypes[w];
 break;
 case 25: 
-s.changeVolume(note.effect.p1 / 64, time);
-noteStore.volume += note.effect.p1 / 64;
+noteStore.volume = WebTracker.restrictRange(noteStore.volume + (note.effect.p1 / 64), 0, 1);
+s.setVolume(noteStore.volume, time);
 break;
 case 26:
-s.changeVolume(-note.effect.p1 / 64, time);
-noteStore.volume -= note.effect.p1 / 64;
+noteStore.volume = WebTracker.restrictRange(noteStore.volume - (note.effect.p1 / 64), 0, 1);
+s.setVolume(noteStore.volume, time);
 break;
 case 31: //set speed
 _bpm = note.effect.p1;
