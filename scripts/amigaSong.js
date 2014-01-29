@@ -460,7 +460,6 @@ return WebTracker.amigaPeriodToNote(x + p);
 this.calcVolumeSlide = function(bpm, vol, p) {
 var ticks = 750 / bpm,
 off = WebTracker.restrictRange(vol + ((p * (ticks-1)) / 64), 0, 1);
-//alert("sliding from " + Math.round(vol * 64) + " to " + Math.round(off * 64));
 return off;
 }; //calcVolumeSlide
 

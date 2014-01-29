@@ -136,7 +136,6 @@ case 4:
 case 13:
 case 16:
 case 17:
-//alert("found non-note.");
 isNote = false;
 break;
 default:
@@ -145,14 +144,10 @@ isNote = true;
 }, //checkIsNote
 
 checkSample = function() {
-//alert("checking sample.");
 checkIsNote();
-//alert ("this " + (isNote ? "is" : "is not") + " a note. " + JSON.stringify(note));
 if (isNote && note.sample > 0 && note.note !== 0) {
-//alert("acting on note " + JSON.stringify(note));
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
-//alert("volume is " + noteStore.volume);
 newSample = true;
 } else {
 newSample = false;
@@ -222,10 +217,8 @@ return floor(random() * 3);
 })(), //outer randomWave
 
 slideVolume = function() {
-//alert("volume was " + noteStore.volume);
 s.setVolume(noteStore.volume, time); //make sure the slide starts now, otherwise starts at the last event.
 noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
-//alert("volume is " + noteStore.volume);
 s.slideVolume(noteStore.volume, time + tpr);
 }, //slideVolume
 
@@ -285,7 +278,6 @@ slideVolume();
 break;
 case 13: //set volume
 noteStore.volume = note.effect.p1;
-//alert("from setVol effect, volume is " + noteStore.volume);
 startNote();
 s.setVolume(noteStore.volume, time);
 break;
