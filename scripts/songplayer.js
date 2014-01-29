@@ -126,9 +126,29 @@ waveTypes = [
   "sawtooth",
   "square"],
 
+checkIsNote = function() {
+switch(note.effect.effect) {
+//all fall through. Seems quicker than writing if blocks.
+case 1:
+case 2:
+case 3:
+case 4:
+case 13:
+case 16:
+case 17:
+//alert("found non-note.");
+isNote = false;
+break;
+default:
+isNote = true;
+} //switch
+}, //checkIsNote
+
 checkSample = function() {
 //alert("checking sample.");
-if (note.sample > 0 && note.note !== 0) {
+checkIsNote();
+//alert ("this " + (isNote ? "is" : "is not") + " a note. " + JSON.stringify(note));
+if (isNote && note.sample > 0 && note.note !== 0) {
 //alert("acting on note " + JSON.stringify(note));
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
@@ -140,7 +160,6 @@ newSample = false;
 }, //checkSample
 
 arpeggio = function() {
-isNote = false;
 startNote();
 slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
 applySlide(noteStore.sample, slideNotes, s, tpr);
@@ -156,7 +175,6 @@ noteStore.lastSlideAmt = note.effect.p1;
 slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 applySlide(noteStore.sample, slideNotes, s, tpr);
-isNote = false;
 }, //slideToNote
 
 vibrato = function() {
@@ -225,7 +243,6 @@ note = n;
 chan = c;
 try {
 s = channels[chan];
-isNote = true; //is the note to be played or a param.
 noteStore = chanStore[chan],
 checkSample(); //set vars if new sample
 switch (note.effect.effect) {
@@ -236,14 +253,12 @@ arpeggio();
 break;
 case 2: //slide up
 startNote();
-isNote = false; //starting below.
 slideNotes = song.slideNoteDown(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 break;
 case 3: //slide down
 startNote();
-isNote = false; //starting below.
 slideNotes = song.slideNoteUp(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
@@ -269,7 +284,6 @@ case 11: //slide volume
 slideVolume();
 break;
 case 13: //set volume
-isNote = false; //start note before setting volume.
 noteStore.volume = note.effect.p1;
 //alert("from setVol effect, volume is " + noteStore.volume);
 startNote();
@@ -277,13 +291,11 @@ s.setVolume(noteStore.volume, time);
 break;
 case 16: //fine slide up
 startNote();
-isNote = false;
 noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1 * -1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
 case 17: //fine slide down
 startNote();
-isNote = false;
 noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
