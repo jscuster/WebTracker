@@ -459,8 +459,9 @@ return WebTracker.amigaPeriodToNote(x + p);
 
 this.calcVolumeSlide = function(bpm, vol, p) {
 var ticks = 750 / bpm,
-off = (p * (ticks-1)) / 64;
-return WebTracker.restrictRange(vol + off, 0, 1);
+off = WebTracker.restrictRange(vol + ((p * (ticks-1)) / 64), 0, 1);
+//alert("sliding from " + Math.round(vol * 64) + " to " + Math.round(off * 64));
+return off;
 }; //calcVolumeSlide
 
 this.calcCycles = function(bpm, c) {

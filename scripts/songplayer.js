@@ -127,9 +127,12 @@ waveTypes = [
   "square"],
 
 checkSample = function() {
-if (note.sample > 0) {
+//alert("checking sample.");
+if (note.sample > 0 && note.note !== 0) {
+//alert("acting on note " + JSON.stringify(note));
 noteStore.sample = note.sample - 1;
 noteStore.volume = samples[noteStore.sample].volume;
+//alert("volume is " + noteStore.volume);
 newSample = true;
 } else {
 newSample = false;
@@ -201,7 +204,10 @@ return floor(random() * 3);
 })(), //outer randomWave
 
 slideVolume = function() {
+//alert("volume was " + noteStore.volume);
+s.setVolume(noteStore.volume, time); //make sure the slide starts now, otherwise starts at the last event.
 noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
+//alert("volume is " + noteStore.volume);
 s.slideVolume(noteStore.volume, time + tpr);
 }, //slideVolume
 
@@ -265,6 +271,7 @@ break;
 case 13: //set volume
 isNote = false; //start note before setting volume.
 noteStore.volume = note.effect.p1;
+//alert("from setVol effect, volume is " + noteStore.volume);
 startNote();
 s.setVolume(noteStore.volume, time);
 break;
@@ -305,12 +312,12 @@ w = randomWave();
 s.tremoloType = waveTypes[w];
 break;
 case 25: 
-s.changeVolume(note.effect.p1, time);
-noteStore.volume += note.effect.p1;
+s.changeVolume(note.effect.p1 / 64, time);
+noteStore.volume += note.effect.p1 / 64;
 break;
 case 26:
-s.changeVolume(-note.effect.p1, time);
-noteStore.volume -= note.effect.p1;
+s.changeVolume(-note.effect.p1 / 64, time);
+noteStore.volume -= note.effect.p1 / 64;
 break;
 case 31: //set speed
 _bpm = note.effect.p1;
@@ -325,6 +332,7 @@ startNote();
 } catch (e) {
 alert("Playing note " + JSON.stringify(note) + "\non channel " + chan);
 alert(JSON.stringify(e));
+WebTracker.logger.log("Playing note " + JSON.stringify(note) + "\non channel " + chan);
 WebTracker.logger.log(JSON.stringify(e));
 } //catch
 }; //inner, playNote
