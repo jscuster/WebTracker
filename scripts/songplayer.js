@@ -156,13 +156,19 @@ applySlide(noteStore.sample, slideNotes, s, tpr);
 isNote = false;
 }, //slideToNote
 
-vibrato = function() {
+vibrato = (function() {
+return function() {
 var e = note.effect,
 simi = e.p2,
-cycles = e.p1;
-if (cycles !== 0) {
-cycles = song.calcCycles(_bpm, cycles);
-noteStore.vibratoCycles = cycles;
+cyc = e.p1,
+freq = 0,
+amp = 0;
+if (cyc === 0) {
+cyc = noteStore.vibratoCycles;
+} else { 
+noteStore.vibratoCycles = cyc;
+freq = song.calcCycles(_bpm, cyc);
+noteStore.vibratoFreq = freq;
 } //if cycles
 if (simi !== 0) {
 simi=song.calcSimitones(simi);
@@ -172,7 +178,8 @@ s.vibrato(cycles, simi, time);
 if (!noteStore.vibratoRetrigger) {
 //s.stopVibrato(time + tpr);
 } //if not retrigger
-}, //vibrato
+}; //inner vibrato
+})(), //outer vibrato
 
 tremolo = function() {
 var e = note.effect,
