@@ -25,6 +25,7 @@ for (var i = 0; i < l; i++) {
 dataView.setUint8(offset + i, st.charCodeAt(i));
 } //i
 }; //writeString
+
 //this function is not mine, find it at https://gist.github.com/jonleighton/958841
 //Give credit where credit is due.
 // Converts an ArrayBuffer directly to base64, without any intermediate 'convert to string then
