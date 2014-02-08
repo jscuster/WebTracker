@@ -17,7 +17,7 @@ doff=ptrs.dataOffset,
 len, lstart, lend; //length, loopStart, loopEnd.
 
 var readHeader = function() {
-that.title = WebTracker.readString(dataView, hoff, 22);
+that.title = WebTracker.stringReader(dataView)(hoff, 22);
 hoff+=22;
 len = 2 * dataView.getUint16(hoff, false); //length of sample data
 hoff+=2;
@@ -64,7 +64,7 @@ doff=ptrs.dataOffset,
 that = this,
 
 writeHeader = function() {
-WebTracker.writeString(dv, that.title, hoff, 22);
+WebTracker.stringWriter(dv)(that.title, hoff, 22);
 hoff+=22;
 var tmp = (that.length / 2) + (that.length % 2);
 dv.setUint16(hoff, tmp, false);

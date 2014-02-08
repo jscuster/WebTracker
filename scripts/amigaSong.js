@@ -28,12 +28,7 @@ that.rowsPerBeat = 4;
 				offset = 0, //jumps around, depending on what we're doing.
 				ocount, pcount, //how many to read
 
-				getString = (function () { //store the readString function for faster access.
-					var readString = WebTracker.readString;
-					return function (offset, length) {
-						return readString(dataView, offset, length);
-					}; //inner func
-				})(), //getString closure
+				getString = WebTracker.stringReader(dataView),
 
 				readNote = function (offset) {
 					var a = [];
@@ -115,12 +110,7 @@ that.rowsPerBeat = 4;
 			buffer = new ArrayBuffer(modLength()),
 			dv = new DataView(buffer),
 
-			writeString = (function () {
-				var sw = WebTracker.writeString;
-				return function (txt, offset, length) {
-					return sw(dv, txt, offset, length);
-				}; //inner function
-			})(); //closure writeString
+			writeString = WebTracker.stringWriter(dv);
 
 		//write title
 		writeString(that.title, 0, 20);
@@ -213,14 +203,13 @@ that.rowsPerBeat = 4;
 			'31CH': 31,
 			'32CH': 32
 		},
-			id = WebTracker.readString(buffer, 1080, 4); //id at position 1080, 4 letters.
+			id = WebTracker.stringReader(buffer)(1080, 4); //id at position 1080, 4 letters.
 		if (id in chanCount) {
 			return chanCount[id];
 		} else {
 			return -1;
 		} //else
 	}; //readChannels
-
 
 	that.isValid = function (buffer) {
 		return that.getChannels(buffer) > 0;

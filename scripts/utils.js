@@ -4,9 +4,10 @@ var WebTracker = WebTracker || {};
 WebTracker.context = window.AudioContext || window.webkitAudioContext;
 WebTracker.context = new WebTracker.context();
 
-WebTracker.readString = function (buffer, offset, length) {
-var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
-res = [],
+WebTracker.stringReader = function (buffer) {
+var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer;
+return function(offset, length) {
+var res = [],
 end = offset + length,
 chr;
 while (offset < end) {
@@ -17,14 +18,17 @@ res.push(tmp);
 }
 return String.fromCharCode.apply(null, res);
 }; //readString
+}; //stringReader
 
-WebTracker.writeString = function (dataView, txt, offset, length) {
+WebTracker.stringWriter = function (dataView) {
+return function(txt, offset, length) {
 var st = txt.slice(0, length),
 l=st.length;
 for (var i = 0; i < l; i++) {
 dataView.setUint8(offset + i, st.charCodeAt(i));
 } //i
 }; //writeString
+}; //stringWriter
 
 //this function is not mine, find it at https://gist.github.com/jonleighton/958841
 //Give credit where credit is due.
