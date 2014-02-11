@@ -2,23 +2,15 @@ var WebTracker = WebTracker || {};
 
 WebTracker.Song = function () {
 'use strict';
-this.maxInstruments = this.maxTitleLength = this.maxChannels = this.maxPatterns = -1;
-this.minInstruments = this.maxSlots = -1;
-this.minBpm = 1;
-this.maxBpm=1000;
+	var _title = "Untitled",
+		_samples = [],
+		_patterns = [],
+		_channels = 4,
+		_patternOrder = [],
+_bpm = 120;
+
 this.rowsPerBeat=4;
 this.defaultRowsPerPattern = 64;
-
-	this.fillSamples = function () {
-var samples = this.samples,
-l = samples.length;
-		if (l < this.minSamples) {
-			for (var i = l; i < this.minSamples; i++) {
-				samples[i] = new this.Sample();
-			} //i
-this.samples = samples;
-		} //if
-	}; //fillSamples
 
 	this.findEmptyPatterns = function () {
 		var p = this.patterns,
@@ -152,39 +144,26 @@ this.patterns[pat][row][chan] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0)
 return n;
 }; //clearNote
 
-}; //Song
 
-WebTracker.Song.init = function(obj) {
-'use strict';
-	var _title = "Untitled",
-		_samples = [],
-		_patterns = [],
-		_channels = 1,
-		_patternOrder = [],
-_bpm = 120;
-
-	Object.defineProperty(obj, "title", {
+	Object.defineProperty(this, "title", {
 		get: function () {
 			return _title;
 		},
 		set: function (v) {
-			if (obj.maxTitleLength > 0) {
-				v = v.slice(0, obj.maxTitleLength);
-			}
 			_title = v;
 		}
 	}); //title property
 
-	Object.defineProperty(obj, "channels", {
+	Object.defineProperty(this, "channels", {
 		get: function () {
 			return _channels;
 		},
 		set: function (v) {
-			_channels = WebTracker.restrictRange(v, 0, obj.maxChannels);
+			_channels = v;
 		}
 	}); //channels property
 
-	Object.defineProperty(obj, "patterns", {
+	Object.defineProperty(this, "patterns", {
 		get: function () {
 			return _patterns;
 		},
@@ -193,19 +172,19 @@ _bpm = 120;
 		}
 	}); //patterns property
 
-	Object.defineProperty(obj, "slots", {
+	Object.defineProperty(this, "slots", {
 		get: function () {
 			return _patternOrder.length;
 		}
 	}); //slots property
 
-	Object.defineProperty(obj, "patternCount", {
+	Object.defineProperty(this, "patternCount", {
 		get: function () {
 			return _patterns.length;
 		}
 	}); //patternCount property
 
-	Object.defineProperty(obj, "patternOrder", {
+	Object.defineProperty(this, "patternOrder", {
 		get: function () {
 			return _patternOrder;
 		},
@@ -214,28 +193,22 @@ _bpm = 120;
 		}
 	}); //patternOrder property
 
-	Object.defineProperty(obj, "samples", {
+	Object.defineProperty(this, "samples", {
 		get: function () {
 			return _samples;
 		},
 		set: function (v) {
 			_samples = v;
-			if (v.length < obj.minSamples) {
-				obj.fillSamples();
-			} //if
 		}
 	}); //samples property
 
-Object.defineProperty(obj, 'bpm', {
+Object.defineProperty(this, 'bpm', {
 get: function() {
 return _bpm;
 },
 set: function(v) {
-if (v >= obj.minBpm && v <= obj.maxBpm) {
 _bpm = v;
-} //if
 } //set
 }); //bpm property
 
-
-}; //Song.init
+}; //Song
