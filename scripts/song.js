@@ -1,17 +1,18 @@
+
 var WebTracker = WebTracker || {};
 
 WebTracker.Song = function () {
-'use strict';
+	'use strict';
 	var _title = "Untitled",
 		_samples = [],
 		_patterns = [],
 		_channels = 4,
 		_patternOrder = [],
-_bpm = 120;
+		_bpm = 120;
 
-this.rowsPerBeat=4;
-this.defaultRowsPerPattern = 64;
-this.restartPosition = 0;
+	this.rowsPerBeat = 4;
+	this.defaultRowsPerPattern = 64;
+	this.restartPosition = 0;
 
 	this.findEmptyPatterns = function () {
 		var p = this.patterns,
@@ -40,12 +41,12 @@ this.restartPosition = 0;
 			var p = [];
 			for (var i = 0; i < rows; i++) {
 				p[i] = [];
-for (var j = 0; j < this.channels; j++) {
-p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
-} //j
+				for (var j = 0; j < this.channels; j++) {
+					p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+				} //j
 			} //i
 			this.patterns.push(p);
-this.patternOrder.push(this.patternCount-1);
+			this.patternOrder.push(this.patternCount - 1);
 			return true;
 		} else { //can't have more than 127 patterns.
 			return false;
@@ -103,47 +104,51 @@ this.patternOrder.push(this.patternCount-1);
 		} //if
 	}; //movePatternDown
 
-this.getNotesAtPoints = function(pat, points) {
-var p = this.patterns[pat],
-copyNote = WebTracker.copyNote,
-res = [];
-for (var i = 0; i < points.length; i++) {
-var pt = points[i];
-res.push({x: pt.x, y: pt.y, note: p[pt.y][pt.x]});
-} //for each point
-return res;
-}; // getNotesAtPoints
+	this.getNotesAtPoints = function (pat, points) {
+		var p = this.patterns[pat],
+			copyNote = WebTracker.copyNote,
+			res = [];
+		for (var i = 0; i < points.length; i++) {
+			var pt = points[i];
+			res.push({
+				x: pt.x,
+				y: pt.y,
+				note: p[pt.y][pt.x]
+			});
+		} //for each point
+		return res;
+	}; // getNotesAtPoints
 
-this.putNotesAtPoints = function(pat, xoff, yoff, notes) {
-var p = this.patterns[pat],
-copyNote = WebTracker.copyNote,
-res = [],
-x,
-y;
-for (var i = 0; i < notes.length; i++) {
-x = +notes[i].x + xoff;
-y = +notes[i].y + yoff;
-res[i] = copyNote(p[y][x]);
-p[y][x] = copyNote(notes[i].note);
-} //i
-return res; //get back the old notes.
-}; //putNotesInRect
+	this.putNotesAtPoints = function (pat, xoff, yoff, notes) {
+		var p = this.patterns[pat],
+			copyNote = WebTracker.copyNote,
+			res = [],
+			x,
+			y;
+		for (var i = 0; i < notes.length; i++) {
+			x = +notes[i].x + xoff;
+			y = +notes[i].y + yoff;
+			res[i] = copyNote(p[y][x]);
+			p[y][x] = copyNote(notes[i].note);
+		} //i
+		return res; //get back the old notes.
+	}; //putNotesInRect
 
-this.transposeNotes = function(notes, transpose) {
-var res = [],
-copyNote = WebTracker.copyNote;
-for (var i = 0; i < notes.length; i++) {
-res[i] = copyNote(notes[i].note);
-notes[i].note.note += transpose;
-} //i
-return res;
-}; //transposeNotes
+	this.transposeNotes = function (notes, transpose) {
+		var res = [],
+			copyNote = WebTracker.copyNote;
+		for (var i = 0; i < notes.length; i++) {
+			res[i] = copyNote(notes[i].note);
+			notes[i].note.note += transpose;
+		} //i
+		return res;
+	}; //transposeNotes
 
-this.clearNote = function(pat, row, chan) {
-var n = this.patterns[pat][ros][chan];
-this.patterns[pat][row][chan] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
-return n;
-}; //clearNote
+	this.clearNote = function (pat, row, chan) {
+		var n = this.patterns[pat][ros][chan];
+		this.patterns[pat][row][chan] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+		return n;
+	}; //clearNote
 
 
 	Object.defineProperty(this, "title", {
@@ -203,13 +208,13 @@ return n;
 		}
 	}); //samples property
 
-Object.defineProperty(this, 'bpm', {
-get: function() {
-return _bpm;
-},
-set: function(v) {
-_bpm = v;
-} //set
-}); //bpm property
+	Object.defineProperty(this, 'bpm', {
+		get: function () {
+			return _bpm;
+		},
+		set: function (v) {
+			_bpm = v;
+		} //set
+	}); //bpm property
 
 }; //Song
