@@ -242,7 +242,7 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 			samples = s;
 			sptr = 0;
 			if (samples.length === 0) {
-				samples = [new WebTracker.AmigaSample()];
+				samples = [new WebTracker.Sample()];
 			}
 			player = new WebTracker.Sampler(samples, destination);
 			update();

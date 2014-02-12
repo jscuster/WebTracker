@@ -137,8 +137,8 @@ WebTracker.Sample = function () {
 		}
 	}); //channels property
 
-	that.rawData = context.createBuffer(1, 1, WebTracker.context.sampleRate);
-	that.data.getChannelData(0)[0] = 0;
+	this.data = context.createBuffer(1, 1, WebTracker.context.sampleRate);
+	this.data.getChannelData(0)[0] = 0;
 
 }; //Sample
 

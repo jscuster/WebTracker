@@ -431,7 +431,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 
 			newSong = function () {
 				changed = false;
-				song = new WebTracker.AmigaSong();
+				song = new WebTracker.Song();
 				song.createPattern();
 				song.patternOrder = [0];
 				filename = "untitled.mod";
@@ -480,8 +480,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			var f = e.target.files[0]; //only open the first selected file
 			var reader = new FileReader();
 			reader.onload = function (e) {
-				var dv = new DataView(e.target.result),
-					sng = new WebTracker.AmigaSong();
+				var dv = new DataView(e.target.result);
 				if (WebTracker.isValidAmigaModule(dv)) {
 					song = WebTracker.loadAmigaMod(dv);
 					filename = f.name;

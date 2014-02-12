@@ -49,10 +49,10 @@ function () {
 }]; //err
 	} //if length not right
 	return err;
-}; //isValidAmigaSample
+}; //isAmigaSampleCompatible
 
 WebTracker.writeAmigaSample = function (s, buffer, ptrs) {
-	if (WebTracker.isValidAmigaSample(s)) {
+	if (WebTracker.isAmigaSampleCompatible(s)) {
 		var dv = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 			hoff = ptrs.headerOffset,
 			doff = ptrs.dataOffset,
@@ -129,7 +129,7 @@ function () {
 				alert("To fix this problem, click Patterns in the top bar, then Edit. Delete some of the patterns listed until 127 or less remain.");
 }]; //fix too many slots
 	} //if more than 127 patterns.
-	//make sure each pattern has exactly 64 rows.
+	//make sure each pattern has exactly 64 rows with supported effects.
 	var p = s.patterns,
 		tmp = [];
 	for (var i = 0; i < p.length; i++) {
@@ -137,13 +137,15 @@ function () {
 		if (tmp.length !== 64) {
 			err[ep++] = ["Pattern " + i + " must have exactly 64 rows.",
 				function () {}];
-		} else //if not correct rows
-			for (var j = 0; j < tmp.length; j++) {
-				if (tmp[j].effect.effect > 31) { //highest supported effect
+		} //if rows !== 64
+		for (var j = 0; j < tmp.length; j++) {
+			for (var k = 0; k < s.channels; k++) {
+				if (tmp[j][k].effect.effect > 31) { //highest supported effect
 					err[ep++] = ["Pattern " + i + ", note " + j + " has an unsupported effect.",
 						function () {}];
 				} //valid amiga effect
-			} //j
+			} //k (channels)
+		} //j (rows)
 	} //for each pattern
 	var smp = s.samples;
 	for (var i = 0; i < smp.length; i++) {

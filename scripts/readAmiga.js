@@ -2,6 +2,7 @@
 var WebTracker = WebTracker || {};
 
 WebTracker.readAmigaSample = function (buffer, ptrs) {
+	'use strict';
 	var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 		hoff = ptrs.headerOffset,
 		doff = ptrs.dataOffset,
@@ -56,10 +57,7 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 (function () { //closure for load and validation functions
 	//just a place to store getChannels and frequently used functions privately.
 	'use strict';
-	var amigaEffect = WebTracker.amigaEffect,
-		note = WebTracker.note,
-
-		getChannels = function (buffer) {
+		var getChannels = function (buffer) {
 			var chanCount = {
 				'TDZ1': 1,
 				'1CHN': 1,
@@ -122,13 +120,15 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 
 	WebTracker.loadAmigaMod = function (buffer) { //pass in a DataView.
 		var chans = getChannels(buffer);
-		s.channels = chans;
 		if (chans > 0) {
 			var dataView = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 				offset = 0, //jumps around, depending on what we're doing.
 				ocount, pcount, //how many to read
 				getString = WebTracker.stringReader(dataView),
 				song = new WebTracker.Song(),
+				amigaEffect = WebTracker.amigaEffect,
+				note = WebTracker.note,
+
 
 				amigaNote = function (n) {
 					var res = {};
@@ -150,6 +150,8 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 
 			//set default bpm
 			song.bpm = song.defaultBpm = 125;
+			//set channels
+			song.channels = chans;
 
 			//get title
 			song.title = getString(0, 20);

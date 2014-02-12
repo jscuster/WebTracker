@@ -4,7 +4,7 @@ var WebTracker = WebTracker || {};
 WebTracker.Song = function () {
 	'use strict';
 	var _title = "Untitled",
-		_samples = [],
+		_samples = [new WebTracker.Sample()],
 		_patterns = [],
 		_channels = 4,
 		_patternOrder = [],
@@ -36,21 +36,16 @@ WebTracker.Song = function () {
 	}; //findEmptyPatterns
 
 	this.createPattern = function (rows) {
-		if (this.patternCount < this.maxPatterns) {
-			rows = rows || this.defaultRowsPerPattern;
-			var p = [];
-			for (var i = 0; i < rows; i++) {
-				p[i] = [];
-				for (var j = 0; j < this.channels; j++) {
-					p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
-				} //j
-			} //i
-			this.patterns.push(p);
-			this.patternOrder.push(this.patternCount - 1);
-			return true;
-		} else { //can't have more than 127 patterns.
-			return false;
-		} //if
+		rows = rows || this.defaultRowsPerPattern;
+		var p = [];
+		for (var i = 0; i < rows; i++) {
+			p[i] = [];
+			for (var j = 0; j < this.channels; j++) {
+				p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+			} //j
+		} //i
+		this.patterns.push(p);
+		this.patternOrder.push(this.patternCount - 1);
 	}; //createPattern
 
 	this.removePattern = function (x) {
