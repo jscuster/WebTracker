@@ -27,14 +27,10 @@ window.onload = function () {
 'song',
 'amigaUtils',
 'readAmiga',
-'writeAmiga',
 'sampler',
 'songplayer',
-'sampleManager',
 'jszip',
-'jszip-deflate',
 'jszip-inflate',
-'jszip-load',
-'webtracker'
+'jszip-load'
 ]); //outer func, prepairs to load files.
 }; //onload
