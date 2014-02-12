@@ -475,14 +475,13 @@ $("#effectEffects").append(lst).val(0);
 			reader.onload = function (e) {
 				var dv = new DataView(e.target.result),
 					sng = new WebTracker.AmigaSong();
-				if (sng.isValid(dv)) {
-					song = sng;
-					song.loadMod(dv);
+				if (WebTracker.isValidAmigaModule(dv)) {
+					song = WebTracker.loadAmigaMod(dv);
 					filename = f.name;
 					refreshObjects();
 					changed = false;
 				} else {
-					alert(f.name + " is an invalid Amiga module. Please select only amiga modules (*.mod).");
+					alert("No loader was found to load " + f.name + ". This file is unsupported. Currently we support: .mod formats.");
 				} //else
 			}; //onload
 			reader.readAsArrayBuffer(f);
@@ -504,9 +503,14 @@ filename = this.value;
 //***some kind of filename parsing goes in that func above.
 
 		$("#saveButton").click(function () {
+var err = WebTracker.isAmigaModCompatible(song);
+if (err.length > 0) {
+alert("Unable to save as amiga mod, please correct errors.");
+//showErrorPanel();
+} else {
 			var zip = new JSZip();
 			zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker: http://webtracker.com\n\nUnleash your creativity!\n");
-			zip.file(filename, song.saveMod(true)); //true = return ArrayBuffer. 
+			zip.file(filename, WebTracker.saveAmigaMod(song, true)); //true = return ArrayBuffer. 
 			var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
 			$("#saveLink").html(htm);
 			changed = false;
@@ -550,9 +554,8 @@ filename = this.value;
 				var data = e.target.result,
 					dv = new DataView(data),
 					s; //song or sample temp var
-				s = new WebTracker.AmigaSong();
-				if (s.isValid(dv)) {
-					s.loadMod(dv);
+				if (WebTracker.isValidAmigaModule(dv)) {
+					s = WebTracker.loadAmigaMod(dv);
 					for (var i = 0; i < s.samples.length; i++) {
 						importSamples[importSamples.length] = s.samples[i];
 					} //i
