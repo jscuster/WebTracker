@@ -1,3 +1,4 @@
+
 var WebTracker = WebTracker || {};
 if (window.File && window.FileReader && window.FileList && window.Blob && (window.AudioContext || window.webkitAudioContext)) {
 	$(function () {
@@ -16,7 +17,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			},
 			importSelected = false,
 			importSamples = [],
-samplesCurSample = 0,
+			samplesCurSample = 0,
 			songPlayer,
 			trackerStartChan = 0,
 			trackerChanWidth = 4,
@@ -24,10 +25,10 @@ samplesCurSample = 0,
 			trackerCurRow = 0,
 			trackerAddRows = 1,
 			trackerCurChan = 0,
-trackerButtonsPerChan = 4, //chan, samp, note, eff
+			trackerButtonsPerChan = 4, //chan, samp, note, eff
 			trackerCurBtn = 0,
 			trackerKeys = false,
-trackerClipboard,
+			trackerClipboard,
 
 			deactivatePlayers = function () {
 				for (var i in samplePlayers) {
@@ -82,17 +83,17 @@ trackerClipboard,
 				} //activate import player
 			}, //showPanel
 
-updateEffectsPanel = function() {
-var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
-$("#effectNote").val(n.note);
-$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(n.note));
-$("#effectSample").val(n.sample);
-$("#effectP1Box").val(n.effect.p1);
-$("#effectP2Box").val(n.effect.p2 || 0);
-$("#effectP1").text(WebTracker.effectParams[n.effect.effect][0]);
-$("#effectP2").text((WebTracker.effectParams[n.effect.effect][1]) || "unused");
-$("#effectEffects").val(n.effect.effect);
-}, //updateEffects
+			updateEffectsPanel = function () {
+				var n = song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan];
+				$("#effectNote").val(n.note);
+				$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(n.note));
+				$("#effectSample").val(n.sample);
+				$("#effectP1Box").val(n.effect.p1);
+				$("#effectP2Box").val(n.effect.p2 || 0);
+				$("#effectP1").text(WebTracker.effectParams[n.effect.effect][0]);
+				$("#effectP2").text((WebTracker.effectParams[n.effect.effect][1]) || "unused");
+				$("#effectEffects").val(n.effect.effect);
+			}, //updateEffects
 
 			update = function () {
 				document.title = song.title + ": Web Tracker";
@@ -112,14 +113,14 @@ $("#effectEffects").val(n.effect.effect);
 				buildTrackerTable();
 				songPlayer.update();
 				$("#patternTempo").val(songPlayer.bpm);
-$("#songPatterns").html(song.patternCount);
-$("#songChannels").val(song.channels);
-updateSamplesPanel();			
-}, //updates after changes are made.
+				$("#songPatterns").html(song.patternCount);
+				$("#songChannels").val(song.channels);
+				updateSamplesPanel();
+			}, //updates after changes are made.
 
 			fillSamplePlayers = function () {
 				samplePlayers.trackerSampleChooser.samples = song.samples; //give the array to the sampler.
-				samplePlayers.trackerSampleChooser.noteCallback=trackerNoteCallback;
+				samplePlayers.trackerSampleChooser.noteCallback = trackerNoteCallback;
 				samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
 				samplePlayers.importSongSamples.samples = song.samples;
 				samplePlayers.importSamplesList.samples = importSamples;
@@ -135,7 +136,7 @@ updateSamplesPanel();
 					res += '<td><button class="patternDown" id="down:' + i + '">Move Down</button></td>'
 					res += "</tr>";
 				} //i
-res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
+				res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
 				res += "</table>";
 				$("#editorInfo").html(res);
 				$(".patternPlay").click(function () {
@@ -158,13 +159,13 @@ res += '<tr><td><button id="patternAddPattern">Add Pattern</button></td></tr>';
 					changed = true;
 					song.movePatternDown(idx);
 				}); //down click
-$("#patternAddPattern").click( function() {
-if (song.createPattern()) {
-buildPatternEditor();
-buildPatternTable();
-$("#patternAddPattern").focus();
-} //if successfully created pattern
-}); //patternAddPattern click
+				$("#patternAddPattern").click(function () {
+					if (song.createPattern()) {
+						buildPatternEditor();
+						buildPatternTable();
+						$("#patternAddPattern").focus();
+					} //if successfully created pattern
+				}); //patternAddPattern click
 			}, //buildPatternEditor
 
 			buildPatternTable = function () {
@@ -218,17 +219,17 @@ $("#patternAddPattern").focus();
 				}); //play from pattern
 			}, //build pattern order html table
 
-updateSamplesPanel = function() {
-var s = song.samples[samplesCurSample];
-$("#samplesLength").html(s.length + " bytes");
-$("#samplesTitle").val(s.title);
-$("#samplesVolume").val(s.volume);
-$("#samplesFineTune").val(s.tune);
-$("#samplesLoopStart").prop('max', s.length).val(s.loopStart);
-$("#samplesLoopEnd").prop('max', s.length).val(s.loopEnd);
-$("#samplesLoopStartSlide").prop('max', s.length).val(s.loopStart);
-$("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
-}, //updateSamplesPanel
+			updateSamplesPanel = function () {
+				var s = song.samples[samplesCurSample];
+				$("#samplesLength").html(s.length + " bytes");
+				$("#samplesTitle").val(s.title);
+				$("#samplesVolume").val(s.volume);
+				$("#samplesFineTune").val(s.tune);
+				$("#samplesLoopStart").prop('max', s.length).val(s.loopStart);
+				$("#samplesLoopEnd").prop('max', s.length).val(s.loopEnd);
+				$("#samplesLoopStartSlide").prop('max', s.length).val(s.loopStart);
+				$("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
+			}, //updateSamplesPanel
 
 			buildTrackerTable = function () {
 				var p,
@@ -241,12 +242,12 @@ $("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
 				res += "</tr>"
 				for (var i = 0; i < p.length; i++) {
 					res += '<tr><td><label for="trackerRow-' + i + '">' + (i + 1) + '</label>';
-res += '<input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect"></td>';
+					res += '<input type="checkbox" id="trackerRow-' + i + '" value = "' + i + '" class="trackerRowSelect"></td>';
 					for (var j = trackerStartChan; j < trackerChanWidth + trackerStartChan; j++) {
 						var n = p[i][j],
-id="trackerBtn-" + i + "-" + j + "-";
+							id = "trackerBtn-" + i + "-" + j + "-";
 						res += '<td><label for="' + id + '0">' + (j + 1) + '</label>';
-res += '<input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" class="trackerSelectNote"></td>';
+						res += '<input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" class="trackerSelectNote"></td>';
 						res += '<td><button id="' + id + '1" class = "trackerSample">' + n.sample + '</button></td>';
 						res += '<td><button id="' + id + '2" class = "trackerNote">' + WebTracker.midiNoteToName(n.note) + '</button></td>';
 						res += '<td><button id="' + id + '3" class="trackerEffect">' + WebTracker.effectToString(n.effect) + '</button></td>';
@@ -256,80 +257,86 @@ res += '<input type="checkbox" value="' + i + ':' + j + '" id="' + id + '0" clas
 				} //i
 				res += "</table>";
 				$("#trackerTable").html(res);
-$(".trackerNote").click(function() {
-setTrackerVarsFromId(this).attr("id");
-trackerPlayNote();
-}).focus(function() {
-setTrackerVarsFromId($(this).attr("id"));
-trackerPlayNote();
-});
-$(".trackerEffect").focus(function() {
-setTrackerVarsFromId($(this).attr("id"));
-updateEffectsPanel();
-}).click(function() {
-$("#trackerTable").hide();
-setTrackerVarsFromId($(this).attr("id"));
-updateEffectsPanel();
-samplePlayers.trackerSampleChooser.active = false;
-trackerKeys = false;
-$("#trackerEffects").show();
-$("#effectSample").focus();
-});
-$(".trackerRowSelect").click(function() {
-var r = +this.value,
-c=this.checked;
-for (var i = trackerStartChan; i < trackerChanWidth - trackerStartChan; i++) {
-$("#trackerBtn-" + r + "-" + i + "-0").attr('checked', c);
-} //i
-}); //row checkbox clicked
-$(".trackerSelectNote").click(function() {
-if (!this.checked) {
-$("#trackerRow-" + +this.value.split(":")[0]).attr('checked', false);
-} //if not checked
-}); //note selector clicked
+				$(".trackerNote").click(function () {
+					setTrackerVarsFromId(this).attr("id");
+					trackerPlayNote();
+				}).focus(function () {
+					setTrackerVarsFromId($(this).attr("id"));
+					trackerPlayNote();
+				});
+				$(".trackerEffect").focus(function () {
+					setTrackerVarsFromId($(this).attr("id"));
+					updateEffectsPanel();
+				}).click(function () {
+					$("#trackerTable").hide();
+					setTrackerVarsFromId($(this).attr("id"));
+					updateEffectsPanel();
+					samplePlayers.trackerSampleChooser.active = false;
+					trackerKeys = false;
+					$("#trackerEffects").show();
+					$("#effectSample").focus();
+				});
+				$(".trackerRowSelect").click(function () {
+					var r = +this.value,
+						c = this.checked;
+					for (var i = trackerStartChan; i < trackerChanWidth - trackerStartChan; i++) {
+						$("#trackerBtn-" + r + "-" + i + "-0").attr('checked', c);
+					} //i
+				}); //row checkbox clicked
+				$(".trackerSelectNote").click(function () {
+					if (!this.checked) {
+						$("#trackerRow-" + +this.value.split(":")[0]).attr('checked', false);
+					} //if not checked
+				}); //note selector clicked
 			}, //buildTrackerTable
 
-setTrackerVarsFromId = function(id) {
-var v = id.split("-");
-trackerCurRow = v[1];
-trackerCurChan = v[2];
-trackerCurBtn = v[3];
-}, //setTrackerVarsFromId
+			setTrackerVarsFromId = function (id) {
+				var v = id.split("-");
+				trackerCurRow = v[1];
+				trackerCurChan = v[2];
+				trackerCurBtn = v[3];
+			}, //setTrackerVarsFromId
 
 			trackerFocus = function () {
-var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
+				var id = "#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-" + trackerCurBtn;
 				$(id).focus();
 			}, //trackerFocus
 
-getSelectedPoints = function() {
-var res = [];
-$(".trackerSelectNote:checked").each(function(box) {
-var p = this.value.split(":");
-res.push({x: p[1], y: p[0]});
-}); //for each selected box
-if (res.length === 0) {
-res.push({x: trackerCurChan, y: trackerCurRow});
-} //if none are checked, we want to copy the currently active note.
-return res;
-}, //getSelectedPoints
+			getSelectedPoints = function () {
+				var res = [];
+				$(".trackerSelectNote:checked").each(function (box) {
+					var p = this.value.split(":");
+					res.push({
+						x: p[1],
+						y: p[0]
+					});
+				}); //for each selected box
+				if (res.length === 0) {
+					res.push({
+						x: trackerCurChan,
+						y: trackerCurRow
+					});
+				} //if none are checked, we want to copy the currently active note.
+				return res;
+			}, //getSelectedPoints
 
-getSelectedNotes = function() {
-return song.getNotesAtPoints(trackerCurPattern, getSelectedPoints());
-}, //getSelectedNotes
+			getSelectedNotes = function () {
+				return song.getNotesAtPoints(trackerCurPattern, getSelectedPoints());
+			}, //getSelectedNotes
 
-selectNoNotes = function() {
-$(".trackerSelectNote:checked").prop('checked', false);
-$(".trackerSelectRow:checked").prop('checked', false);
-},
+			selectNoNotes = function () {
+				$(".trackerSelectNote:checked").prop('checked', false);
+				$(".trackerSelectRow:checked").prop('checked', false);
+			},
 
-clearSelectedNotes = function() {
-var p = getSelectedPoints();
-var pat = song.patterns[trackerCurPattern];
-for (var i = 0; i < p.length; i++) {
-var pt = p[i];
-pat[pt.y][pt.x] = new WebTracker.note(0, 0, new WebTracker.effect(0, 0, 0));
-} //i
-}, //clearSelectedNotes
+			clearSelectedNotes = function () {
+				var p = getSelectedPoints();
+				var pat = song.patterns[trackerCurPattern];
+				for (var i = 0; i < p.length; i++) {
+					var pt = p[i];
+					pat[pt.y][pt.x] = new WebTracker.note(0, 0, new WebTracker.effect(0, 0, 0));
+				} //i
+			}, //clearSelectedNotes
 
 			trackerNextBtn = function () {
 				var c = trackerCurChan,
@@ -338,15 +345,15 @@ pat[pt.y][pt.x] = new WebTracker.note(0, 0, new WebTracker.effect(0, 0, 0));
 					bl = trackerButtonsPerChan;
 				b++; //next
 				if (b >= bl) {
-if (c < cl-1) { //next channel
-c++;
-b=0;
-} else {
-b--;
-} //if channels
-} //if buttons
-trackerCurBtn = b;
-trackerCurChan = c;
+					if (c < cl - 1) { //next channel
+						c++;
+						b = 0;
+					} else {
+						b--;
+					} //if channels
+				} //if buttons
+				trackerCurBtn = b;
+				trackerCurChan = c;
 				trackerFocus();
 			}, //trackerNextBtn
 
@@ -356,15 +363,15 @@ trackerCurChan = c;
 					bl = trackerButtonsPerChan;
 				b--;
 				if (b < 0) {
-if (c > trackerStartChan) {
-					b = bl - 1;
-					c--;
-				} else {
-b++; //put it back
-} //move channels?
-} //b out of bounds
+					if (c > trackerStartChan) {
+						b = bl - 1;
+						c--;
+					} else {
+						b++; //put it back
+					} //move channels?
+				} //b out of bounds
 				trackerCurBtn = b;
- 				trackerCurChan = c;
+				trackerCurChan = c;
 				trackerFocus();
 			}, //trackerPrevBtn
 
@@ -404,23 +411,23 @@ b++; //put it back
 				} //if there's room, move
 			}, //trackerPrevChan
 
-trackerPlayNote = function() {
-songPlayer.quickPlayNote(trackerCurPattern, trackerCurRow, trackerCurChan);
-},
+			trackerPlayNote = function () {
+				songPlayer.quickPlayNote(trackerCurPattern, trackerCurRow, trackerCurChan);
+			},
 
-trackerNoteCallback = function(s, n) {
-if (+trackerCurBtn === 2) {
-s++;
-song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].sample = s;
-song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].note = n;
-$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-2").html(WebTracker.midiNoteToName(n));
-$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-1").html(s);
-if (+trackerCurRow + trackerAddRows < song.patterns[trackerCurPattern].length) {
-trackerCurRow = +trackerCurRow + trackerAddRows;
-trackerFocus();
-} //if can add rows.
-}
-}, //trackerNoteCallback
+			trackerNoteCallback = function (s, n) {
+				if (+trackerCurBtn === 2) {
+					s++;
+					song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].sample = s;
+					song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan].note = n;
+					$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-2").html(WebTracker.midiNoteToName(n));
+					$("#trackerBtn-" + trackerCurRow + "-" + trackerCurChan + "-1").html(s);
+					if (+trackerCurRow + trackerAddRows < song.patterns[trackerCurPattern].length) {
+						trackerCurRow = +trackerCurRow + trackerAddRows;
+						trackerFocus();
+					} //if can add rows.
+				}
+			}, //trackerNoteCallback
 
 			newSong = function () {
 				changed = false;
@@ -445,13 +452,13 @@ trackerFocus();
 				destination.connect(context.destination);
 				newSong();
 				$(".first").click();
-$("#trackerEffects").hide();
-var lst = "";
-for (var i = 0; i < WebTracker.effects.length; i++) {
-lst += '<option value="' + i + '">' + WebTracker.effects[i] + "</option>"
-} //i
-$("#effectEffects").append(lst).val(0);
-				samplePlayers.samplesSampleChooser.sampleCallback = function(sptr) {
+				$("#trackerEffects").hide();
+				var lst = "";
+				for (var i = 0; i < WebTracker.effects.length; i++) {
+					lst += '<option value="' + i + '">' + WebTracker.effects[i] + "</option>"
+				} //i
+				$("#effectEffects").append(lst).val(0);
+				samplePlayers.samplesSampleChooser.sampleCallback = function (sptr) {
 					samplesCurSample = sptr;
 					updateSamplesPanel();
 				}; //sampleCallback
@@ -497,23 +504,24 @@ $("#effectEffects").append(lst).val(0);
 			} //if
 		}); //new file creation
 
-$("#saveFilename").focusout(function() {
-filename = this.value;
-}); //saveFilename focus out
-//***some kind of filename parsing goes in that func above.
+		$("#saveFilename").focusout(function () {
+			filename = this.value;
+		}); //saveFilename focus out
+		//***some kind of filename parsing goes in that func above.
 
 		$("#saveButton").click(function () {
-var err = WebTracker.isAmigaModCompatible(song);
-if (err.length > 0) {
-alert("Unable to save as amiga mod, please correct errors.");
-//showErrorPanel();
-} else {
-			var zip = new JSZip();
-			zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker: http://webtracker.com\n\nUnleash your creativity!\n");
-			zip.file(filename, WebTracker.saveAmigaMod(song, true)); //true = return ArrayBuffer. 
-			var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
-			$("#saveLink").html(htm);
-			changed = false;
+			var err = WebTracker.isAmigaModCompatible(song);
+			if (err.length > 0) {
+				alert("Unable to save as amiga mod, please correct errors.");
+				//showErrorPanel();
+			} else {
+				var zip = new JSZip();
+				zip.file("readme.txt", "***   " + song.title + " ***\n\nCreated with WebTracker: http://webtracker.com\n\nUnleash your creativity!\n");
+				zip.file(filename, WebTracker.saveAmigaMod(song, true)); //true = return ArrayBuffer. 
+				var htm = '<a href="' + 'data:application/zip;base64,' + zip.generate() + '">Click to download</a>';
+				$("#saveLink").html(htm);
+				changed = false;
+			} //if validity check
 		}); //save click
 
 		$("#importClear").click(function () {
@@ -607,41 +615,41 @@ alert("Unable to save as amiga mod, please correct errors.");
 			} //if
 		}); //tempo loose focus
 
-$("#samplesTitle").focusout(function() {
-song.samples[samplesCurSample].title = this.value;
-}); //title focus out
+		$("#samplesTitle").focusout(function () {
+			song.samples[samplesCurSample].title = this.value;
+		}); //title focus out
 
-$("#samplesVolume").focusout(function() {
-song.samples[samplesCurSample].volume = WebTracker.restrictRange(+this.value, 0, 1);
-}); // sample volume focus out
+		$("#samplesVolume").focusout(function () {
+			song.samples[samplesCurSample].volume = WebTracker.restrictRange(+this.value, 0, 1);
+		}); // sample volume focus out
 
-$("#samplesFineTune").focusout(function() {
-song.samples[samplesCurSample].tune = WebTracker.restrictRange(+this.value,-8, 7);
-}); // samples finetune focus out
+		$("#samplesFineTune").focusout(function () {
+			song.samples[samplesCurSample].tune = WebTracker.restrictRange(+this.value, -8, 7);
+		}); // samples finetune focus out
 
-$("#samplesLoopStart").focusout(function() {
-song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-updateSamplesPanel();
-}); //samplesLoopStart focus out
+		$("#samplesLoopStart").focusout(function () {
+			song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+			updateSamplesPanel();
+		}); //samplesLoopStart focus out
 
-$("#samplesLoopEnd").focusout(function() {
-song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-updateSamplesPanel();
-}); //samplesLoopEnd
+		$("#samplesLoopEnd").focusout(function () {
+			song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+			updateSamplesPanel();
+		}); //samplesLoopEnd
 
-$("#samplesLoopStartSlide").focusout(function() {
-song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-updateSamplesPanel();
-}); //samplesLoopStartSlide focus out
+		$("#samplesLoopStartSlide").focusout(function () {
+			song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+			updateSamplesPanel();
+		}); //samplesLoopStartSlide focus out
 
-$("#samplesLoopEndSlide").focusout(function() {
-song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-updateSamplesPanel();
-}); //samplesLoopEndSlide
+		$("#samplesLoopEndSlide").focusout(function () {
+			song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
+			updateSamplesPanel();
+		}); //samplesLoopEndSlide
 
-$("#trackerPlay").click(function() {
-songPlayer.playPattern(trackerCurPattern);
-}); //trackerPlay click
+		$("#trackerPlay").click(function () {
+			songPlayer.playPattern(trackerCurPattern);
+		}); //trackerPlay click
 
 		$("#trackerChannelWidth").focusout(function () {
 			var v = +this.value;
@@ -680,234 +688,237 @@ songPlayer.playPattern(trackerCurPattern);
 
 		$(document).on('keydown', '.trackerTable', function (e) {
 			if (trackerKeys) {
-switch(e.which) {
-//falls through
-case 9:
-case 13:
-return false;
-default:
-return true;
-} //switch
-} //if trackerKeys is active
-}); //keyDown
+				switch (e.which) {
+					//falls through
+				case 9:
+				case 13:
+					return false;
+				default:
+					return true;
+				} //switch
+			} //if trackerKeys is active
+		}); //keyDown
 
-$(document).on('keyup', '.trackerTable', function (e) {
+		$(document).on('keyup', '.trackerTable', function (e) {
 			var k = e.which;
 			if (trackerKeys) {
 				switch (k) {
 				case 37: //left arrow
 					trackerPrevBtn();
-return false;
-				break;
+					return false;
+					break;
 				case 39: //right
 					trackerNextBtn();
-return false;
+					return false;
 					break;
 				case 38: //up arrow
 					trackerPrevRow();
-return false;
+					return false;
 					break;
 				case 40: //down
 					trackerNextRow();
-return false;
+					return false;
 					break;
-case 51: //#
-if (e.shiftKey) $("#trackerTranspose").click();
-return false;
-break;
-case 220: //\
-if (e.shiftKey) { // |
-$("#trackerSelectRect").click();
-} else { // \
-$("#trackerCopy").click();
-} //| or \
-return false;
-break;
-case 191: // /
-if (e.shiftKey) { // ?
-$("#trackerSelectAll").click();
-} else { // /
-$("#trackerPaste").click();
-} // ? or /
-return false;
-break;
-case 13:
-$("#trackerPlay").click();
-return false;
-break;
-case 33: //pjup
-if (e.shiftKey) {
-if (trackerCurPattern - 1 >= 0) {
-trackerCurPattern -= 1;
-buildTrackerTable();
-trackerFocus();
-$("#trackerCurrentPattern").val(trackerCurPattern);
-} //if we can change patterns.
-} else { //no shift key
-trackerCurRow = 0;
-trackerFocus();
-} //if shift or not
-return false;
-break;
-case 34: //pjdwn
-if (e.shiftKey) {
-if (trackerCurPattern + 1 < song.patternCount) {
-trackerCurPattern += 1;
-buildTrackerTable();
-trackerFocus();
-$("#trackerCurrentPattern").val(trackerCurPattern);
-} //if can switch pattern
-} else { //if shift key was down
-trackerCurRow = song.patterns[trackerCurPattern].length - 1;
-trackerFocus();
-} //shift or not
-return false;
-break;
-case 36: //home
-if (e.shiftKey) {
-trackerCurPattern = 0;
-} else { //no shift
-trackerCurChan = trackerStartChan;
-} //shift or not
-trackerFocus();
-return false;
-break;
-case 35: //end
-if (e.shiftKey) {
-trackerCurPattern = song.patternCount - 1;
-} else { //shift not down.
-trackerCurChan = trackerStartChan + trackerChanWidth - 1;
-} //shift or not
-trackerFocus();
-return false;
-break;
-//falls through
-case 8: //backspace
-case 46: //delete
-clearSelectedNotes();
-buildTrackerTable();
-trackerFocus();
-return false;
-break;
-case 9:
-if (e.shiftKey) {
-trackerPrevChan();
-} else {
-trackerNextChan();
-}
-return false;
-break;
+				case 51: //#
+					if (e.shiftKey) $("#trackerTranspose").click();
+					return false;
+					break;
+				case 220: //\
+					if (e.shiftKey) { // |
+						$("#trackerSelectRect").click();
+					} else { // \
+						$("#trackerCopy").click();
+					} //| or \
+					return false;
+					break;
+				case 191: // /
+					if (e.shiftKey) { // ?
+						$("#trackerSelectAll").click();
+					} else { // /
+						$("#trackerPaste").click();
+					} // ? or /
+					return false;
+					break;
+				case 13:
+					$("#trackerPlay").click();
+					return false;
+					break;
+				case 33: //pjup
+					if (e.shiftKey) {
+						if (trackerCurPattern - 1 >= 0) {
+							trackerCurPattern -= 1;
+							buildTrackerTable();
+							trackerFocus();
+							$("#trackerCurrentPattern").val(trackerCurPattern);
+						} //if we can change patterns.
+					} else { //no shift key
+						trackerCurRow = 0;
+						trackerFocus();
+					} //if shift or not
+					return false;
+					break;
+				case 34: //pjdwn
+					if (e.shiftKey) {
+						if (trackerCurPattern + 1 < song.patternCount) {
+							trackerCurPattern += 1;
+							buildTrackerTable();
+							trackerFocus();
+							$("#trackerCurrentPattern").val(trackerCurPattern);
+						} //if can switch pattern
+					} else { //if shift key was down
+						trackerCurRow = song.patterns[trackerCurPattern].length - 1;
+						trackerFocus();
+					} //shift or not
+					return false;
+					break;
+				case 36: //home
+					if (e.shiftKey) {
+						trackerCurPattern = 0;
+					} else { //no shift
+						trackerCurChan = trackerStartChan;
+					} //shift or not
+					trackerFocus();
+					return false;
+					break;
+				case 35: //end
+					if (e.shiftKey) {
+						trackerCurPattern = song.patternCount - 1;
+					} else { //shift not down.
+						trackerCurChan = trackerStartChan + trackerChanWidth - 1;
+					} //shift or not
+					trackerFocus();
+					return false;
+					break;
+					//falls through
+				case 8: //backspace
+				case 46: //delete
+					clearSelectedNotes();
+					buildTrackerTable();
+					trackerFocus();
+					return false;
+					break;
+				case 9:
+					if (e.shiftKey) {
+						trackerPrevChan();
+					} else {
+						trackerNextChan();
+					}
+					return false;
+					break;
 				default:
 					break;
 				} //arrows
 			} //trackerKeys
 		}); //keydown
 
-$("#effectNote").focusout(function() {
-$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(this.value));
-}); //effectNote lose focus
+		$("#effectNote").focusout(function () {
+			$("#effectPeriod").val(WebTracker.noteToAmigaPeriod(this.value));
+		}); //effectNote lose focus
 
-$("#effectPeriod").focusout(function() {
-$("#effectNote").val(WebTracker.amigaPeriodToNote(this.value));
-}); //effectPeriod loose focus
+		$("#effectPeriod").focusout(function () {
+			$("#effectNote").val(WebTracker.amigaPeriodToNote(this.value));
+		}); //effectPeriod loose focus
 
-$(".effectCancel").click( function() {
-$("#trackerEffects").hide();
-buildTrackerTable();
-$("#trackerTable").show();
-trackerFocus();
-samplePlayers.trackerSampleChooser.active = true;
-trackerKeys = true;
-}); //effectCancel click
+		$(".effectCancel").click(function () {
+			$("#trackerEffects").hide();
+			buildTrackerTable();
+			$("#trackerTable").show();
+			trackerFocus();
+			samplePlayers.trackerSampleChooser.active = true;
+			trackerKeys = true;
+		}); //effectCancel click
 
-$(".effectSave").click(function() {
-$("#trackerEffects").hide();
-song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan] = WebTracker.note(+$("#effectSample").val(),
-+$("#effectNote").val(),
-WebTracker.effect(+$("#effectEffects").val(),
-+$("#effectP1Box").val(),
-+$("#effectP2Box").val())); //new note
-buildTrackerTable();
-$("#trackerTable").show();
-trackerFocus();
-samplePlayers.trackerSampleChooser.active = true;
-trackerKeys = true;
-}); //save click
+		$(".effectSave").click(function () {
+			$("#trackerEffects").hide();
+			song.patterns[trackerCurPattern][trackerCurRow][trackerCurChan] = WebTracker.note(+$("#effectSample").val(), +$("#effectNote").val(),
+				WebTracker.effect(+$("#effectEffects").val(), +$("#effectP1Box").val(), +$("#effectP2Box").val())); //new note
+			buildTrackerTable();
+			$("#trackerTable").show();
+			trackerFocus();
+			samplePlayers.trackerSampleChooser.active = true;
+			trackerKeys = true;
+		}); //save click
 
-$("#trackerCurrentPattern").focusout(function() {
-trackerCurPattern = +this.value;
-buildTrackerTable();
-}); //trackerCurrentPattern focus out
+		$("#trackerCurrentPattern").focusout(function () {
+			trackerCurPattern = +this.value;
+			buildTrackerTable();
+		}); //trackerCurrentPattern focus out
 
-$("#trackerSelectAll").click(function() {
-$(".trackerSelectNote").attr("checked", true);
-$(".trackerRowSelect").attr("checked", true);
-}); //selectAll click
+		$("#trackerSelectAll").click(function () {
+			$(".trackerSelectNote").attr("checked", true);
+			$(".trackerRowSelect").attr("checked", true);
+		}); //selectAll click
 
-$("#trackerSelectRect").click(function() {
-var rows = $(".trackerRowSelect:checked");
-if (rows.length >= 2) {
-var start = +rows[0].value,
-end = +rows[rows.length-1].value;
-for (var i = start+1; i < end; i++) {
-var btn = $("#trackerRow-" + i);
-if(!btn.prop('checked')) {
-btn.click();
-} //if not checked already, click it.
-} // i
-} else { //if it's not the rows, it's the notes.
-var n = $(".trackerSelectNote:checked");
-if (n.length !== 2) {
-alert("Error, to select inside a boundary of notes, exactly two notes can be checked.");
-} else {//if not 2 notes
-var p1 = n[0].value.split(":"),
-p2 = n[n.length-1].value.split(":");
-p1 = {x: +p1[1], y: +p1[0]};
-p2 = {x: +p2[1], y: +p2[0]};
-var rect = WebTracker.getRectPoints(p1, p2);
-for (var i = 0; i < rect.length; i++) {
-for (var j = 0; j < rect[i].length; j++) {
-var p = rect[i][j];
-$("#trackerBtn-" + p.y + "-" + p.x + "-0").prop("checked", true);
-} //j
-} //i
-} //if length is right
-} //if rows or notes
-}); //select rectangle
+		$("#trackerSelectRect").click(function () {
+			var rows = $(".trackerRowSelect:checked");
+			if (rows.length >= 2) {
+				var start = +rows[0].value,
+					end = +rows[rows.length - 1].value;
+				for (var i = start + 1; i < end; i++) {
+					var btn = $("#trackerRow-" + i);
+					if (!btn.prop('checked')) {
+						btn.click();
+					} //if not checked already, click it.
+				} // i
+			} else { //if it's not the rows, it's the notes.
+				var n = $(".trackerSelectNote:checked");
+				if (n.length !== 2) {
+					alert("Error, to select inside a boundary of notes, exactly two notes can be checked.");
+				} else { //if not 2 notes
+					var p1 = n[0].value.split(":"),
+						p2 = n[n.length - 1].value.split(":");
+					p1 = {
+						x: +p1[1],
+						y: +p1[0]
+					};
+					p2 = {
+						x: +p2[1],
+						y: +p2[0]
+					};
+					var rect = WebTracker.getRectPoints(p1, p2);
+					for (var i = 0; i < rect.length; i++) {
+						for (var j = 0; j < rect[i].length; j++) {
+							var p = rect[i][j];
+							$("#trackerBtn-" + p.y + "-" + p.x + "-0").prop("checked", true);
+						} //j
+					} //i
+				} //if length is right
+			} //if rows or notes
+		}); //select rectangle
 
-$("#trackerCopy").click(function() {
-trackerClipboard = getSelectedNotes();
-selectNoNotes();
-}); //trackerCopy click
+		$("#trackerCopy").click(function () {
+			trackerClipboard = getSelectedNotes();
+			selectNoNotes();
+		}); //trackerCopy click
 
-$("#trackerPaste").click(function() {
-if (trackerClipboard.length > 0) {
-var p = trackerClipboard[0],
-xoff = trackerCurChan - p.x,
-yoff = trackerCurRow - p.y;
-song.putNotesAtPoints(trackerCurPattern, xoff, yoff, trackerClipboard);
-buildTrackerTable();
-trackerFocus();
-} //if the clibpoard isn't empty
-}); //trackerPaste click
+		$("#trackerPaste").click(function () {
+			if (trackerClipboard.length > 0) {
+				var p = trackerClipboard[0],
+					xoff = trackerCurChan - p.x,
+					yoff = trackerCurRow - p.y;
+				song.putNotesAtPoints(trackerCurPattern, xoff, yoff, trackerClipboard);
+				buildTrackerTable();
+				trackerFocus();
+			} //if the clibpoard isn't empty
+		}); //trackerPaste click
 
-$("#trackerSelectNone").click(selectNoNotes) //clear selection
+		$("#trackerSelectNone").click(selectNoNotes) //clear selection
 
-$("#trackerTranspose").click(function() {
-var n = getSelectedNotes() 
-if (n.length > 0) {
-var t = +prompt("Please enter the number of simitones to transpose (negative `-~ numbers transpose down.)");
-if (!isNaN(t)) {
-song.transposeNotes(n, t);
-buildTrackerTable();
-trackerFocus();
-} else { //now it's not a number.
-alert("Error: Please enter a valid number. Ecamples: -5: transpose down 5 simitones; 9: transpose up 9 simitones.");
-} //if the user entered a number
-} else { //now we know no notes were selected.
-alert("Error: Please select the notes to transpose first.");
-} //if we have notes
-}); //tracker transpose
+		$("#trackerTranspose").click(function () {
+			var n = getSelectedNotes()
+			if (n.length > 0) {
+				var t = +prompt("Please enter the number of simitones to transpose (negative `-~ numbers transpose down.)");
+				if (!isNaN(t)) {
+					song.transposeNotes(n, t);
+					buildTrackerTable();
+					trackerFocus();
+				} else { //now it's not a number.
+					alert("Error: Please enter a valid number. Ecamples: -5: transpose down 5 simitones; 9: transpose up 9 simitones.");
+				} //if the user entered a number
+			} else { //now we know no notes were selected.
+				alert("Error: Please select the notes to transpose first.");
+			} //if we have notes
+		}); //tracker transpose
 		init();
 	}); //ready
 } else {
