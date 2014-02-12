@@ -31,6 +31,7 @@ window.onload = function () {
 'songplayer',
 'jszip',
 'jszip-inflate',
-'jszip-load'
+'jszip-load',
+'wplayer'
 ]); //outer func, prepairs to load files.
 }; //onload
