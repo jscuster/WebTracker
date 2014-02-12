@@ -1,9 +1,10 @@
+
 var WebTracker = WebTracker || {};
 WebTracker.Sample = function () {
-'use strict';
-this.clean = true; //dirty if waiting for resampler.
+	'use strict';
+	this.clean = true; //dirty if waiting for resampler.
 	var that = this,
-context = WebTracker.context,
+		context = WebTracker.context,
 		_title = "Untitled",
 		_channels = 0,
 		_length = 0,
@@ -19,18 +20,18 @@ context = WebTracker.context,
 			_factor = (_sampRate * Math.pow(1.007247, _tune)) / context.sampleRate;
 		}, //setFactor
 
-	setupDataVars = function() {
-		_length = _data.length;
-		_channels = _data.numberOfChannels;
-		_sampRate = _data.sampleRate;
-		setFactor();
-	}; //setupDataVars
+		setupDataVars = function () {
+			_length = _data.length;
+			_channels = _data.numberOfChannels;
+			_sampRate = _data.sampleRate;
+			setFactor();
+		}; //setupDataVars
 
 	Object.defineProperty(that, "title", {
-		get: function() {
+		get: function () {
 			return _title;
 		},
-		set: function(v) {
+		set: function (v) {
 			_title = v;
 		}
 	}); //title property
@@ -74,7 +75,7 @@ context = WebTracker.context,
 		},
 		set: function (value) {
 			_tune = WebTracker.restrictRange(value, -8, 7);
-setFactor();
+			setFactor();
 		}
 	}); //tune property
 
@@ -104,11 +105,11 @@ setFactor();
 		}
 	}); //loopStartTime property
 
-Object.defineProperty(that, "loopLength", {
-get: function() {
-return _loopEnd-_loopStart;
-}
-}); //loopLength property
+	Object.defineProperty(that, "loopLength", {
+		get: function () {
+			return _loopEnd - _loopStart;
+		}
+	}); //loopLength property
 
 	Object.defineProperty(that, "data", {
 		get: function () {
@@ -137,57 +138,57 @@ return _loopEnd-_loopStart;
 	}); //channels property
 
 	that.rawData = context.createBuffer(1, 1, WebTracker.context.sampleRate);
-that.data.getChannelData(0)[0] = 0;
+	that.data.getChannelData(0)[0] = 0;
 
 }; //Sample
 
-WebTracker.Sample.prototype.resample = function(newRate) {
-if (newRate !== this.sampleRate) {that.clean = false;
-WebTracker.resample(this.data, this.sampleRate, newRate, function(d) {
-this.data = d;
-this.sampleRate = newRate; //we resampled it, set it up right.
-this.clean = true;
-}); //resample
-} //if different;
+WebTracker.Sample.prototype.resample = function (newRate) {
+	if (newRate !== this.sampleRate) {
+		that.clean = false;
+		WebTracker.resample(this.data, this.sampleRate, newRate, function (d) {
+			this.data = d;
+			this.sampleRate = newRate; //we resampled it, set it up right.
+			this.clean = true;
+		}); //resample
+	} //if different;
 }; //resample
 
-	WebTracker.Sample.prototype.toMono = function () {
-		if (this.data.numberOfChannels > 1) {
-			var buffer = this.data,
-				l = buffer.length,
-				c = buffer.numberOfChannels,
-				d,
-				chanData = [];
-			this.data = WebTracker.context.createBuffer(1, l, buffer.sampleRate);
-d = this.data.getChannelData(0);
-			for (var i = 0; i < c; i++) {
-				chanData[i] = buffer.getChannelData(i);
-			} //get each channel
-			for (var i = 0; i < l; i++) {
-				var avg = 0;
-				for (var j = 0; j < c; j++) {
-					avg += chanData[j][i]; //add the channels together
-				} //j
-				d[i] = avg / c;
-			} //i
-		} //if
-	}; //toMono
+WebTracker.Sample.prototype.toMono = function () {
+	if (this.data.numberOfChannels > 1) {
+		var buffer = this.data,
+			l = buffer.length,
+			c = buffer.numberOfChannels,
+			d,
+			chanData = [];
+		this.data = WebTracker.context.createBuffer(1, l, buffer.sampleRate);
+		d = this.data.getChannelData(0);
+		for (var i = 0; i < c; i++) {
+			chanData[i] = buffer.getChannelData(i);
+		} //get each channel
+		for (var i = 0; i < l; i++) {
+			var avg = 0;
+			for (var j = 0; j < c; j++) {
+				avg += chanData[j][i]; //add the channels together
+			} //j
+			d[i] = avg / c;
+		} //i
+	} //if
+}; //toMono
 
-WebTracker.Sample.prototype.eightBitify = function() {
-var round = Math.round;
-for (var i = 0; i < this.channels; i++) {
-var b = this.data.getChannelData(i),
-l=b.length;
-for (var j = 0; j < l; j++) {
-b[j] = round(b[j] * 127) / 127; //allowed samples are from -128 to 127, round each sample to this constraint.
-} //j
-} //i
+WebTracker.Sample.prototype.eightBitify = function () {
+	var round = Math.round;
+	for (var i = 0; i < this.channels; i++) {
+		var b = this.data.getChannelData(i),
+			l = b.length;
+		for (var j = 0; j < l; j++) {
+			b[j] = round(b[j] * 127) / 127; //allowed samples are from -128 to 127, round each sample to this constraint.
+		} //j
+	} //i
 }; //eightBitify
 
-WebTracker.samplePointer = function(h, d) {
-return {
-headerOffset: h,
-dataOffset: d
-}; //pointer
+WebTracker.samplePointer = function (h, d) {
+	return {
+		headerOffset: h,
+		dataOffset: d
+	}; //pointer
 }; //samplePointer
-
