@@ -96,7 +96,7 @@ WebTracker.isAmigaModCompatible = function(s) {
 //provides array of errors and functions to fix them.
 var err = [], ep = 0;
 //channels > 0 && <= 32
-if (s.channels <== 0 || s.channels > 32) {
+if (s.channels <= 0 || s.channels > 32) {
 err[ep++] = ["Amiga modules support from 1 to 32 channels. This song has " + s.channels + ".", 
 function() {
 alert("Remove one channel in the composer.");
@@ -118,7 +118,7 @@ if (s.slots > 127) {
 err[ep++] = [
 "Pattern order list may have up to 127 items. Currently this song lists " + s.slots + ".",
 function() {
-alert("To fix this problem, click "Patterns in the top bar, then Order. Delete some of the items listed until 127 or less remain.");
+alert("To fix this problem, click Patterns in the top bar, then Order. Delete some of the items listed until 127 or less remain.");
 }]; //fix too many slots
 } //if more than 127 slots.
 //patterns <= 127
@@ -126,7 +126,7 @@ if (s.patternCount > 127) {
 err[ep++] = [
 "an amiga song may have up to 127 patterns. Currently this song has " + s.patternCount + ".",
 function() {
-alert("To fix this problem, click "Patterns in the top bar, then Edit. Delete some of the patterns listed until 127 or less remain.");
+alert("To fix this problem, click Patterns in the top bar, then Edit. Delete some of the patterns listed until 127 or less remain.");
 }]; //fix too many slots
 } //if more than 127 patterns.
 //make sure each pattern has exactly 64 rows.
@@ -155,7 +155,7 @@ err[ep++] = tmp[j];
 return err; 
 }; //isAmigaSongCompatible
 
-WebTracker.saveAmigaMod = function (song) {
+WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
 		'use strict';
 if (WebTracker.isAmigaModCompatible(song).length > 0) {
 throw {message: "Error: This song is not compatible with the amiga format."};
@@ -244,4 +244,3 @@ for (var i = song.samples.length; i < 31; i++) { //fill in sample data
 			return buffer;
 		} //if converting to base64
 	}; //saveAmigaMod
-
