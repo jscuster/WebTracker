@@ -11,6 +11,7 @@ _bpm = 120;
 
 this.rowsPerBeat=4;
 this.defaultRowsPerPattern = 64;
+this.restartPosition = 0;
 
 	this.findEmptyPatterns = function () {
 		var p = this.patterns,

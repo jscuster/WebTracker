@@ -50,7 +50,7 @@ ptrs.dataOffset = doff;
 return res; //return the newly loaded sample
 }; //readSample
 
-WebTracker.isValidAmigaSample = function(s) {
+WebTracker.isAmigaSampleCompatible = function(s) {
 var err = [], ep = 0;
 if (s.channels > 1) {
 err[ep++] = ["Sample must have only 1 channel, this sample has " + s.channels + ".",
