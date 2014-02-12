@@ -139,7 +139,7 @@ newSample = false;
 arpeggio = function() {
 isNote = false;
 startNote();
-slideNotes = song.calcArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
+slideNotes = WebTracker.calcAmigaArpeggio(_bpm, noteStore.lastNote, note.effect.p1, note.effect.p2);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 }, //arpeggio
 
@@ -150,7 +150,7 @@ noteStore.slideBound = note.note;
 if (useEffectParam) {
 noteStore.lastSlideAmt = note.effect.p1 || noteStore.lastSlideAmt;
 } //if useEffectParam
-slideNotes = song.calculateNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
+slideNotes = WebTracker.calcAmigaNoteSlide(_bpm, noteStore.lastNote, noteStore.slideBound, noteStore.lastSlideAmt);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 applySlide(noteStore.sample, slideNotes, s, tpr);
 isNote = false;
@@ -167,11 +167,11 @@ if (cyc === 0) {
 cyc = noteStore.vibratoCycles;
 } else { 
 noteStore.vibratoCycles = cyc;
-freq = song.calcCycles(_bpm, cyc);
+freq = WebTracker.calcAmigaCycles(_bpm, cyc);
 noteStore.vibratoFreq = freq;
 } //if cycles
 if (simi !== 0) {
-simi=song.calcSimitones(simi);
+simi = WebTracker.calcAmigaVibratoAmplitude(simi);
 noteStore.vibratoAmp = simi;
 } //if simi
 s.vibrato(cycles, simi, time);
@@ -186,11 +186,11 @@ var e = note.effect,
 amp = e.p2,
 cycles = e.p1;
 if (cycles !== 0) {
-cycles = song.calcCycles(_bpm, cycles);
+cycles = WebTracker.calcAmigaCycles(_bpm, cycles);
 noteStore.tremoloCycles = cycles;
 } //if cycles
 if (amp !== 0) {
-amp=song.calcTremoloAmplitude(amp);
+amp = WebTracker.calcAmigaTremoloAmplitude(amp);
 noteStore.tremoloAmp = amp;
 } //if simi
 s.tremolo(cycles, amp, time);
@@ -209,7 +209,7 @@ return floor(random() * 3);
 
 slideVolume = function() {
 s.setVolume(noteStore.volume, time); //make sure the slide starts now, otherwise starts at the last event.
-noteStore.volume = song.calcVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
+noteStore.volume = WebTracker.calcAmigaVolumeSlide(_bpm, noteStore.volume, note.effect.p1);
 s.slideVolume(noteStore.volume, time + tpr);
 }, //slideVolume
 
@@ -238,14 +238,14 @@ break;
 case 2: //slide up
 startNote();
 isNote = false; //starting below.
-slideNotes = song.slideNoteDown(_bpm, noteStore.lastNote, 0, note.effect.p1);
+slideNotes = WebTracker.amigaSlideNoteDown(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 break;
 case 3: //slide down
 startNote();
 isNote = false; //starting below.
-slideNotes = song.slideNoteUp(_bpm, noteStore.lastNote, 0, note.effect.p1);
+slideNotes = WebTracker.amigaSlideNoteUp(_bpm, noteStore.lastNote, 0, note.effect.p1);
 applySlide(noteStore.sample, slideNotes, s, tpr);
 noteStore.lastNote = slideNotes[slideNotes.length - 1];
 break;
@@ -278,13 +278,13 @@ break;
 case 16: //fine slide up
 startNote();
 isNote = false;
-noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1 * -1);
+noteStore.lastNote = WebTracker.calcAmigaFineSlide(noteStore.lastNote, note.effect.p1 * -1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
 case 17: //fine slide down
 startNote();
 isNote = false;
-noteStore.lastNote = song.calcFineSlide(noteStore.lastNote, note.effect.p1);
+noteStore.lastNote = WebTracker.calcAmigaFineSlide(noteStore.lastNote, note.effect.p1);
 s.setNote(noteStore.sample, noteStore.lastNote, time);
 break;
 case 19: //vibrato waveform select
