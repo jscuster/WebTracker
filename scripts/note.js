@@ -124,10 +124,11 @@ WebTracker.effect = function (e, p1, p2) {
 	}; //effect
 }; //effect factory
 
-WebTracker.note = function (s, n, e) {
+WebTracker.note = function (s, n, v, e) {
 	return {
 		sample: s,
 		note: n,
+		volume: v,
 		effect: e
 	}; //note
 }; //note factory

@@ -136,7 +136,7 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 					res.effect = n[2] & 0x0f;
 					res.param = n[3];
 					var midiNote = WebTracker.amigaPeriodToNote(res.period);
-					return note(res.sample, midiNote, amigaEffect(res.effect, res.param));
+					return note(res.sample, midiNote, 1, amigaEffect(res.effect, res.param));
 				}, //amigaNote
 
 				readNote = function (offset) {
