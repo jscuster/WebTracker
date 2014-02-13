@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.SongPlayer = function (song, destination) {
 	'use strict';
@@ -19,6 +18,7 @@ WebTracker.SongPlayer = function (song, destination) {
 		donePlayingCallback,
 		chanStore,
 		samples = song.samples,
+masterVolume = context.createGain(),
 
 		setTimePerRow = function () {
 			tpr = 60 / (_bpm * song.rowsPerBeat);
@@ -26,6 +26,7 @@ WebTracker.SongPlayer = function (song, destination) {
 
 		preload = function () {
 			//initialize variables
+var panpos = song.defaultPan;
 			channels = [];
 			patternCursor = 0;
 			rowCursor = 0;
@@ -34,15 +35,10 @@ WebTracker.SongPlayer = function (song, destination) {
 
 			//load channels with samplers.
 			channelCount = song.channels;
+
 			for (var i = 0; i < channelCount; i++) {
 				channels[i] = new WebTracker.Sampler(song.samples, destination);
-				//set position per left, right, right, left spec.
-				var mod = i % 4;
-				if (mod === 0 || mod === 3) {
-					channels[i].setPan(-0.25, 0, 0); //left
-				} else {
-					channels[i].setPan(0.25, 0, 0); //right
-				} //if pan
+				channels[i].setPan(panPos[i], 0, 0);
 				chanStore[i] = {
 					lastNote: 0,
 					slideBound: 0,
@@ -408,6 +404,10 @@ WebTracker.SongPlayer = function (song, destination) {
 		} //set
 	}); //stopCallback
 
+//initialize
+	destination = destination || context.destination; //if not provided, assume speakers
+	masterVolume.connect(destination);
+	destination = masterVolume; //connect everything to destination.
 	this.update = preload;
 	preload();
 }; //SongPlayer

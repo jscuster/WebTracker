@@ -1,5 +1,5 @@
-
 var WebTracker = WebTracker || {};
+
 WebTracker.Sampler = function (samples, destination) {
 	var context = WebTracker.context;
 	destination = destination || context.destination;
@@ -54,6 +54,8 @@ WebTracker.Sampler = function (samples, destination) {
 
 	gain.connect(destination);
 	panner.connect(gain);
+	panner.panningModel = "equalpower";
+	panner.distanceModel =  "linear"
 	destination = panner;
 
 	this.play = function (s, note, when) {

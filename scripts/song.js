@@ -13,6 +13,8 @@ WebTracker.Song = function () {
 	this.rowsPerBeat = 4;
 	this.defaultRowsPerPattern = 64;
 	this.restartPosition = 0;
+	this.defaultPan = [0, 0, 0, 0];
+	this.globalVolume = 1;
 
 	this.findEmptyPatterns = function () {
 		var p = this.patterns,
@@ -161,6 +163,10 @@ WebTracker.Song = function () {
 		},
 		set: function (v) {
 			_channels = v;
+this.defaultPan = [];
+for (var i = 0; i < v; i++) {
+this.defaultPan[i] = 0;
+} //for each channel set pan to center
 		}
 	}); //channels property
 
