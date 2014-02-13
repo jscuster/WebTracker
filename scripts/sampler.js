@@ -97,10 +97,12 @@ WebTracker.Sampler = function (samples, destination) {
 		} //if
 	}; //stop
 
-	this.setPan = function (x, y, z) {
-		panner.setPosition(x, y, z);
-	}; //setPan
-
+	this.setPan = (function() {
+		var abs = Math.abs;
+		return function (x) {
+			panner.setPosition(x, 0, 1 - abs(x));
+		}; //setPan
+	})(); //setPan closure saving abs
 	this.setVolume = function (volume, when) {
 		gain.gain.setValueAtTime(volume, when);
 	}; //setVolume

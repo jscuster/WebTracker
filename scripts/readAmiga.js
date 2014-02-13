@@ -152,14 +152,14 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 			//set channels
 			song.channels = chans;
 //set default pan positions for amiga mods.
-			for (var i = 0; i < channs; i++) {
+			for (var i = 0; i < chans; i++) {
 				//set position per left, right, right, left spec.
 				var mod = i % 4;
 				//should be -1, 1, 1, -1, ... but we'll use smaller figures for better sound. (yes, better in my open ion.)
 				if (mod === 0 || mod === 3) {
-					song.defaultPan[i].setPan(-0.25, 0, 0); //left
+					song.defaultPan[i] = -0.75; //left
 				} else {
-					song.defaultPan[i].setPan(0.25, 0, 0); //right
+					song.defaultPan[i] = 0.75; //right
 				} //if pan
 			} //for each channel, set pan
 			//get title

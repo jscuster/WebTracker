@@ -26,7 +26,7 @@ masterVolume = context.createGain(),
 
 		preload = function () {
 			//initialize variables
-var panpos = song.defaultPan;
+			var panPos = song.defaultPan;
 			channels = [];
 			patternCursor = 0;
 			rowCursor = 0;
@@ -35,10 +35,9 @@ var panpos = song.defaultPan;
 
 			//load channels with samplers.
 			channelCount = song.channels;
-
 			for (var i = 0; i < channelCount; i++) {
 				channels[i] = new WebTracker.Sampler(song.samples, destination);
-				channels[i].setPan(panPos[i], 0, 0);
+				channels[i].setPan(panPos[i]);
 				chanStore[i] = {
 					lastNote: 0,
 					slideBound: 0,
