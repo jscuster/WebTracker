@@ -3,12 +3,17 @@ var WebTracker = WebTracker || {};
 WebTracker.loadXMSong = function(dv) {
 var getString = WebTracker.stringReader(dv),
 off = 0,
+nextOff = 0,
 patternTableCount = 0,
 patternCount = 0,
 insCount = 0,
 patternCount = 0,
 amigaPeriods = false,
-song = new WebTracker.Song();
+tmp, //we always need temp vars
+chans, //channels
+song = new WebTracker.Song(),
+po = song.patternOrder,
+patterns = song.patterns;
 
 //basic data
 song.title = getString(17: 20);
@@ -18,15 +23,45 @@ song.trackerName = getString(38, 20);
 off = 60 + dv.getUint32(60);
 patternTableCount = dv.getUint16(64);
 song.restartPosition = dv.getUint16(66);
-song.channels = dv.getUint16(68);
+song.channels = chans = dv.getUint16(68);
 patternCount = dv.getUint16(70);
 instrumentCount = dv.getUint16(72);
 amigaPeriods = (dv.getUint16(74) & 0x1) > 0;
 defaultSpeed = dv.getUint16(76);
 defaultBpm = dv.getUint16(78);
 for (var i = 0; i <= patternTableCount; i++) {
-song.patternOrder[i] = dv.getUint8(80 + i);
+tmp = dv.getUint8(80 + i);
+tmp = tmp < patternCount ? tmp : 0;
+po[i] = tmp; //po = song.patternOrder
 } //i
+
+//read pattern headers
+for (var i = 0; i < patternCount; i++) {
+var p = patterns[i] = [];
+if (dv.getUint8(off+4) !== 0) {
+alert("This XM module uses a unknown packing type in pattern " + i + ". Unable to load song.");
+return new WebTracker.Song(); //return a new empty song instead.
+} //if bad packing type
+var rows = dv.getUint16(off+5),
+patternDataLength = dv.getUint16(off+7);
+off += dv.getUint32(off); //point to next pattern header
+nextOff =  off+patternDataLength;
+if (patternDataLength > 0) {
+for (var j = 0; j < rows; j++) {
+p[j] = []; //initialize row
+for (var k = 0; k < chans; k++) { //each channel
+var nflags = dv.getUint8(off);
+if ((nflags & 0x80) === 0) {
+nflags = 0x1f;
+} else {
+off++;
+} //if no note data
+var key = (flags & 0x1) > 0 ? dv.getUint8(off++),
+var ins = (flags & 0x2) > 0 ? dv.getUint8(off++),
+var vol = (flags & 0x4) > 0 ? dv.getUint8(off++),
+var fx = (flags & 0x8) > 0 ? dv.getUint8(off++),
+var fxData = (flags & 0x10) > 0 ? dv.getUint8(off++),
+
 
 }; //loadXMSong
 
