@@ -13,7 +13,24 @@ tmp, //we always need temp vars
 chans, //channels
 song = new WebTracker.Song(),
 po = song.patternOrder,
-patterns = song.patterns;
+patterns = song.patterns,
+
+readNote = function(ptr) {
+var off = ptr.off,
+nflags = dv.getUint8(off);
+if ((nflags & 0x80) === 0) {
+nflags = 0x1f;
+} else {
+off++;
+} //if no note data
+var key = (flags & 0x1) > 0 ? dv.getUint8(off++),
+var ins = (flags & 0x2) > 0 ? dv.getUint8(off++),
+var vol = (flags & 0x4) > 0 ? dv.getUint8(off++),
+var fx = (flags & 0x8) > 0 ? dv.getUint8(off++),
+var fxData = (flags & 0x10) > 0 ? dv.getUint8(off++);
+ptr.off = off;
+return WebTracker.note(ins, key, vol, WebTracker.effect(fx, fxData)); //totally rong, need to fix, just here for now.
+}; //readNote
 
 //basic data
 song.title = getString(17: 20);
@@ -46,21 +63,16 @@ var rows = dv.getUint16(off+5),
 patternDataLength = dv.getUint16(off+7);
 off += dv.getUint32(off); //point to next pattern header
 nextOff =  off+patternDataLength;
+var notePtr = {off: off};
 if (patternDataLength > 0) {
 for (var j = 0; j < rows; j++) {
 p[j] = []; //initialize row
 for (var k = 0; k < chans; k++) { //each channel
-var nflags = dv.getUint8(off);
-if ((nflags & 0x80) === 0) {
-nflags = 0x1f;
-} else {
-off++;
-} //if no note data
-var key = (flags & 0x1) > 0 ? dv.getUint8(off++),
-var ins = (flags & 0x2) > 0 ? dv.getUint8(off++),
-var vol = (flags & 0x4) > 0 ? dv.getUint8(off++),
-var fx = (flags & 0x8) > 0 ? dv.getUint8(off++),
-var fxData = (flags & 0x10) > 0 ? dv.getUint8(off++),
+p[j][k] = readNote(notePtr);
+} //k: chans
+} //j: rows
+off = nextOff; //done with this pattern, move to next.
+} //i: patterns
 
 
 }; //loadXMSong
