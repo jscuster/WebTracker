@@ -24,6 +24,7 @@ window.onload = function () {
 'utils',
 'sample',
 'note',
+'instrument',
 'song',
 'amigaUtils',
 'readAmiga',

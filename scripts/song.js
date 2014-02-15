@@ -2,9 +2,9 @@
 var WebTracker = WebTracker || {};
 
 WebTracker.Song = function () {
-	'use strict';
+	"use strict";
 	var _title = "Untitled",
-		_samples = [new WebTracker.Sample()],
+		_instruments = [new WebTracker.Sample()],
 		_patterns = [],
 		_channels = 4,
 		_patternOrder = [],
@@ -43,7 +43,7 @@ WebTracker.Song = function () {
 		for (var i = 0; i < rows; i++) {
 			p[i] = [];
 			for (var j = 0; j < this.channels; j++) {
-				p[i][j] = WebTracker.note(0, 0, WebTracker.effect(0, 0, 0));
+				p[i][j] = WebTracker.note(0, 0, 1, WebTracker.effect(0, 0, 0));
 			} //j
 		} //i
 		this.patterns.push(p);
@@ -200,12 +200,12 @@ this.defaultPan[i] = 0;
 		}
 	}); //patternOrder property
 
-	Object.defineProperty(this, "samples", {
+	Object.defineProperty(this, "instruments", {
 		get: function () {
-			return _samples;
+			return _instruments;
 		},
 		set: function (v) {
-			_samples = v;
+			_instruments = v;
 		}
 	}); //samples property
 

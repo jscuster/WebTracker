@@ -1,11 +1,10 @@
 
 var WebTracker = WebTracker || {};
 WebTracker.Sample = function () {
-	'use strict';
+	"use strict";
 	this.clean = true; //dirty if waiting for resampler.
 	var that = this,
 		context = WebTracker.context,
-		_title = "Untitled",
 		_channels = 0,
 		_length = 0,
 		_volume = 1,
@@ -26,15 +25,6 @@ WebTracker.Sample = function () {
 			_sampRate = _data.sampleRate;
 			setFactor();
 		}; //setupDataVars
-
-	Object.defineProperty(that, "title", {
-		get: function () {
-			return _title;
-		},
-		set: function (v) {
-			_title = v;
-		}
-	}); //title property
 
 	Object.defineProperty(that, "volume", {
 		get: function () {

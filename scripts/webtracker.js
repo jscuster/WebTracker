@@ -10,14 +10,14 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			initialized = false,
 			filename = "untitled.mod",
 			samplePlayers = {
-				importSamplesList: new WebTracker.SamplePlayer([], destination, "importSamplesList"),
-				importSongSamples: new WebTracker.SamplePlayer([], destination, "importSongSamples"),
-				samplesSampleChooser: new WebTracker.SamplePlayer([], destination, "samplesSampleChooser"),
+				importinstrumentsList: new WebTracker.SamplePlayer([], destination, "importinstrumentsList"),
+				importSonginstruments: new WebTracker.SamplePlayer([], destination, "importSonginstruments"),
+				instrumentsSampleChooser: new WebTracker.SamplePlayer([], destination, "instrumentsSampleChooser"),
 				trackerSampleChooser: new WebTracker.SamplePlayer([], destination, "trackerSampleChooser", "trackerNote")
 			},
 			importSelected = false,
-			importSamples = [],
-			samplesCurSample = 0,
+			importinstruments = [],
+			instrumentsCurSample = 0,
 			songPlayer,
 			trackerStartChan = 0,
 			trackerChanWidth = 4,
@@ -42,19 +42,19 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 					$("#importImport").html("Place Sample");
 					$("#importAdd").attr('disabled', 'disabled');
 					deactivatePlayers();
-					samplePlayers.importSongSamples.active = true;
+					samplePlayers.importSonginstruments.active = true;
 					update();
-					$("#importSongSamples").show();
-					$("#importSamplesList").hide();
+					$("#importSonginstruments").show();
+					$("#importinstrumentsList").hide();
 				} else {
 					//we are not in the middle of an import, just starting.
-					$("#importClear").html("Clear Loaded Samples")
+					$("#importClear").html("Clear Loaded instruments")
 					$("#importImport").html("Select Sample");
 					$("#importAdd").removeAttr('disabled');
-					$("#importSamplesList").show();
-					$("#importSongSamples").hide();
+					$("#importinstrumentsList").show();
+					$("#importSonginstruments").hide();
 					deactivatePlayers();
-					samplePlayers.importSamplesList.active = true;
+					samplePlayers.importinstrumentsList.active = true;
 					update();
 				} //show proper labels on controls
 			}, //showing controls for import
@@ -65,8 +65,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				$("#" + name + "First").click();
 				deactivatePlayers();
 				trackerKeys = false;
-				if (name === "samples") {
-					samplePlayers.samplesSampleChooser.active = true;
+				if (name === "instruments") {
+					samplePlayers.instrumentsSampleChooser.active = true;
 				} else if (name === "tracker") { //activate correct player.
 					samplePlayers.trackerSampleChooser.active = true;
 					trackerKeys = true;
@@ -77,9 +77,9 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				$(".subpanel").hide();
 				$("#" + name).show();
 				if (name === "import") {
-					$("#importSongSamples").hide();
-					samplePlayers.importSamplesList.active = true; //activate the correct player.
-					samplePlayers.importSamplesList.update();
+					$("#importSonginstruments").hide();
+					samplePlayers.importinstrumentsList.active = true; //activate the correct player.
+					samplePlayers.importinstrumentsList.update();
 				} //activate import player
 			}, //showPanel
 
@@ -99,7 +99,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				document.title = song.title + ": Web Tracker";
 				$("#songTitle").prop('value', song.title)
 				$("#filesFilename").html("current file: " + filename + " - " + song.title)
-				$("#songMessage").html(song.samples.map(function (s) {
+				$("#songMessage").html(song.instruments.map(function (s) {
 					return s.title;
 				}).join("<br>"));
 				$("#trackerChannelWidth").val(trackerChanWidth);
@@ -115,16 +115,16 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				$("#patternTempo").val(songPlayer.bpm);
 				$("#songPatterns").html(song.patternCount);
 				$("#songChannels").val(song.channels);
-				updateSamplesPanel();
+				updateinstrumentsPanel();
 			}, //updates after changes are made.
 
 			fillSamplePlayers = function () {
-				samplePlayers.trackerSampleChooser.samples = song.samples; //give the array to the sampler.
+				samplePlayers.trackerSampleChooser.instruments = song.instruments; //give the array to the sampler.
 				samplePlayers.trackerSampleChooser.noteCallback = trackerNoteCallback;
-				samplePlayers.samplesSampleChooser.samples = song.samples; //give the array to the sampler.
-				samplePlayers.importSongSamples.samples = song.samples;
-				samplePlayers.importSamplesList.samples = importSamples;
-			}, //load the samples in.
+				samplePlayers.instrumentsSampleChooser.instruments = song.instruments; //give the array to the sampler.
+				samplePlayers.importSonginstruments.instruments = song.instruments;
+				samplePlayers.importinstrumentsList.instruments = importinstruments;
+			}, //load the instruments in.
 
 			buildPatternEditor = function () {
 				var res = "<table>",
@@ -219,17 +219,17 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				}); //play from pattern
 			}, //build pattern order html table
 
-			updateSamplesPanel = function () {
-				var s = song.samples[samplesCurSample];
-				$("#samplesLength").html(s.length + " bytes");
-				$("#samplesTitle").val(s.title);
-				$("#samplesVolume").val(s.volume);
-				$("#samplesFineTune").val(s.tune);
-				$("#samplesLoopStart").prop('max', s.length).val(s.loopStart);
-				$("#samplesLoopEnd").prop('max', s.length).val(s.loopEnd);
-				$("#samplesLoopStartSlide").prop('max', s.length).val(s.loopStart);
-				$("#samplesLoopEndSlide").prop('max', s.length).val(s.loopEnd);
-			}, //updateSamplesPanel
+			updateinstrumentsPanel = function () {
+				var s = song.instruments[instrumentsCurSample];
+				$("#instrumentsLength").html(s.length + " bytes");
+				$("#instrumentsTitle").val(s.title);
+				$("#instrumentsVolume").val(s.volume);
+				$("#instrumentsFineTune").val(s.tune);
+				$("#instrumentsLoopStart").prop('max', s.length).val(s.loopStart);
+				$("#instrumentsLoopEnd").prop('max', s.length).val(s.loopEnd);
+				$("#instrumentsLoopStartSlide").prop('max', s.length).val(s.loopStart);
+				$("#instrumentsLoopEndSlide").prop('max', s.length).val(s.loopEnd);
+			}, //updateinstrumentsPanel
 
 			buildTrackerTable = function () {
 				var p,
@@ -458,9 +458,9 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 					lst += '<option value="' + i + '">' + WebTracker.effects[i] + "</option>"
 				} //i
 				$("#effectEffects").append(lst).val(0);
-				samplePlayers.samplesSampleChooser.sampleCallback = function (sptr) {
-					samplesCurSample = sptr;
-					updateSamplesPanel();
+				samplePlayers.instrumentsSampleChooser.sampleCallback = function (sptr) {
+					instrumentsCurSample = sptr;
+					updateinstrumentsPanel();
 				}; //sampleCallback
 			}; //initialize the program
 
@@ -529,21 +529,21 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				//the operation was canceled.
 				showImportControls();
 			} else {
-				//clearing importSamples.
-				importSamples = [];
+				//clearing importinstruments.
+				importinstruments = [];
 				fillSamplePlayers();
 			} //act on importSelected togg.e
 		}); //importClear clicked
 
 		$("#importImport").click(function () {
 			if (importSelected) {
-				var smp = samplePlayers.importSamplesList.currentSample,
-					i = samplePlayers.importSongSamples.sampleIndex;
-				if (confirm("Warning: replacing sample " + (i + 1) + ": (" + song.samples[i].title + ") with the selected sample. Continue?")) {
-					smp.title = song.samples[i].title;
-					song.samples[i] = smp; //replace
-					i = samplePlayers.importSamplesList.sampleIndex;
-					importSamples.splice(i, 1);
+				var smp = samplePlayers.importinstrumentsList.currentSample,
+					i = samplePlayers.importSonginstruments.sampleIndex;
+				if (confirm("Warning: replacing sample " + (i + 1) + ": (" + song.instruments[i].title + ") with the selected sample. Continue?")) {
+					smp.title = song.instruments[i].title;
+					song.instruments[i] = smp; //replace
+					i = samplePlayers.importinstrumentsList.sampleIndex;
+					importinstruments.splice(i, 1);
 					fillSamplePlayers();
 					changed = true;
 					update();
@@ -563,8 +563,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 					s; //song or sample temp var
 				if (WebTracker.isValidAmigaModule(dv)) {
 					s = WebTracker.loadAmigaMod(dv);
-					for (var i = 0; i < s.samples.length; i++) {
-						importSamples[importSamples.length] = s.samples[i];
+					for (var i = 0; i < s.instruments.length; i++) {
+						importinstruments[importinstruments.length] = s.instruments[i];
 					} //i
 					fillSamplePlayers();
 					update();
@@ -574,7 +574,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 						function (audio) { //callback for successful decode
 							s = new WebTracker.AmigaSample();
 							s.data = audio;
-							importSamples[importSamples.length] = s;
+							importinstruments[importinstruments.length] = s;
 							fillSamplePlayers();
 							update();
 						}, //decodeAudioData success
@@ -614,37 +614,37 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			} //if
 		}); //tempo loose focus
 
-		$("#samplesTitle").focusout(function () {
-			song.samples[samplesCurSample].title = this.value;
+		$("#instrumentsTitle").focusout(function () {
+			song.instruments[instrumentsCurSample].title = this.value;
 		}); //title focus out
 
-		$("#samplesVolume").focusout(function () {
-			song.samples[samplesCurSample].volume = WebTracker.restrictRange(+this.value, 0, 1);
+		$("#instrumentsVolume").focusout(function () {
+			song.instruments[instrumentsCurSample].volume = WebTracker.restrictRange(+this.value, 0, 1);
 		}); // sample volume focus out
 
-		$("#samplesFineTune").focusout(function () {
-			song.samples[samplesCurSample].tune = WebTracker.restrictRange(+this.value, -8, 7);
-		}); // samples finetune focus out
+		$("#instrumentsFineTune").focusout(function () {
+			song.instruments[instrumentsCurSample].tune = WebTracker.restrictRange(+this.value, -8, 7);
+		}); // instruments finetune focus out
 
-		$("#samplesLoopStart").focusout(function () {
-			song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-			updateSamplesPanel();
-		}); //samplesLoopStart focus out
+		$("#instrumentsLoopStart").focusout(function () {
+			song.instruments[instrumentsCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.instruments[instrumentsCurSample].length);
+			updateinstrumentsPanel();
+		}); //instrumentsLoopStart focus out
 
-		$("#samplesLoopEnd").focusout(function () {
-			song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-			updateSamplesPanel();
-		}); //samplesLoopEnd
+		$("#instrumentsLoopEnd").focusout(function () {
+			song.instruments[instrumentsCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.instruments[instrumentsCurSample].length);
+			updateinstrumentsPanel();
+		}); //instrumentsLoopEnd
 
-		$("#samplesLoopStartSlide").focusout(function () {
-			song.samples[samplesCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-			updateSamplesPanel();
-		}); //samplesLoopStartSlide focus out
+		$("#instrumentsLoopStartSlide").focusout(function () {
+			song.instruments[instrumentsCurSample].loopStart = WebTracker.restrictRange(+this.value, 0, song.instruments[instrumentsCurSample].length);
+			updateinstrumentsPanel();
+		}); //instrumentsLoopStartSlide focus out
 
-		$("#samplesLoopEndSlide").focusout(function () {
-			song.samples[samplesCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.samples[samplesCurSample].length);
-			updateSamplesPanel();
-		}); //samplesLoopEndSlide
+		$("#instrumentsLoopEndSlide").focusout(function () {
+			song.instruments[instrumentsCurSample].loopEnd = WebTracker.restrictRange(+this.value, 0, song.instruments[instrumentsCurSample].length);
+			updateinstrumentsPanel();
+		}); //instrumentsLoopEndSlide
 
 		$("#trackerPlay").click(function () {
 			songPlayer.playPattern(trackerCurPattern);
@@ -679,7 +679,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			var k = e.which;
 			if (e.ctrlKey) { //if control is down,
 				if (k >= 49 && k <= 53) {
-					var b = "#" + ("btnFiles btnSamples btnSong btnPatterns btnTracker".split(" ")[k - 49])
+					var b = "#" + ("btnFiles btninstruments btnSong btnPatterns btnTracker".split(" ")[k - 49])
 					$(b).click();
 				} //ctrl+1--5
 			} //ctrl down

@@ -114,10 +114,11 @@ WebTracker.midiNoteToName = (function () {
 
 WebTracker.noteToAmigaPeriod = (function () {
 	var pow = Math.pow,
+		round = Math.round,
 		f = pow(2, 1 / 12); //12; //th root of 2
 	return function (n) {
 		if (n != 0) {
-			return 428 * pow(f, -1 * (n - 60));
+			return round(428 * pow(f, -1 * (n - 60)));
 		} else {
 			return 0;
 		} //0 note = 0 music.
@@ -126,9 +127,10 @@ WebTracker.noteToAmigaPeriod = (function () {
 
 WebTracker.amigaPeriodToNote = (function () {
 	var log = Math.log,
+		round = Math.round,
 		d = log(Math.pow(2, 1 / 12)); //devide log(period/428)/d = note.
 	return function (p) {
-		return p > 0 ? 60 + log(428 / p) / d : 0;
+		return p > 0 ? round(60 + log(428 / p) / d) : 0;
 	}; //amigaPeriodToNote
 })(); //closure amigaPeriodToNote
 

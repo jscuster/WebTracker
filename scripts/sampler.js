@@ -1,10 +1,11 @@
 var WebTracker = WebTracker || {};
 
-WebTracker.Sampler = function (samples, destination) {
-	var context = WebTracker.context;
-	destination = destination || context.destination;
-	var lastSample = -1,
-		sptr,
+WebTracker.Sampler = function (instruments, destination) {
+"use strict";
+	var context = WebTracker.context,
+		lastInstrument = -1,
+		iptr,
+		lastMappedSample,
 		node,
 		gain = context.createGain(),
 		panner = context.createPanner(),
@@ -52,27 +53,30 @@ WebTracker.Sampler = function (samples, destination) {
 			}; //onaudioprocess
 		}; //hackedVibrato
 
+	destination = destination || context.destination;
 	gain.connect(destination);
 	panner.connect(gain);
 	panner.panningModel = "equalpower";
 	panner.distanceModel =  "linear"
 	destination = panner;
 
-	this.play = function (s, note, when) {
+	this.play = function (ins, note, when) {
 		if (note != 0) {
 			when = when || 0;
 			this.stop(when - 0.0001);
-			sptr = s;
-			var smp = samples[s],
+			iptr = ins;
+			ins = instruments[ins];
+			var smp = ins.getNoteSample(note),
 				rate = smp.factor * Math.pow(1.0595, note - 60),
 				buffer = smp.data;
+			lastMappedSample = smp;
 			if (buffer) {
 				node = context.createBufferSource();
 				node.buffer = buffer;
 				//volume
-				this.setVolume(smp.volume, when);
-				if (s !== lastSample) {
-					lastSample = s;
+				this.setVolume(ins.volume, when);
+				if (iptr !== lastInstrument) {
+					lastInstrument = iptr;
 				} //if different sample
 				//loop
 				if (smp.loopLength > 2) {
@@ -112,8 +116,8 @@ WebTracker.Sampler = function (samples, destination) {
 	}; //slideVolume
 
 	this.setNote = function (s, n, when) {
-		if (s === sptr) {
-			var rate = samples[s].factor * Math.pow(1.0595, n - 60);
+		if (s === iptr) {
+			var rate = lastMappedSample.factor * Math.pow(1.0595, n - 60);
 			node.playbackRate.setValueAtTime(rate, when);
 		} else {
 			this.play(s, n, when);

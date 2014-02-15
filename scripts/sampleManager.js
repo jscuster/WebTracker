@@ -1,27 +1,26 @@
 
 var WebTracker = WebTracker || {};
-WebTracker.SamplePlayer = function (_samples, destination, container, keyboardContainer) {
-	//allows the player to select and play a sample.
-	'use strict';
+WebTracker.SamplePlayer = function (instruments, destination, container, keyboardContainer) {
+	"use strict";
+	//allows the player to select and play an instrument.
 	if (!container) { //must know where to generate html and which controls to listen to.
 		throw {
 			message: "Error: A valid id must be passed so controls can be placed."
 		};
 	} //if bad container
 
-	var samples = [],
-		sptr = 0, //points to the currently playing sample
+	var iptr = 0, //points to the currently playing instrument
 		that = this,
 		keys = "zsxdcvgbhnjmq2w3er5t6y7ui9o0p".toUpperCase(),
 		octave = 5,
 		transpose = 0,
 		downKey = -1, //keys currently down. Must keep track so the key is not retriggerd when held.
 		_noteCallback,
-		_sampleCallback,
-		player = new WebTracker.Sampler(samples, destination), //only use of destination param
-		nextSampId = container + "NextSample",
-		prevSampId = container + "PrevSample",
-		sampNameId = container + "SampleName",
+		_instrumentCallback,
+		player = new WebTracker.Sampler(instruments, destination), //only use of destination param
+		nextInsId = container + "NextInstrumnt",
+		prevInsId = container + "PrevInstrument",
+		insNameId = container + "InstrumentName",
 		prevOctId = container + "PrevOctave",
 		nextOctId = container + "NextOctave",
 		octNameId = container + "OctaveName",
@@ -46,11 +45,11 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 						downKey = e.which;
 						switch (e.which) {
 						case 187: // =
-							that.nextSample();
+							that.nextInstrument();
 							return false;
 							break;
 						case 189: // -
-							that.prevSample();
+							that.prevInstrument();
 							return false;
 							break;
 						case 219: // [
@@ -72,8 +71,8 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 						default:
 							var i = keyToNote(String.fromCharCode(e.which));
 							if (i >= 0) {
-								player.play(sptr, i);
-								if (_noteCallback) _noteCallback(sptr, i);
+								player.play(iptr, i);
+								if (_noteCallback) _noteCallback(iptr, i);
 								return false;
 							} //note finding
 						} //switch
@@ -97,16 +96,16 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 
 		generateHtml = function () {
 			var res = '<table><tr>';
-			res += '<td><button id="' + nextSampId + '">Next Sample</button></td>';
+			res += '<td><button id="' + nextInsId + '">Next Instrument</button></td>';
 			res += '<td><button id="' + nextOctId + '">+ 1</button></td>';
 			res += '<td><button id="' + transUpId + '">+ 1</button></td>';
 			res += '</tr><tr>';
-			res += '<td id="' + sampNameId + '"></td>';
+			res += '<td id="' + insNameId + '"></td>';
 			res += '<td id="' + octNameId + '"></td>';
 			res += '<td id="' + transNameId + '"></td>';
-			res += '<td id="' + sampNameId + '"></td>';
+			res += '<td id="' + insNameId + '"></td>';
 			res += '</tr><tr>';
-			res += '<td><button id="' + prevSampId + '">Previous Sample</button></td>';
+			res += '<td><button id="' + prevInsId + '">Previous Instrument</button></td>';
 			res += '<td><button id="' + prevOctId + '">- 1</button></td>';
 			res += '<td><button id="' + transDownId + '">- 1</button></td>';
 			res += '</tr></table>';
@@ -122,8 +121,8 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 		initControls = function () {
 			//button bindings
 			$("#" + container).html(generateHtml());
-			$("#" + prevSampId).click(that.prevSample);
-			$("#" + nextSampId).click(that.nextSample);
+			$("#" + prevInsId).click(that.prevInstrument);
+			$("#" + nextInsId).click(that.nextInstrument);
 			$("#" + nextOctId).click(that.nextOctave);
 			$("#" + prevOctId).click(that.prevOctave);
 			$("#" + transUpId).click(that.transposeUp);
@@ -136,7 +135,7 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 
 		update = function () {
 			if (that.active) {
-				$("#" + sampNameId).html((sptr + 1) + ": " + samples[sptr].title);
+				$("#" + insNameId).html((iptr + 1) + ": " + instruments[iptr].title);
 				$("#" + octNameId).html("octave: " + octave);
 				$("#" + transNameId).html("Transpoze: " + transpose);
 			} //if
@@ -156,21 +155,18 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 
 	this.update = update;
 
-	this.nextSample = function () {
-		sptr++;
-		if (sptr >= samples.length) {
-			sptr = 0;
-		} //we move to the next sample in the list.
-		if (_sampleCallback) _sampleCallback(sptr);
+	this.nextInstrument = function () {
+		iptr = (iptr + 1) % instruments.length;
+		if (_instrumentCallback) _instrumentCallback(iptr);
 		update();
-	}; //nextSample
+	}; //nextInstrunent
 
-	this.prevSample = function () {
-		sptr--;
-		if (sptr < 0) {
-			sptr = samples.length - 1;
+	this.prevInstrument = function () {
+		iptr--;
+		if (iptr < 0) {
+			iptr = samples.length - 1;
 		}
-		if (_sampleCallback) _sampleCallback(sptr);
+		if (_instrumentCallback) _instrumentCallback(iptr);
 		update();
 	}; //prevSample
 
@@ -206,43 +202,35 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 		update();
 	}; //transposeUp
 
-	Object.defineProperty(this, 'sample', {
+	Object.defineProperty(this, 'instrument', {
 		get: function () {
-			return samples[sptr];
+			return instruments[iptr];
 		}, //get currently selected sample.
 		set: function (value) {
-			samples[sptr] = value;
+			instruments[iptr] = value;
 			update();
 		} //set the currently selected sample to the new value
 	}); //sample property
 
-	Object.defineProperty(this, 'sampleIndex', {
+	Object.defineProperty(this, 'instrumentIndex', {
 		get: function () {
-			return sptr;
-		}, //get sampleIndex (sptr)
+			return iptr;
+		}, //get sampleIndex (iptr)
 		set: function (value) {
-			sptr = value;
-			if (sptr >= samples.length) sptr = samples.Length - 1;
-			if (sptr < 0) sptr = 0;
+			iptr = WebTracker.restrictRange(value, 0, instruments.length - 1);
 			update();
 		} //set sampleIndex
 	}); //sampleIndex property
 
-	Object.defineProperty(this, 'currentSample', {
+	Object.defineProperty(this, 'instruments', {
 		get: function () {
-			return samples[sptr];
-		} //getter
-	}); //currentSample property
-
-	Object.defineProperty(this, 'samples', {
-		get: function () {
-			return samples;
+			return instruments;
 		},
 		set: function (s) {
-			samples = s;
-			sptr = 0;
-			if (samples.length === 0) {
-				samples = [new WebTracker.Sample()];
+			instruments = s;
+			iptr = 0;
+			if (instruments.length === 0) {
+				instruments = [new WebTracker.Instrument()];
 			}
 			player = new WebTracker.Sampler(samples, destination);
 			update();
@@ -255,11 +243,11 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 		}
 	}); //noteCallback
 
-	Object.defineProperty(this, "sampleCallback", {
+	Object.defineProperty(this, "instrumentCallback", {
 		set: function (sc) {
-			_sampleCallback = sc || function () {};
+			_instrumentCallback = sc || function () {};
 		}
-	}); //sampleCallback
+	}); //instrumentCallback
 
 	if ((typeof keyboardContainer === "string") && keyboardContainer.length > 0) {
 		makeKeyTextBox = false;
@@ -268,6 +256,5 @@ WebTracker.SamplePlayer = function (_samples, destination, container, keyboardCo
 		keyboardContainer = container + "SamplesKeyBox";
 	} //if no good container, make one.
 
-	this.samples = _samples;
 	initControls();
 }; //SamplePlayer

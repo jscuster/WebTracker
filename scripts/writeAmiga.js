@@ -1,8 +1,17 @@
 var WebTracker = WebTracker || {};
 
-WebTracker.isAmigaSampleCompatible = function (s) {
+WebTracker.isAmigaSampleCompatible = function (ins) {
 	var err = [],
-		ep = 0;
+		ep = 0,
+		s;
+	if (ins.sampleCount > 1) {
+		err[ep++] = ["Amiga modules only permit 1 sample per instrument.", function() {
+			alert("To fix this problem, delete all but one sample, then map that sample to all notes. You should choose a sample in the middle of the note range of your composition for best sound.");
+		}];
+		return err; //no sense working on the other potentialities until this one is fixed.
+	} //if more than one sample in instrument.
+	//get the only sample
+s = ins.getSample(1);
 	if (s.channels > 1) {
 		err[ep++] = ["Sample must have only 1 channel, this sample has " + s.channels + ".",
 function () {
@@ -15,10 +24,10 @@ function () {
 				s.resample(8287.2);
 }];
 	} //if not sampleRate match
-	if (s.title.length > 22) {
-		err[ep++] = ["Sample titles can be no more than 22 characters.",
+	if (ins.title.length > 22) {
+		err[ep++] = ["Instrument titles can be no more than 22 characters.",
 function () {
-				var t = orig = s.title;
+				var t = orig = ins.title;
 				while (t != null && t.length > 22) {
 					t = prompt("Please enter a new title, 22 characters or less:", orig);
 					if (t == null) {
@@ -27,11 +36,11 @@ function () {
 						orig = t;
 					} //if
 				} //while
-				s.title = orig;
+				ins.title = orig;
 }];
 	} //if title to long
 	if (s.length > 131070) { //0xffff is max size for length, measured in words, 65535*2.
-		err[ep++] = ["This sample is to long. The max length is 131070, current length is " + s.length + ".",
+		err[ep++] = ["This sample is to long. The max length is 131070 bytes, current length is " + s.length + ".",
 function () {
 				if (s.channels > 1) {
 					alert("Please make this sample mono first.");
@@ -51,15 +60,16 @@ function () {
 	return err;
 }; //isAmigaSampleCompatible
 
-WebTracker.writeAmigaSample = function (s, buffer, ptrs) {
+WebTracker.writeAmigaSample = function (ins, buffer, ptrs) {
 	if (WebTracker.isAmigaSampleCompatible(s)) {
 		var dv = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 			hoff = ptrs.headerOffset,
 			doff = ptrs.dataOffset,
 			round = Math.round,
+s = ins.getSample(1),
 
 			writeHeader = function () {
-				WebTracker.stringWriter(dv)(s.title, hoff, 22);
+				WebTracker.stringWriter(dv)(ins.title, hoff, 22);
 				hoff += 22;
 				var tmp = (s.length / 2) + (s.length % 2);
 				dv.setUint16(hoff, tmp, false);
@@ -147,7 +157,12 @@ function () {
 			} //k (channels)
 		} //j (rows)
 	} //for each pattern
-	var smp = s.samples;
+	var smp = s.instruments;
+	if (smp.length > 31) {
+		err[ep++] = ["Amiga modules support up to 31 instruments. This song has " + (smp.length - 31) + " instruments too many.", function() {
+				alert("Use the samples tab to remove extra samples.");
+		}];
+	} //if too many instruments
 	for (var i = 0; i < smp.length; i++) {
 		tmp = WebTracker.isAmigaSampleCompatible(smp[i]);
 		if (tmp.length > 0) {
@@ -176,14 +191,14 @@ WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
 			var length = 1084; //sample headers, title, pattern headers, etc.
 			length += (64 * song.patternCount * song.channels * 4);
 			samplePointers = WebTracker.samplePointer(20, length); //end of pattern data
-			song.samples.forEach(function (s) {
+			song.instruments.forEach(function (s) {
 				if (WebTracker.isAmigaSampleCompatible(s).length > 0) {
 					throw {
 						message: "Error: This song is not compatible with the amiga format."
 					};
 				} else { //now we know it's valid
-					length += s.length;
-					length += s.length % 2;
+					var l = s.getSample(1).length;
+					length += l + (l % 2);
 				} //if
 			});
 			return length;
@@ -236,9 +251,10 @@ WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
 	} //i
 
 	//write samples
-	song.samples.forEach(function (s) {
+	song.instruments.forEach(function (s) {
 		WebTracker.writeAmigaSample(s, dv, samplePointers);
 	}); //write each sample.
+	//fill in empty samples
 	if (song.samples.length < 31) {
 		var s = new WebTracker.sample();
 		s.sampleRate = 8287.2;
