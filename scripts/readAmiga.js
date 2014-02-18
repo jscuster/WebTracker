@@ -18,7 +18,7 @@ WebTracker.readAmigaSample = function (buffer, ptrs) {
 			if (tune > 7) {
 				tune = 15 - tune;
 			}
-			smp.tune = tune;
+			smp.tune = tune / 8;
 			ins.volume = dataView.getUint8(hoff++) / 64; //volume, scaled to 0..1
 			lstart = dataView.getUint16(hoff) * 2;
 			hoff += 2;
@@ -200,7 +200,7 @@ ins.mapSample(); //automatically maps the first sample to all notes.
 			for (var i = 0; i < 31; i++) {
 				s[i] = WebTracker.readAmigaSample(dataView, samplePointers);
 			} //for: read each sample.
-			song.samples = s;
+			song.instruments = s;
 			//set bpm if found
 			song.patterns[song.patternOrder[0]][0].forEach(function (n) { //cearch the channels in the first row of the first pattern in the patternOrder list.
 				if (n.effect === 31) song.bpm = n.effect.p1;

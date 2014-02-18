@@ -4,7 +4,7 @@ var WebTracker = WebTracker || {};
 WebTracker.Song = function () {
 	"use strict";
 	var _title = "Untitled",
-		_instruments = [new WebTracker.Sample()],
+		_instruments = [new WebTracker.Instrument()],
 		_patterns = [],
 		_channels = 4,
 		_patternOrder = [],

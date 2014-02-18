@@ -9,6 +9,19 @@ WebTracker.Instrument = function () {
 	for (var i = 1; i < 128; i++) noteMap[i] = 0; //set all notes to point to silence.
 
 	//public vars
+	this.volumeEnvelope = [{x: 0, y: 1}];
+	this.panEnvelope = [{x: 0, y: 0}];
+	this.volumeSustain = 0;
+	this.volumeLoopStart = this.volumeLoopEnd = 0;
+	this.volumeEnvelopeEnabled = this.volumeEnvelopeSustained = this.volumeEnvelopeLooped = false;
+	this.panSustain = 0;
+	this.panLoopStart = this.panLoopEnd = 0;
+	this.panEnvelopeEnabled = this.panEnvelopeSustained = this.panEnvelopeLooped = false;
+	this.vibratoType = 0;
+	this.vibratoSweep = 0;
+	this.vibratoDepth = 0;
+	this.vibratoRate = 0;
+	this.volumeFadeOut = 0;
 	this.title = "";
 	this.volume = 1;
 
@@ -16,6 +29,15 @@ WebTracker.Instrument = function () {
 		var idx = samples.length;
 		samples[idx] = s;
 		return idx;
+	}; //addSample
+
+	this.setSample = function (s, idx) {
+		if (idx < 1) {
+			throw {message: "Error: No assignment to sample 0 is permitted."};
+		} //if idx = 0
+		else {
+			samples[idx] = s;
+		} //if in bound
 	}; //addSample
 
 	this.removeSample = function (idx) {
@@ -46,18 +68,17 @@ WebTracker.Instrument = function () {
 	}; //mapSample
 
 	this.getNoteSample = function (note) {
-//alert("noteMap has " + noteMap.length + " notes.");
-//alert(JSON.stringify(noteMap));
 var m = noteMap[note];
-//alert("Mapping from note " + note + " to sample " + m);
 		return samples[m];
-	} //getSample
+	}; //getNoteSample
 
 	this.getSample = function (idx) {
 		//make sure we're in bounds
-		if (idx < 1 || idx >= samples.length) throw {
-			message: "Illegal sample requested: requested " + idx + ", must be between 1 and " + samples.length + "."
-		};
+		if (idx < 1 || idx >= samples.length) {
+			throw {
+				message: "Illegal sample requested: requested " + idx + ", must be between 1 and " + samples.length + "."
+			};
+		} //if
 		return samples[idx];
 	}; //getSample
 
@@ -67,4 +88,15 @@ var m = noteMap[note];
 		}
 	}); //get property for samples.length: sampleCount
 
+	Object.defineProperty(this, "length", { //total data bytes
+		get: function() {
+			var len = 0;
+			if (samples.length > 1) {
+				for (var i = 1; i < samples.length; i++) {
+					len = len + samples[i].length;
+				} //i
+			} //if
+			return len;
+		}
+	}); //length
 }; //Instrument

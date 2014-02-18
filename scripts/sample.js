@@ -2,7 +2,10 @@
 var WebTracker = WebTracker || {};
 WebTracker.Sample = function () {
 	"use strict";
+	this.title = "";
 	this.clean = true; //dirty if waiting for resampler.
+	this.pan = 0xff; //0xff = ignore
+
 	var that = this,
 		context = WebTracker.context,
 		_channels = 0,
@@ -16,7 +19,7 @@ WebTracker.Sample = function () {
 		_data,
 
 		setFactor = function () {
-			_factor = (_sampRate * Math.pow(1.007247, _tune)) / context.sampleRate;
+			_factor = (_sampRate * Math.pow(1.0595, _tune)) / context.sampleRate;
 		}, //setFactor
 
 		setupDataVars = function () {
@@ -64,7 +67,7 @@ WebTracker.Sample = function () {
 			return _tune;
 		},
 		set: function (value) {
-			_tune = WebTracker.restrictRange(value, -8, 7);
+			_tune = value;
 			setFactor();
 		}
 	}); //tune property

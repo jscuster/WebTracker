@@ -4,26 +4,6 @@ WebTracker.isAmigaSampleCompatible = function (ins) {
 	var err = [],
 		ep = 0,
 		s;
-	if (ins.sampleCount > 1) {
-		err[ep++] = ["Amiga modules only permit 1 sample per instrument.", function() {
-			alert("To fix this problem, delete all but one sample, then map that sample to all notes. You should choose a sample in the middle of the note range of your composition for best sound.");
-		}];
-		return err; //no sense working on the other potentialities until this one is fixed.
-	} //if more than one sample in instrument.
-	//get the only sample
-s = ins.getSample(1);
-	if (s.channels > 1) {
-		err[ep++] = ["Sample must have only 1 channel, this sample has " + s.channels + ".",
-function () {
-				s.toMono();
-}];
-	} //if not mono
-	if (s.sampleRate !== 8287.2) {
-		err[ep] = ["Sample must have sample rate of 8287.2. This sample's rate = " + s.sampleRate + ".",
-function () {
-				s.resample(8287.2);
-}];
-	} //if not sampleRate match
 	if (ins.title.length > 22) {
 		err[ep++] = ["Instrument titles can be no more than 22 characters.",
 function () {
@@ -39,6 +19,27 @@ function () {
 				ins.title = orig;
 }];
 	} //if title to long
+	if (ins.sampleCount > 1) {
+		err[ep++] = ["Amiga modules only permit 1 sample per instrument.", function() {
+			alert("To fix this problem, delete all but one sample, then map that sample to all notes. You should choose a sample in the middle of the note range of your composition for best sound.");
+		}];
+		return err; //no sense working on the other potentialities until this one is fixed.
+	} //if more than one sample in instrument.
+	else if (ins.sampleCount === 1) {
+		//get the only sample
+		s = ins.getSample(ins.sampleCount);
+		if (s.channels > 1) {
+			err[ep++] = ["Sample must have only 1 channel, this sample has " + s.channels + ".",
+function () {
+				s.toMono();
+}];
+	} //if not mono
+	if (s.sampleRate !== 8287.2) {
+		err[ep] = ["Sample must have sample rate of 8287.2. This sample's rate = " + s.sampleRate + ".",
+function () {
+				s.resample(8287.2);
+}];
+	} //if not sampleRate match
 	if (s.length > 131070) { //0xffff is max size for length, measured in words, 65535*2.
 		err[ep++] = ["This sample is to long. The max length is 131070 bytes, current length is " + s.length + ".",
 function () {
@@ -57,23 +58,25 @@ function () {
 				} //if not mono or if agree to truncate
 }]; //err
 	} //if length not right
+} //if sample = 1 and is empty
 	return err;
 }; //isAmigaSampleCompatible
 
 WebTracker.writeAmigaSample = function (ins, buffer, ptrs) {
-	if (WebTracker.isAmigaSampleCompatible(s)) {
+	if (WebTracker.isAmigaSampleCompatible(ins)) {
 		var dv = (buffer instanceof ArrayBuffer) ? new DataView(buffer) : buffer,
 			hoff = ptrs.headerOffset,
 			doff = ptrs.dataOffset,
 			round = Math.round,
-s = ins.getSample(1),
+s = ins.sampleCount === 1 ? ins.getSample(1) : new WebTracker.Sample(), //get the stored sample or create a blank one.
 
 			writeHeader = function () {
-				WebTracker.stringWriter(dv)(ins.title, hoff, 22);
+				WebTracker.stringWriter(dv)(s.title, hoff, 22);
 				hoff += 22;
 				var tmp = (s.length / 2) + (s.length % 2);
 				dv.setUint16(hoff, tmp, false);
 				hoff += 2;
+var tune = WebTracker.restrictRange(Math.round(s.tune * 8), -8, 7);
 				dv.setUint8(hoff++, s.tune < 0 ? s.tune + 15 : s.tune); //two's complament lower nibble
 				dv.setUint8(hoff++, round(s.volume * 64));
 				dv.setUint16(hoff, round(s.loopStart / 2), false);
@@ -177,7 +180,7 @@ function () {
 }; //isAmigaSongCompatible
 
 WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
-	'use strict';
+	"use strict";
 	if (WebTracker.isAmigaModCompatible(song).length > 0) {
 		throw {
 			message: "Error: This song is not compatible with the amiga format."
@@ -191,16 +194,19 @@ WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
 			var length = 1084; //sample headers, title, pattern headers, etc.
 			length += (64 * song.patternCount * song.channels * 4);
 			samplePointers = WebTracker.samplePointer(20, length); //end of pattern data
-			song.instruments.forEach(function (s) {
+			var ins = song.instruments;
+			for (var i = 0; i < ins.length; i++) {
+				var s = ins[i];
 				if (WebTracker.isAmigaSampleCompatible(s).length > 0) {
 					throw {
 						message: "Error: This song is not compatible with the amiga format."
 					};
 				} else { //now we know it's valid
-					var l = s.getSample(1).length;
-					length += l + (l % 2);
+//alert("instrument " + i + " has " + s.sampleCount + " samples. Data bytes = " + s.length);
+					var l = s.length;
+					length += (l + (l % 2));
 				} //if
-			});
+			} //for
 			return length;
 		},
 
@@ -255,12 +261,15 @@ WebTracker.saveAmigaMod = function (song, returnArrayBuffer) {
 		WebTracker.writeAmigaSample(s, dv, samplePointers);
 	}); //write each sample.
 	//fill in empty samples
-	if (song.samples.length < 31) {
-		var s = new WebTracker.sample();
+	if (song.instruments.length < 31) {
+		var emptyIns = new WebTracker.Instrument(),
+			s = new WebTracker.sample();
+		emptyIns.addSample(s);
 		s.sampleRate = 8287.2;
 		s.title = "";
+		emptyIns.title = "";
 		for (var i = song.samples.length; i < 31; i++) { //fill in sample data
-			WebTracker.writeAmigaSample(s, dv, samplePointers);
+			WebTracker.writeAmigaSample(emptyIns, dv, samplePointers);
 		} //for each non-created sample
 	} //if less than 31samples
 

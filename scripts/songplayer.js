@@ -17,7 +17,7 @@ WebTracker.SongPlayer = function (song, destination) {
 		playTimer = 0,
 		donePlayingCallback,
 		chanStore,
-		samples = song.samples,
+		instruments = song.instruments,
 masterVolume = context.createGain(),
 
 		setTimePerRow = function () {
@@ -36,7 +36,7 @@ masterVolume = context.createGain(),
 			//load channels with samplers.
 			channelCount = song.channels;
 			for (var i = 0; i < channelCount; i++) {
-				channels[i] = new WebTracker.Sampler(song.samples, destination);
+				channels[i] = new WebTracker.Sampler(song.instruments, destination);
 				channels[i].setPan(panPos[i]);
 				chanStore[i] = {
 					lastNote: 0,
@@ -125,7 +125,7 @@ masterVolume = context.createGain(),
 				checkSample = function () {
 					if (note.sample > 0 && note.note !== 0) {
 						noteStore.sample = note.sample - 1;
-						noteStore.volume = samples[noteStore.sample].volume;
+						noteStore.volume = instruments[noteStore.sample].volume;
 						newSample = true;
 					} else {
 						newSample = false;
