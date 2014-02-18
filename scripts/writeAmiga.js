@@ -71,14 +71,14 @@ WebTracker.writeAmigaSample = function (ins, buffer, ptrs) {
 s = ins.sampleCount === 1 ? ins.getSample(1) : new WebTracker.Sample(), //get the stored sample or create a blank one.
 
 			writeHeader = function () {
-				WebTracker.stringWriter(dv)(s.title, hoff, 22);
+				WebTracker.stringWriter(dv)(ins.title, hoff, 22);
 				hoff += 22;
 				var tmp = (s.length / 2) + (s.length % 2);
 				dv.setUint16(hoff, tmp, false);
 				hoff += 2;
 var tune = WebTracker.restrictRange(Math.round(s.tune * 8), -8, 7);
 				dv.setUint8(hoff++, s.tune < 0 ? s.tune + 15 : s.tune); //two's complament lower nibble
-				dv.setUint8(hoff++, round(s.volume * 64));
+				dv.setUint8(hoff++, round(ins.volume * 64));
 				dv.setUint16(hoff, round(s.loopStart / 2), false);
 				hoff += 2;
 				dv.setUint16(hoff, round((s.loopEnd - s.loopStart) / 2), false);

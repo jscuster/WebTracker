@@ -117,7 +117,7 @@ WebTracker.toAmigaEffect = function (effect) {
 		return [e - 1, p1];
 		break;
 	case 13: //set volume
-		return [12, p1 * 64];
+		return [12, Math.round(p1 * 64)];
 		break;
 	case 14: //pattern break
 		var y = p1 % 10;
