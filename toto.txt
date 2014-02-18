@@ -3,9 +3,5 @@
 2. fix div in webtracker to drop files.
 3. optimize functions.
 4. create better interface for tracker and player.
-5. create stand-alone player page so anyone can include a mod player on their page.
-6. make XM loader
-7. enable cloud support for saving files
-8. create song format that supports 16-bit stereo samples, if not already built
-9. create loader for mo3 files (samples are mp3 encoded)
-10. check out s3m, it, far, etx.
+5. create song format that supports 16-bit stereo samples, if not already built
+6. enable cloud support for saving files
