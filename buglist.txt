@@ -1,3 +1,4 @@
 Nobody likes em, but they are here.
 
-smashed
+Errors in some effects.
+Some effects not implemented.
