@@ -1,4 +1,3 @@
-
 //files are at the bottom.
 window.onload = function () {
 	(function (scripts) {

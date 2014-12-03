@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 
 WebTracker.readAmigaSample = function (buffer, ptrs) {

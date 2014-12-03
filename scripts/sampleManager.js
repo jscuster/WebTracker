@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.SamplePlayer = function (_samples, destination, container, keyboardContainer) {
 	//allows the player to select and play a sample.

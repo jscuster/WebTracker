@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.logger = new function () {
 	lines = [];
