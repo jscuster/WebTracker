@@ -6,6 +6,7 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 			destination = context.createDynamicsCompressor(),
 			changed = false,
 			song,
+songPlayer,
 			initialized = false;
 
 		destination.connect(context.destination);
@@ -23,8 +24,8 @@ if (window.File && window.FileReader && window.FileList && window.Blob && (windo
 				var dv = new DataView(e.target.result);
 				if (WebTracker.isValidAmigaModule(dv)) {
 					song = WebTracker.loadAmigaMod(dv);
-				var songPlayer = new WebTracker.SongPlayer(song, destination);
-				songPlayer.playSong();
+				songPlayer = new WebTracker.SongPlayer(song, destination);
+initialized = true;
 				} else {
 					alert("No loader was found to load " + f.name + ". This file is unsupported. Currently we support: .mod formats.");
 				} //else
