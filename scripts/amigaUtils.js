@@ -29,16 +29,16 @@ WebTracker.amigaEffect = (function () {
 			return effect(e + 1, x > 0 ? x : -y);
 			break;
 		case 7: //tremolo
-			return effect(e, x, y);
+			return effect(e + 1, x, y);
 			break;
 		case 8: //supposed to be unused, suspect pan.
 			return effect(e + 1, p);
 			break;
 		case 9: //set ssample offset
-			return effect(10, p << 8);
+			return effect(e + 1, p << 8);
 			break;
 		case 10: //volume slide
-			return effect(11, x > 0 ? x : -y);
+			return effect(e + 1, x > 0 ? x : -y);
 			break;
 		case 11: //position jump
 			return effect(e + 1, p);
