@@ -30,9 +30,6 @@ window.onload = function () {
 'readAmiga',
 'sampler',
 'songplayer',
-'jszip',
-'jszip-inflate',
-'jszip-load',
 'wplayer'
-]); //outer func, prepairs to load files.
+]); //outer func, prepares to load files.
 }; //onload

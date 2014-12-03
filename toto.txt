@@ -3,5 +3,13 @@
 2. fix div in webtracker to drop files.
 3. optimize functions.
 4. create better interface for tracker and player.
+<<<<<<< HEAD
 5. create song format that supports 16-bit stereo samples, if not already built
 6. enable cloud support for saving files
+=======
+5. make XM loader
+6. enable cloud support for saving files
+7. create song format that supports 16-bit stereo samples, if not already built
+8. create loader for mo3 files (samples are mp3 encoded)
+9. check out s3m, it, far, etx.
+>>>>>>> Testing
