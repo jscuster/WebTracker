@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.SamplePlayer = function (instruments, destination, container, keyboardContainer) {
 	"use strict";

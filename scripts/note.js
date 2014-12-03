@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.effects = [
 'none', //0

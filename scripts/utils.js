@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 
 //initialize webaudio

@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 if (window.File && window.FileReader && window.FileList && window.Blob && (window.AudioContext || window.webkitAudioContext)) {
 	$(function () {

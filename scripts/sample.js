@@ -1,4 +1,3 @@
-
 var WebTracker = WebTracker || {};
 WebTracker.Sample = function () {
 	"use strict";
